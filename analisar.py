@@ -7,7 +7,7 @@ import sys
 from datetime import datetime, timezone
 
 from radar import armazenamento as A
-from radar.copia import perfil_copia
+from radar.copia import atualizar_simulada, perfil_copia
 from radar.estilo import impressao
 from radar.operador import CRITERIOS, avaliar as avaliar_operador
 from radar.metricas import benjamini_hochberg, classificar, copiavel, numeros
@@ -112,6 +112,10 @@ def main() -> int:
         "config": {k: v for k, v in cfg.items() if not k.startswith("_")},
         "criterios_operador": CRITERIOS,
     }
+    # cópia simulada (sem dinheiro) de todas as carteiras do radar, desde o dia em que começou
+    sim = atualizar_simulada(A.ler_json(A.DADOS / "copia_simulada.json", {}), saida, agora)
+    A.gravar_json(A.DADOS / "copia_simulada.json", sim)
+    rel["copia_simulada"] = sim
     A.gravar_json(A.SAIDA / "relatorio.json", rel)
     A.gravar_json(A.DADOS / "carteiras.json", lista)
     A.gravar_json(A.DADOS / "estado.json", est)

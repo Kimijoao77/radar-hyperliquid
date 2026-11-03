@@ -79,3 +79,44 @@ def perfil_copia(ops: list[Operacao], fotos: list[dict] | None, conta_entrada: f
     out["taxa_lado"] = round(sum(o.taxas for o in fs) / (2 * noc), 6) if noc else None
     out["n"] = len(fs)
     return out
+
+
+# ---------------- cópia simulada desde o dia em que começou (sem dinheiro) ----------------
+ESCORREGA = {60: 0.0003, 300: 0.0008}
+TAXA_MERCADO = 0.00045
+
+
+def _eficiencia(k: dict, atraso: int) -> float:
+    if not k.get("total") or k["total"] <= 0:
+        return 0.0
+    x = (k.get("por_atraso") or {}).get(str(atraso))
+    return max(-1.0, min(1.0, (x["resultado"] if x else k["total"]) / k["total"]))
+
+
+def atualizar_simulada(sim: dict, carteiras: list[dict], agora_ms: int) -> dict:
+    """Guarda, para cada dia desde o começo, o resultado do dia de cada carteira que estava no radar naquele dia.
+    Refaz só ontem e hoje (o dia de hoje ainda está acontecendo); os dias antigos ficam como estavam, então uma carteira
+    que sair do radar continua contando nos dias em que estava (sem esconder as perdas).
+    Por carteira e dia: [resultado ÷ saldo, sobra com 1 min, sobra com 5 min, custo/dia 1 min, custo/dia 5 min, alavancagem dela]."""
+    hoje = datetime.fromtimestamp(agora_ms / 1000, BRT).date()
+    sim.setdefault("inicio", hoje.isoformat())
+    dias = sim.setdefault("dias", {})
+    alvo = {(hoje - timedelta(days=1)).isoformat(), hoje.isoformat()}
+    for c in carteiras:
+        k = c.get("copia") or {}
+        if not k.get("pnl_dia") or not k.get("conta_ref"):
+            continue
+        d0 = datetime.fromisoformat(k["dia0"]).date()
+        al = (k.get("alavancagem") or {}).get("exposicao_mediana") or (c.get("estilo") or {}).get("alavancagem_mediana")
+        giro = (k.get("giro_dia") or 0) / k["conta_ref"]
+        taxa = max(0.0, TAXA_MERCADO - (k.get("taxa_lado") if k.get("taxa_lado") is not None else TAXA_MERCADO))
+        for dia in alvo:
+            if dia < sim["inicio"]:
+                continue
+            i = (datetime.fromisoformat(dia).date() - d0).days
+            if 0 <= i < len(k["pnl_dia"]):
+                dias.setdefault(dia, {})[c["carteira"]] = [
+                    round(k["pnl_dia"][i] / k["conta_ref"], 6), round(_eficiencia(k, 60), 3), round(_eficiencia(k, 300), 3),
+                    round(giro * 2 * (ESCORREGA[60] + taxa), 6), round(giro * 2 * (ESCORREGA[300] + taxa), 6),
+                    round(al, 2) if al else None]
+    return sim

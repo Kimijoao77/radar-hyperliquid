@@ -222,3 +222,18 @@ def test_perfil_copia():
     assert p["total"] == pytest.approx(10)
     assert p["por_atraso"]["5"]["n"] == 10 and p["por_atraso"]["5"]["resultado"] == pytest.approx(20)  # só as de 1 h
     assert sum(p["pnl_dia"]) == pytest.approx(10) and len(p["pnl_dia"]) == 21
+
+
+def test_copia_simulada_guarda_dias():
+    from radar.copia import atualizar_simulada
+    agora = 1_793_700_000_000                       # 03/11/2026 (horário de Brasília)
+    c = {"carteira": "0xa", "estilo": {}, "copia": {"conta_ref": 1000, "dia0": "2026-11-01", "pnl_dia": [10, 20, 30], "total": 60,
+                                                     "por_atraso": {"60": {"resultado": 30}, "300": {"resultado": 0}}, "giro_dia": 500, "taxa_lado": 0.0001,
+                                                     "alavancagem": {"exposicao_mediana": 3}}}
+    sim = atualizar_simulada({}, [c], agora)
+    assert sim["inicio"] == "2026-11-03" and list(sim["dias"]) == ["2026-11-03"]
+    r, e60, e300, c60, c300, al = sim["dias"]["2026-11-03"]["0xa"]
+    assert r == 0.03 and e60 == 0.5 and e300 == 0 and al == 3 and c60 < c300
+    # no dia seguinte a carteira saiu do radar: o dia 03 continua lá
+    sim = atualizar_simulada(sim, [], agora + 86400000)
+    assert "0xa" in sim["dias"]["2026-11-03"]

@@ -1,0 +1,165 @@
+"""Laboratório 2: robôs de grade (grid) e de DCA, sem dinheiro, com as velas de 1 hora da Hyperliquid.
+
+Grade: divide uma faixa de preço (em volta do preço do começo) em N degraus. Em cada degrau abaixo do preço fica uma
+ordem de compra; quando compra, põe a venda no degrau de cima. Ganha a cada sobe e desce dentro da faixa.
+Se o preço sai por cima, fica só com dinheiro (perdeu a alta); se sai por baixo, fica com a moeda caindo.
+
+DCA (o dos robôs): compra um pouco; se cair X %, compra mais (cada compra maior que a anterior) até um limite;
+vende tudo quando o preço passa Y % acima do preço médio. Quase sempre acerta; numa queda grande e sem volta, prende
+todo o dinheiro e (com alavancagem) pode zerar a conta.
+
+Em cada vela, o caminho do preço dentro da hora não é conhecido: a conta é conservadora (nunca compra e vende o mesmo
+degrau na mesma hora). Taxas: ordem limitada 0,015 %, a mercado 0,045 % (Hyperliquid).
+"""
+from __future__ import annotations
+
+HORA = 3600 * 1000
+ANO_H = 24 * 365
+MAKER, TAKER = 0.00015, 0.00045
+
+
+def _queda(curva: list[float]) -> float:
+    pico, pior = 0.0, 0.0
+    for v in curva:
+        pico = max(pico, v)
+        if pico > 0:
+            pior = max(pior, (pico - v) / pico)
+    return pior
+
+
+def _pontos(ts: list[int], curva: list[float], n: int = 80) -> list[list]:
+    if not curva:
+        return []
+    passo = max(1, len(curva) // n)
+    out = [[ts[i], round(curva[i], 2)] for i in range(0, len(curva), passo)]
+    if out[-1][0] != ts[-1]:
+        out.append([ts[-1], round(curva[-1], 2)])
+    return out
+
+
+def grade(velas: list[dict], faixa: float, niveis: int, alav: float = 1.0, capital: float = 1000.0) -> dict:
+    """Grade "neutra" de compra: faixa ±faixa em volta do preço de abertura da primeira vela."""
+    p0 = float(velas[0]["o"])
+    baixo, alto = p0 * (1 - faixa), p0 * (1 + faixa)
+    L = [baixo + (alto - baixo) * i / niveis for i in range(niveis + 1)]
+    qtd = capital * alav / niveis / p0                        # mesma quantidade em cada degrau
+    caixa, moeda = capital, 0.0
+    segura = []                                               # por degrau i (L[i] → L[i+1]): comprado?
+    for i in range(niveis):
+        if L[i + 1] > p0:                                     # degraus acima do preço: já compra no começo
+            caixa -= qtd * p0 * (1 + TAKER)
+            moeda += qtd
+            segura.append(True)
+        else:
+            segura.append(False)
+    ciclos, lucro_grade, fora, liquidada = 0, 0.0, 0, False
+    curva, ts = [], []
+    for v in velas:
+        lo, hi, c = float(v["l"]), float(v["h"]), float(v["c"])
+        vendeu = set()
+        for i in range(niveis):                               # vendas primeiro (degraus comprados)
+            if segura[i] and hi >= L[i + 1]:
+                caixa += qtd * L[i + 1] * (1 - MAKER)
+                moeda -= qtd
+                segura[i] = False
+                vendeu.add(i)
+                ciclos += 1
+                lucro_grade += qtd * (L[i + 1] - L[i])
+        for i in range(niveis):                               # depois as compras (não no degrau que acabou de vender)
+            if not segura[i] and i not in vendeu and lo <= L[i]:
+                caixa -= qtd * L[i] * (1 + MAKER)
+                moeda += qtd
+                segura[i] = True
+        if c < baixo or c > alto:
+            fora += 1
+        patrimonio = caixa + moeda * c
+        if alav > 1 and patrimonio <= capital * 0.05:          # com alavancagem: a margem acabou
+            liquidada, patrimonio = True, 0.0
+            curva.append(0.0); ts.append(int(v["t"]))
+            break
+        curva.append(patrimonio); ts.append(int(v["t"]))
+    return _resumo(velas, curva, ts, capital, {"ciclos": ciclos, "lucro_dos_degraus": round(lucro_grade, 2),
+                                               "fora_da_faixa": round(fora / max(1, len(curva)), 3), "liquidada": liquidada})
+
+
+def dca(velas: list[dict], passo: float, alvo: float, ordens: int = 5, escala: float = 1.5, alav: float = 1.0, capital: float = 1000.0) -> dict:
+    """Robô de DCA comprado: 1 compra base + até `ordens` compras de segurança a cada `passo` de queda; vende com `alvo` de lucro."""
+    pesos = [escala ** k for k in range(ordens + 1)]
+    base = capital * alav / sum(pesos)
+    caixa, qtd, gasto, n_comp = capital, 0.0, 0.0, 0
+    p_ent = None
+    ciclos, horas_presas, maior_preso, preso_desde = 0, 0, 0, None
+    liquidada = False
+    curva, ts = [], []
+    for v in velas:
+        lo, hi, c, t = float(v["l"]), float(v["h"]), float(v["c"]), int(v["t"])
+        if qtd == 0:                                          # abre um ciclo na abertura da vela
+            p_ent = float(v["o"])
+            q = base / p_ent
+            caixa -= q * p_ent / alav + q * p_ent * TAKER
+            qtd, gasto, n_comp = q, q * p_ent, 1
+            preso_desde = t
+        # compras de segurança
+        while n_comp <= ordens and lo <= p_ent * (1 - passo * n_comp):
+            px = p_ent * (1 - passo * n_comp)
+            q = base * pesos[n_comp] / px
+            caixa -= q * px / alav + q * px * MAKER
+            qtd += q; gasto += q * px; n_comp += 1
+        medio = gasto / qtd
+        if hi >= medio * (1 + alvo):                          # alvo: vende tudo
+            px = medio * (1 + alvo)
+            receita = qtd * px * (1 - MAKER)
+            caixa += gasto / alav + (receita - gasto)
+            ciclos += 1
+            maior_preso = max(maior_preso, (t - preso_desde) / HORA)
+            qtd = gasto = 0.0
+            n_comp = 0
+            patrimonio = caixa
+        else:
+            horas_presas += 1
+            aberto = (qtd * c - gasto)                        # ganho ou perda da posição aberta
+            patrimonio = caixa + gasto / alav + aberto
+            if alav > 1 and patrimonio <= capital * 0.05:
+                liquidada, patrimonio = True, 0.0
+                curva.append(0.0); ts.append(t)
+                break
+        curva.append(patrimonio); ts.append(t)
+    if qtd and preso_desde:
+        maior_preso = max(maior_preso, (ts[-1] - preso_desde) / HORA)
+    return _resumo(velas, curva, ts, capital, {"ciclos": ciclos, "horas_com_posicao": round(horas_presas / max(1, len(curva)), 3),
+                                               "maior_tempo_preso_h": round(maior_preso), "liquidada": liquidada})
+
+
+def _resumo(velas, curva, ts, capital, extra) -> dict:
+    final = curva[-1] if curva else capital
+    horas = max(1, len(curva))
+    p0, p1 = float(velas[0]["o"]), float(velas[min(len(velas), len(curva)) - 1]["c"])
+    return {"final": round(final, 2), "retorno": round(final / capital - 1, 4),
+            "ao_ano": round((final / capital - 1) * ANO_H / horas, 4) if horas >= 24 * 7 else None,
+            "pior_queda": round(_queda(curva), 4), "segurar_moeda": round(p1 / p0 - 1, 4),
+            "dias": round(horas / 24, 1), "curva": _pontos(ts, curva), **extra}
+
+
+CONFIGS = (
+    [{"tipo": "grade", "faixa": f, "niveis": n, "alav": a} for f in (0.10, 0.20) for n in (10, 20) for a in (1, 3)]
+    + [{"tipo": "dca", "passo": s, "alvo": g, "alav": a} for s in (0.02, 0.03) for g in (0.015, 0.03) for a in (1, 3)]
+)
+
+
+def nome(c: dict) -> str:
+    if c["tipo"] == "grade":
+        return f"Grade ±{round(c['faixa'] * 100)} %, {c['niveis']} degraus{'' if c['alav'] == 1 else f', {c['alav']}×'}"
+    return f"DCA a cada −{round(c['passo'] * 100)} %, alvo +{c['alvo'] * 100:g} %{'' if c['alav'] == 1 else f', {c['alav']}×'}"
+
+
+def rodar(c: dict, velas: list[dict]) -> dict:
+    if c["tipo"] == "grade":
+        return grade(velas, c["faixa"], c["niveis"], c["alav"])
+    return dca(velas, c["passo"], c["alvo"], alav=c["alav"])
+
+
+def nota(r: dict) -> float:
+    """Para escolher as que vão para o ao vivo: retorno por risco (liquidada = fora)."""
+    if r.get("liquidada"):
+        return -9
+    return r["retorno"] / max(0.05, r["pior_queda"])

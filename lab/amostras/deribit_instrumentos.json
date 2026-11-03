@@ -1,0 +1,139 @@
+{
+ "status": 200,
+ "url": "https://www.deribit.com/api/v2/public/get_instruments?currency=BTC&kind=option&expired=false",
+ "corpo": {
+  "jsonrpc": "2.0",
+  "result": {
+   "_tamanho": 898,
+   "_amostra": [
+    {
+     "state": "open",
+     "price_index": "btc_usd",
+     "kind": "option",
+     "instrument_name": "BTC-4NOV26-68000-C",
+     "maker_commission": 0.0003,
+     "taker_commission": 0.0003,
+     "instrument_type": "reversed",
+     "product_group": "BTC",
+     "underlying_type": "crypto",
+     "expiration_timestamp": 1793779200000,
+     "instrument_id": 724659,
+     "creation_timestamp": 1793433610000,
+     "is_active": true,
+     "contract_size": 1.0,
+     "tick_size": 0.0001,
+     "strike": 68000.0,
+     "counter_currency": "USD",
+     "option_type": "call",
+     "min_trade_amount": 0.1,
+     "block_trade_commission": 0.0003,
+     "block_trade_min_trade_amount": 25,
+     "block_trade_tick_size": 0.0001,
+     "settlement_currency": "BTC",
+     "settlement_period": "day",
+     "base_currency": "BTC",
+     "index_id": 1000033,
+     "quote_currency": "BTC",
+     "tick_size_steps": {
+      "_tamanho": 1,
+      "_amostra": [
+       {
+        "tick_size": 0.0005,
+        "above_price": 0.005
+       }
+      ]
+     },
+     "lot_size": 1,
+     "base_currency_uuid": "5b71fc48-3dd3-540c-809b-f8c94d0e68b5",
+     "quote_currency_uuid": "5b71fc48-3dd3-540c-809b-f8c94d0e68b5"
+    },
+    {
+     "state": "open",
+     "price_index": "btc_usd",
+     "kind": "option",
+     "instrument_name": "BTC-4NOV26-68000-P",
+     "maker_commission": 0.0003,
+     "taker_commission": 0.0003,
+     "instrument_type": "reversed",
+     "product_group": "BTC",
+     "underlying_type": "crypto",
+     "expiration_timestamp": 1793779200000,
+     "instrument_id": 724660,
+     "creation_timestamp": 1793433610000,
+     "is_active": true,
+     "contract_size": 1.0,
+     "tick_size": 0.0001,
+     "strike": 68000.0,
+     "counter_currency": "USD",
+     "option_type": "put",
+     "min_trade_amount": 0.1,
+     "block_trade_commission": 0.0003,
+     "block_trade_min_trade_amount": 25,
+     "block_trade_tick_size": 0.0001,
+     "settlement_currency": "BTC",
+     "settlement_period": "day",
+     "base_currency": "BTC",
+     "index_id": 1000033,
+     "quote_currency": "BTC",
+     "tick_size_steps": {
+      "_tamanho": 1,
+      "_amostra": [
+       {
+        "tick_size": 0.0005,
+        "above_price": 0.005
+       }
+      ]
+     },
+     "lot_size": 1,
+     "base_currency_uuid": "5b71fc48-3dd3-540c-809b-f8c94d0e68b5",
+     "quote_currency_uuid": "5b71fc48-3dd3-540c-809b-f8c94d0e68b5"
+    },
+    {
+     "state": "open",
+     "price_index": "btc_usd",
+     "kind": "option",
+     "instrument_name": "BTC-4NOV26-69000-C",
+     "maker_commission": 0.0003,
+     "taker_commission": 0.0003,
+     "instrument_type": "reversed",
+     "product_group": "BTC",
+     "underlying_type": "crypto",
+     "expiration_timestamp": 1793779200000,
+     "instrument_id": 724661,
+     "creation_timestamp": 1793433610000,
+     "is_active": true,
+     "contract_size": 1.0,
+     "tick_size": 0.0001,
+     "strike": 69000.0,
+     "counter_currency": "USD",
+     "option_type": "call",
+     "min_trade_amount": 0.1,
+     "block_trade_commission": 0.0003,
+     "block_trade_min_trade_amount": 25,
+     "block_trade_tick_size": 0.0001,
+     "settlement_currency": "BTC",
+     "settlement_period": "day",
+     "base_currency": "BTC",
+     "index_id": 1000033,
+     "quote_currency": "BTC",
+     "tick_size_steps": {
+      "_tamanho": 1,
+      "_amostra": [
+       {
+        "tick_size": 0.0005,
+        "above_price": 0.005
+       }
+      ]
+     },
+     "lot_size": 1,
+     "base_currency_uuid": "5b71fc48-3dd3-540c-809b-f8c94d0e68b5",
+     "quote_currency_uuid": "5b71fc48-3dd3-540c-809b-f8c94d0e68b5"
+    }
+   ]
+  },
+  "usIn": 1793722337048195,
+  "usOut": 1793722337048739,
+  "usDiff": 544,
+  "testnet": false
+ }
+}

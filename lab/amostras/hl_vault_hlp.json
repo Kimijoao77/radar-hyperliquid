@@ -1,0 +1,252 @@
+{
+ "status": 200,
+ "url": "https://api.hyperliquid.xyz/info",
+ "corpo": {
+  "name": "Hyperliquidity Provider (HLP)",
+  "vaultAddress": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+  "leader": "0x677d831aef5328190852e24f13c46cac05f984e7",
+  "description": "This community-owned vault provides liquidity to Hyperliquid through multiple market making strategies, performs liquidations, and accrues platform fees.",
+  "portfolio": {
+   "_tamanho": 8,
+   "_amostra": [
+    {
+     "_tamanho": 2,
+     "_amostra": [
+      "day",
+      {
+       "accountValueHistory": {
+        "_tamanho": 55,
+        "_amostra": [
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793635863938,
+           "154997614.1439859867"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793637115042,
+           "154992267.325109005"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793638906803,
+           "154993871.7160690129"
+          ]
+         }
+        ]
+       },
+       "pnlHistory": {
+        "_tamanho": 55,
+        "_amostra": [
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793635863938,
+           "0.0"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793637115042,
+           "1040.241123"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793638906803,
+           "1922.652083"
+          ]
+         }
+        ]
+       },
+       "vlm": "0.0"
+      }
+     ]
+    },
+    {
+     "_tamanho": 2,
+     "_amostra": [
+      "week",
+      {
+       "accountValueHistory": {
+        "_tamanho": 64,
+        "_amostra": [
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793113032350,
+           "174070920.8527489901"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793123135739,
+           "174093798.831223011"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793134033960,
+           "174062917.845649004"
+          ]
+         }
+        ]
+       },
+       "pnlHistory": {
+        "_tamanho": 64,
+        "_amostra": [
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793113032350,
+           "0.0"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793123135739,
+           "1927.518474"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1793134033960,
+           "5340.1229"
+          ]
+         }
+        ]
+       },
+       "vlm": "0.0"
+      }
+     ]
+    },
+    {
+     "_tamanho": 2,
+     "_amostra": [
+      "month",
+      {
+       "accountValueHistory": {
+        "_tamanho": 46,
+        "_amostra": [
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1791067088367,
+           "182308573.1703769863"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1791156766458,
+           "181630281.4330239892"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1791242326969,
+           "181550168.4974260032"
+          ]
+         }
+        ]
+       },
+       "pnlHistory": {
+        "_tamanho": 46,
+        "_amostra": [
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1791067088367,
+           "0.0"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1791156766458,
+           "6259.962647"
+          ]
+         },
+         {
+          "_tamanho": 2,
+          "_amostra": [
+           1791242326969,
+           "28264.127049"
+          ]
+         }
+        ]
+       },
+       "vlm": "0.0"
+      }
+     ]
+    }
+   ]
+  },
+  "apr": -0.0008886268708478939,
+  "followerState": null,
+  "leaderFraction": 0.002408710913080771,
+  "leaderCommission": 0.0,
+  "followers": {
+   "_tamanho": 100,
+   "_amostra": [
+    {
+     "user": "0x029fa9d9a10ea5c8187bfe9fa6a428792cc3a945",
+     "vaultEquity": "311765.709678903",
+     "pnl": "61765.709677903",
+     "allTimePnl": "69218.564164903",
+     "daysFollowing": 682,
+     "vaultEntryTime": 1734786976034,
+     "lockupUntil": 1747658825285
+    },
+    {
+     "user": "0x03e161499870b0a37549b16a5d33e0582fe1255e",
+     "vaultEquity": "605014.4296923785",
+     "pnl": "80879.6258803785",
+     "allTimePnl": "156904.9863943785",
+     "daysFollowing": 683,
+     "vaultEntryTime": 1734650428028,
+     "lockupUntil": 1770680880422
+    },
+    {
+     "user": "0x0a3343b600d81cdaac131342652241cd32e14349",
+     "vaultEquity": "950007.6567360541",
+     "pnl": "397499.6957270541",
+     "allTimePnl": "481256.3310230541",
+     "daysFollowing": 1069,
+     "vaultEntryTime": 1701343962388,
+     "lockupUntil": 1733743542040
+    }
+   ]
+  },
+  "maxDistributable": 10748730.747307,
+  "maxWithdrawable": 0.0,
+  "isClosed": false,
+  "relationship": {
+   "type": "parent",
+   "data": {
+    "childAddresses": {
+     "_tamanho": 7,
+     "_amostra": [
+      "0x010461c14e146ac35fe42271bdc1134ee31c703a",
+      "0x2e3d94f0562703b25c83308a05046ddaf9a8dd14",
+      "0x2ed5c4484ea3ff8b57d5f2fb152a40d9f2b68308"
+     ]
+    }
+   }
+  },
+  "allowDeposits": true,
+  "alwaysCloseOnWithdraw": false
+ }
+}

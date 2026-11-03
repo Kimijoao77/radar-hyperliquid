@@ -16,7 +16,7 @@ from statistics import median
 from .trades import Operacao
 
 BRT = timezone(timedelta(hours=-3))
-LIMIARES_S = [5, 30, 120, 600]   # atrasos testados (segundos)
+LIMIARES_S = [5, 30, 60, 120, 300, 600]   # atrasos testados (segundos)
 DIAS_MAX = 150
 
 

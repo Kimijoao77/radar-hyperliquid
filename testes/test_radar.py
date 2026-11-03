@@ -195,23 +195,3 @@ def test_operador_robo_e_humano():
     assert r["rotulo"] == "Robô provável", r
     assert h["rotulo"] == "Humano provável", h
     assert avaliar(humano[:5])["nota"] is None
-
-
-# ---------------- números para copiar ----------------
-def test_perfil_copia():
-    from radar.copia import perfil_copia
-    agora = 1_790_000_000_000
-    fs = []
-    for i in range(10):  # 10 operações de 1 h e 10 de 2 s
-        t = agora - (20 - i) * 86400000
-        fs += [fill(t, "BTC", "B", 100, 1, 0, oid=2 * i, tid=4 * i), fill(t + H, "BTC", "A", 102, 1, 1, pnl=2, oid=2 * i + 1, tid=4 * i + 1),
-               fill(t + 5000, "ETH", "B", 100, 1, 0, oid=100 + i, tid=4 * i + 2), fill(t + 7000, "ETH", "A", 99, 1, 1, pnl=-1, oid=200 + i, tid=4 * i + 3)]
-    ops = montar(fs)
-    fotos = [{"t": agora, "v": 1000, "ntl": 5000, "pos": [["BTC", 1, 100, 10]]}, {"t": agora, "v": 2000, "ntl": 0, "pos": []}]
-    p = perfil_copia(ops, fotos, 500, agora)
-    assert p["conta_ref"] == 1500           # mediana das fotos (maior que o saldo de entrada)
-    assert p["alavancagem"]["exposicao_mediana"] == 5 and p["alavancagem"]["configurada_max"] == 10
-    assert p["alavancagem"]["posicionado"] == 0.5
-    assert p["total"] == pytest.approx(10)
-    assert p["por_atraso"]["5"]["n"] == 10 and p["por_atraso"]["5"]["resultado"] == pytest.approx(20)  # só as de 1 h
-    assert sum(p["pnl_dia"]) == pytest.approx(10) and len(p["pnl_dia"]) == 21

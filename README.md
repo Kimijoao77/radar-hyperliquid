@@ -44,17 +44,7 @@ A cada 2 horas o GitHub Actions roda dois scripts e guarda o resultado aqui no r
      - **Perdendo.**
    - **Dá para copiar?** é só uma informação ao lado (mais de 60 operações por dia, posições de menos de 5 min ou cara de market maker). Não muda a classe nem descarta: o João decide.
    - Descarta só as perdedoras e as sortudas, depois de 21 dias, para liberar vaga.
-   - Grava `saida/relatorio.json` (o app Nexus mostra no app **Radar**) e `saida/relatorio.md`.
-
-## Números para copiar (`radar/copia.py`)
-
-Para a aba **Cópia** do Nexus (simulação e projeção, sem dinheiro), cada carteira leva no relatório:
-- **resultado de cada dia** (até 150 dias) e o **saldo de referência** (o maior entre o saldo das fotos e o de quando entrou no radar), para virar % da conta;
-- **o que sobra com atraso:** o lucro só das operações que duram mais que 5 s, 30 s, 2 min e 10 min;
-- **giro por dia e taxa média**, para estimar o custo extra de copiar;
-- **alavancagem:** a configurada nas posições e a exposição real (posições abertas ÷ saldo), pelas fotos da conta.
-
-`saida/historico.json` guarda um ponto por rodada (carteiras por classe e o resultado depois de entrar no radar) para o painel "Como está indo".
+   - Grava `saida/relatorio.json` (o app Nexus mostra na aba **Finanças → Radar**) e `saida/relatorio.md`.
 
 ## Humano ou robô (`radar/operador.py`)
 

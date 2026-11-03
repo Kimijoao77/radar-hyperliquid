@@ -7,7 +7,6 @@ import sys
 from datetime import datetime, timezone
 
 from radar import armazenamento as A
-from radar.copia import perfil_copia
 from radar.estilo import impressao
 from radar.operador import CRITERIOS, avaliar as avaliar_operador
 from radar.metricas import benjamini_hochberg, classificar, copiavel, numeros
@@ -74,7 +73,6 @@ def main() -> int:
             "depois": {k: v for k, v in depois.items() if k != "curva"},
             "curva": reduzir(geral.get("curva", [])),
             "estilo": impressao(ops, f),
-            "copia": perfil_copia(ops, f, c.get("na_entrada", {}).get("conta"), agora),
             "operador": operador,
             "copiavel": {"ok": ok[0], "motivo": ok[1]},
             "recentes": recentes, "abertas": abertas,
@@ -94,17 +92,6 @@ def main() -> int:
         "config": {k: v for k, v in cfg.items() if not k.startswith("_")},
         "criterios_operador": CRITERIOS,
     }
-    # como está indo: um ponto por rodada (fica no relatório, últimos 60 dias)
-    hist = A.ler_json(A.SAIDA / "historico.json", [])
-    dep = [x["depois"] for x in saida if x["situacao"] == "observando" and x["depois"].get("n")]
-    hist.append({"t": agora, "obs": rel["observando"], "cl": cont,
-                 "dep_n": sum(d["n"] for d in dep), "dep_res": round(sum(d["resultado"] for d in dep), 2)})
-    hist = [h for h in hist if h["t"] >= agora - 60 * DIA_MS]
-    A.gravar_json(A.SAIDA / "historico.json", hist)
-    amostra = hist[::max(1, len(hist) // 120)][-120:]
-    if amostra and amostra[-1] is not hist[-1]:
-        amostra.append(hist[-1])
-    rel["historico"] = amostra
     A.gravar_json(A.SAIDA / "relatorio.json", rel)
     A.gravar_json(A.DADOS / "carteiras.json", lista)
     (A.SAIDA / "relatorio.md").write_text(markdown(rel), encoding="utf-8")

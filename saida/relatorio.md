@@ -1,4 +1,4 @@
-# Radar Hyperliquid — 2026-11-03 12:06 UTC
+# Radar Hyperliquid — 2026-11-03 15:15 UTC
 
 Observando 25 carteiras (0 já descartadas).
 

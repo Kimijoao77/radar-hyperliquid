@@ -26,6 +26,11 @@ def boa(p: dict, f: dict) -> bool:
     return (p.get("tvlUsd") or 0) >= f["tvl_minimo"] and (p.get("count") or 0) >= f["dias_minimos"] and not p.get("outlier") and (p.get("apyBase") or 0) > 0
 
 
+def _firme(p: dict) -> float:
+    """Ordena pelo menor entre o rendimento de hoje e a média de 30 dias (um dia bom isolado não conta)."""
+    return min(p.get("apyBase") or 0, p.get("apyMean30d") or p.get("apyBase") or 0)
+
+
 def resumo(p: dict) -> dict:
     return {"id": p["pool"], "projeto": p["project"], "rede": p["chain"], "par": p["symbol"], "tvl": round(p.get("tvlUsd") or 0),
             "taxas_ano": round((p.get("apyBase") or 0) / 100, 4), "premio_ano": round((p.get("apyReward") or 0) / 100, 4),
@@ -34,14 +39,14 @@ def resumo(p: dict) -> dict:
 
 def estaveis(pools: list[dict], f: dict) -> list[dict]:
     ps = [p for p in pools if p.get("stablecoin") and p.get("ilRisk") == "no" and boa(p, f)]
-    ps.sort(key=lambda p: -(p.get("apyBase") or 0))
+    ps.sort(key=lambda p: -_firme(p))
     return [resumo(p) for p in ps[: f["quantos"]]]
 
 
 def volateis(pools: list[dict], f: dict) -> list[dict]:
     ps = [p for p in pools if p.get("exposure") == "multi" and p.get("ilRisk") == "yes" and not p.get("stablecoin") and boa(p, f)
           and len(p.get("underlyingTokens") or []) == 2 and p["chain"] in CADEIAS]
-    ps.sort(key=lambda p: -(p.get("apyBase") or 0))
+    ps.sort(key=lambda p: -_firme(p))
     return [resumo(p) for p in ps[: f["quantos"]]]
 
 

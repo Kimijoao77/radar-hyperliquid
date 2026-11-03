@@ -32,7 +32,7 @@ def ler_nome(nome: str) -> dict | None:
 
 
 def escolher(livro: list[dict], tipo: str, indice: float, agora: int) -> dict | None:
-    """A opção do vencimento entre 5 e 9 dias, com exercício mais perto de 10 % fora do preço, que tenha comprador."""
+    """A opção do vencimento mais perto de 7 dias (entre 4 e 11), com exercício mais perto de 10 % fora do preço, que tenha comprador."""
     alvo = indice * (1 - DISTANCIA if tipo == "put" else 1 + DISTANCIA)
     opc = []
     for b in livro:
@@ -40,7 +40,7 @@ def escolher(livro: list[dict], tipo: str, indice: float, agora: int) -> dict | 
         if not x or x["tipo"] != tipo or not b.get("bid_price"):
             continue
         dias = (x["venc"] - agora) / DIA
-        if 5 <= dias <= 9:
+        if 4 <= dias <= 11:
             opc.append((abs(dias - 7), abs(x["k"] - alvo), x, b))
     if not opc:
         return None

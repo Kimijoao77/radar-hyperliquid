@@ -12,7 +12,7 @@ import requests
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 
-from lab.cofres import HLP, LISTA, PADRAO, candidatos, constante, desde, indice, medir, reduzir  # noqa: E402
+from lab.cofres import HLP, LISTA, PADRAO, candidatos, constante, indice, medir, reduzir  # noqa: E402
 from radar.api import Hyperliquid  # noqa: E402
 
 HORA = 3600 * 1000
@@ -53,16 +53,19 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
     medidos.sort(key=lambda x: (not x["constante"], -((x["medidas"] or {}).get("ao_ano") or -9) / max(0.05, (x["medidas"] or {}).get("pior_queda") or 1)))
     if not est.get("escolhidos"):
         boas = [x["cofre"] for x in medidos if x["constante"] and not x["hlp"]][: p["carteira"]]
-        est = {"inicio": agora, "escolhidos": boas + [HLP]}
+        est = {"inicio": agora, "escolhidos": boas + [HLP],
+               "base": {x["cofre"]: x["_ind"][-1][1] for x in medidos if x["cofre"] in boas + [HLP] and x["_ind"]}}
     # depósito simulado: partes iguais, 10 % do lucro para o dono
     parte = p["capital"] / max(1, len(est["escolhidos"]))
     carteira, total = [], 0.0
     for e in est["escolhidos"]:
         x = next((m for m in medidos if m["cofre"] == e), None)
         r = None
-        if x:
-            usa = x["_ind_m"] if x["_ind_m"] and x["_ind_m"][0][0] <= est["inicio"] else x["_ind"]
-            r = desde(usa, est["inicio"])
+        if x and x["_ind"]:
+            b = est.get("base", {}).get(e)
+            if b is None:                                    # entrou depois: começa a contar agora
+                est.setdefault("base", {})[e] = b = x["_ind"][-1][1]
+            r = x["_ind"][-1][1] / b - 1
         ganho = 0.0 if r is None else parte * r
         if ganho > 0:
             ganho *= 1 - p["comissao"]

@@ -36,8 +36,13 @@ def main(raiz: Path = RAIZ, api=None) -> int:
             passado.append({"moeda": m, "config": c, "nome": nome(c), **r, "nota": round(nota(r), 3)})
     passado.sort(key=lambda r: -r["nota"])
     if not est.get("escolhidas") and passado:
-        g = [r for r in passado if r["config"]["tipo"] == "grade" and not r["liquidada"]][:2]
-        d = [r for r in passado if r["config"]["tipo"] == "dca" and not r["liquidada"]][:2]
+        def duas(tipo):   # as 2 melhores, em moedas diferentes
+            out = []
+            for r in passado:
+                if r["config"]["tipo"] == tipo and not r["liquidada"] and r["moeda"] not in {x["moeda"] for x in out}:
+                    out.append(r)
+            return out[:2]
+        g, d = duas("grade"), duas("dca")
         est = {"inicio": agora // HORA * HORA, "escolhidas": [{"moeda": r["moeda"], "config": r["config"]} for r in g + d]}
     ao_vivo = []
     for e in est.get("escolhidas", []):

@@ -9,18 +9,20 @@
   "volume_mes_minimo": 200000,
   "roi_mes_minimo": 0.03,
   "roi_mes_maximo": 3.0,
-  "giro_mes_maximo": 400,
-  "exigir_pnl_total_positivo": true
+  "giro_mes_maximo": null,
+  "exigir_pnl_total_positivo": true,
+  "_leia": "giro_mes_maximo null = não corta market maker nem robô de alta frequência (o João decide se copia)."
  },
  "copiavel": {
   "max_operacoes_por_dia": 60,
   "duracao_mediana_minima_min": 5,
-  "max_maker_com_duracao_curta": 0.9
+  "max_maker_com_duracao_curta": 0.9,
+  "_leia": "Só informação: o radar mostra se dá para copiar, mas não descarta nem muda a classe (o João decide)."
  },
  "classificacao": {
   "min_operacoes": 30,
   "min_operacoes_acompanhadas": 20,
-  "q_maximo_habilidade": 0.10,
+  "q_maximo_habilidade": 0.1,
   "q_maximo_promissora": 0.25,
   "fator_lucro_minimo": 1.3,
   "semanas_positivas_minimo": 0.6,

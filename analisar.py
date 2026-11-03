@@ -12,9 +12,9 @@ from radar.operador import CRITERIOS, avaliar as avaliar_operador
 from radar.metricas import benjamini_hochberg, classificar, copiavel, numeros
 from radar.trades import montar
 
-ORDEM = {"habilidade": 0, "promissora": 1, "observando": 2, "sorte": 3, "perdendo": 4, "nao_copiavel": 5}
+ORDEM = {"habilidade": 0, "promissora": 1, "observando": 2, "sorte": 3, "perdendo": 4}
 NOMES = {"habilidade": "Habilidade provável", "promissora": "Promissora", "observando": "Em observação",
-         "sorte": "Sorte provável", "perdendo": "Perdendo", "nao_copiavel": "Não dá para copiar"}
+         "sorte": "Sorte provável", "perdendo": "Perdendo"}
 DIA_MS = 86400000
 
 
@@ -46,16 +46,16 @@ def main() -> int:
         base[a] = (c, ops, geral, antes, depois, copiavel(geral, cp), avaliar_operador(fills))
 
     # q-valores só entre as que dá para julgar (assim o "desconto" é justo)
-    ps = {a: b[2]["p"] for a, b in base.items() if b[2].get("n", 0) >= cc["min_operacoes"] and b[5][0]}
+    ps = {a: b[2]["p"] for a, b in base.items() if b[2].get("n", 0) >= cc["min_operacoes"]}
     qs = benjamini_hochberg(ps) if ps else {}
 
     saida = []
     for a, (c, ops, geral, antes, depois, ok, operador) in base.items():
-        classe, motivo = classificar(geral, depois, qs.get(a), ok, cc)
+        classe, motivo = classificar(geral, depois, qs.get(a), cc)
         dias_obs = (agora - c.get("desde", agora)) / DIA_MS
         # libera a vaga: não copiáveis na hora; perdedoras e sortudas depois de um tempo observando
         if c.get("situacao") == "observando":
-            if (classe == "nao_copiavel" and geral.get("n", 0) >= 10) or (classe in ("perdendo", "sorte") and dias_obs >= cc["dias_para_descartar"]):
+            if classe in ("perdendo", "sorte") and dias_obs >= cc["dias_para_descartar"]:
                 c["situacao"], c["descartada_em"], c["motivo"] = "descartada", agora, motivo
         nd = depois.get("n", 0)
         nota = (geral.get("t", 0) or 0) + (depois.get("t", 0) if nd >= 10 else 0)
@@ -74,6 +74,7 @@ def main() -> int:
             "curva": reduzir(geral.get("curva", [])),
             "estilo": impressao(ops, f),
             "operador": operador,
+            "copiavel": {"ok": ok[0], "motivo": ok[1]},
             "recentes": recentes, "abertas": abertas,
         })
     saida.sort(key=lambda s: (ORDEM[s["classe"]], -s["nota"]))

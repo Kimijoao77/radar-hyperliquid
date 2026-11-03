@@ -108,7 +108,7 @@ def numeros(ops: list[Operacao]) -> dict:
 
 
 def copiavel(m: dict, cfg: dict) -> tuple[bool, str]:
-    """Dá para copiar com atraso de segundos/minutos e ordens pequenas?"""
+    """Só informação (não descarta nem muda a classe): dá para copiar com atraso de segundos/minutos e ordens pequenas?"""
     if not m.get("n"):
         return True, ""
     if m["por_dia"] > cfg["max_operacoes_por_dia"]:
@@ -124,10 +124,9 @@ def fq(q: float) -> str:
     return "menos de 0,001" if q < 0.001 else f"{q:.3f}".replace(".", ",")
 
 
-def classificar(geral: dict, depois: dict, q: float | None, ok_copia: tuple[bool, str], cfg: dict) -> tuple[str, str]:
-    """Classe e o motivo, em português simples."""
-    if not ok_copia[0]:
-        return "nao_copiavel", ok_copia[1]
+def classificar(geral: dict, depois: dict, q: float | None, cfg: dict) -> tuple[str, str]:
+    """Classe e o motivo, em português simples. Dar ou não para copiar NÃO entra aqui (desde 03/11 o João decide):
+    vai como informação à parte (copiavel)."""
     n = geral.get("n", 0)
     if n < cfg["min_operacoes"]:
         return "observando", f"só {n} operações fechadas; precisa de {cfg['min_operacoes']} para julgar"

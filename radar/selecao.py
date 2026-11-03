@@ -33,7 +33,7 @@ def avaliar_linha(linha: dict, f: dict) -> tuple[bool, str, float]:
     if f.get("exigir_pnl_total_positivo") and tot.get("pnl", 0) <= 0:
         return False, "prejuízo no total", 0
     giro = mes.get("vlm", 0) / conta if conta else 0
-    if giro > f["giro_mes_maximo"]:
+    if f.get("giro_mes_maximo") and giro > f["giro_mes_maximo"]:
         return False, "giro altíssimo (market maker ou robô de alta frequência)", 0
     # nota: ROI do mês pesa mais, semana confirma, total (limitado) mostra histórico
     nota = 0.5 * min(roi, 1.5) + 0.2 * max(-0.5, min(sem.get("roi", 0), 0.5)) + 0.3 * max(-1, min(tot.get("roi", 0), 3)) / 3

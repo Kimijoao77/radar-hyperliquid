@@ -154,7 +154,7 @@ def test_ponta_a_ponta(tmp_path, monkeypatch):
 
     assert coletar.main(5) == 0
     lista = json.loads((tmp_path / "dados" / "carteiras.json").read_text())
-    assert set(lista) == {"0xbom", "0xsortudo", "0xhft", "0xruim"}  # a pequena e a market maker ficam de fora
+    assert set(lista) == {"0xbom", "0xsortudo", "0xhft", "0xruim", "0xmaker"}  # só a conta pequena fica de fora (giro não corta mais)
     # a segunda coleta não duplica fills
     assert coletar.main(5) == 0
     fs = A.ler_fills("0xbom")
@@ -164,16 +164,17 @@ def test_ponta_a_ponta(tmp_path, monkeypatch):
     assert analisar.main() == 0
     rel = json.loads((tmp_path / "saida" / "relatorio.json").read_text())
     cl = {c["carteira"]: c["classe"] for c in rel["carteiras"]}
-    assert cl["0xhft"] == "nao_copiavel"
+    hft = next(c for c in rel["carteiras"] if c["carteira"] == "0xhft")
+    assert hft["copiavel"]["ok"] is False and hft["classe"] != "nao_copiavel"  # só informação
     assert cl["0xruim"] == "perdendo"
     assert cl["0xsortudo"] == "sorte"
     assert cl["0xbom"] in ("promissora", "habilidade")
     bom = next(c for c in rel["carteiras"] if c["carteira"] == "0xbom")
     assert bom["estilo"]["pistas"]  # tem alguma pista do jeito de operar
     assert rel["carteiras"][0]["carteira"] == "0xbom"
-    # carteira não copiável libera a vaga
+    # carteira que não dá para copiar continua em observação (o João decide)
     lista = json.loads((tmp_path / "dados" / "carteiras.json").read_text())
-    assert lista["0xhft"]["situacao"] == "descartada"
+    assert lista["0xhft"]["situacao"] == "observando"
 
 
 # ---------------- humano ou robô ----------------

@@ -24,7 +24,7 @@ A cada 2 horas o GitHub Actions roda dois scripts e guarda o resultado aqui no r
      - conta de pelo menos US$ 10 mil e volume relevante no mês;
      - ROI do mês entre 3 % e 300 %: acima disso costuma ser uma aposta só;
      - lucro no total;
-     - giro baixo o bastante para não ser market maker.
+     - (o corte por giro alto, de market maker, está desligado desde 03/11: o João decide se copia).
    - As melhores entram na **lista de observação** (até 120, no máximo 25 novas por dia).
    - Para cada carteira observada, baixa os fills (cada execução de ordem) e tira uma foto do saldo e das posições. Na primeira vez, baixa os últimos 90 dias.
 2. **`analisar.py`**
@@ -42,8 +42,8 @@ A cada 2 horas o GitHub Actions roda dois scripts e guarda o resultado aqui no r
      - **Em observação:** menos de 30 operações.
      - **Sorte provável.**
      - **Perdendo.**
-     - **Não dá para copiar:** rápida demais (alta frequência, market maker).
-   - Descarta as que não servem para liberar vaga: as não copiáveis na hora; as perdedoras e as sortudas depois de 21 dias.
+   - **Dá para copiar?** é só uma informação ao lado (mais de 60 operações por dia, posições de menos de 5 min ou cara de market maker). Não muda a classe nem descarta: o João decide.
+   - Descarta só as perdedoras e as sortudas, depois de 21 dias, para liberar vaga.
    - Grava `saida/relatorio.json` (o app Nexus mostra na aba **Finanças → Radar**) e `saida/relatorio.md`.
 
 ## Humano ou robô (`radar/operador.py`)

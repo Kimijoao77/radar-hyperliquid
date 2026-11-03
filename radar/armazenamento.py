@@ -50,6 +50,9 @@ def compactar(f: dict) -> dict:
     }
     if f.get("liquidation"):
         c["liq"] = 1
+    c["cl"] = 1 if f.get("cloid") else 0          # ordem com ID próprio (desde 03/11)
+    if f.get("builderFee"):
+        c["b"] = 1                                 # passou por um app de terceiros (builder)
     return c
 
 

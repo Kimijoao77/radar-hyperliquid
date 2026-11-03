@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 
 from radar import armazenamento as A
 from radar.estilo import impressao
+from radar.operador import CRITERIOS, avaliar as avaliar_operador
 from radar.metricas import benjamini_hochberg, classificar, copiavel, numeros
 from radar.trades import montar
 
@@ -42,14 +43,14 @@ def main() -> int:
         geral = numeros(ops)
         antes = numeros([o for o in ops if o.t1 is not None and o.t1 < desde])
         depois = numeros([o for o in ops if o.t0 >= desde])
-        base[a] = (c, ops, geral, antes, depois, copiavel(geral, cp))
+        base[a] = (c, ops, geral, antes, depois, copiavel(geral, cp), avaliar_operador(fills))
 
     # q-valores só entre as que dá para julgar (assim o "desconto" é justo)
     ps = {a: b[2]["p"] for a, b in base.items() if b[2].get("n", 0) >= cc["min_operacoes"] and b[5][0]}
     qs = benjamini_hochberg(ps) if ps else {}
 
     saida = []
-    for a, (c, ops, geral, antes, depois, ok) in base.items():
+    for a, (c, ops, geral, antes, depois, ok, operador) in base.items():
         classe, motivo = classificar(geral, depois, qs.get(a), ok, cc)
         dias_obs = (agora - c.get("desde", agora)) / DIA_MS
         # libera a vaga: não copiáveis na hora; perdedoras e sortudas depois de um tempo observando
@@ -72,6 +73,7 @@ def main() -> int:
             "depois": {k: v for k, v in depois.items() if k != "curva"},
             "curva": reduzir(geral.get("curva", [])),
             "estilo": impressao(ops, f),
+            "operador": operador,
             "recentes": recentes, "abertas": abertas,
         })
     saida.sort(key=lambda s: (ORDEM[s["classe"]], -s["nota"]))
@@ -86,6 +88,8 @@ def main() -> int:
         "por_classe": cont, "nomes": NOMES,
         "ultimo_filtro": est.get("ultimo_filtro"), "ultima_coleta": est.get("ultima_coleta"),
         "carteiras": saida,
+        "config": {k: v for k, v in cfg.items() if not k.startswith("_")},
+        "criterios_operador": CRITERIOS,
     }
     A.gravar_json(A.SAIDA / "relatorio.json", rel)
     A.gravar_json(A.DADOS / "carteiras.json", lista)

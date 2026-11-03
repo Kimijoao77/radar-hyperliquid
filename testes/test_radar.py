@@ -174,3 +174,23 @@ def test_ponta_a_ponta(tmp_path, monkeypatch):
     # carteira não copiável libera a vaga
     lista = json.loads((tmp_path / "dados" / "carteiras.json").read_text())
     assert lista["0xhft"]["situacao"] == "descartada"
+
+
+# ---------------- humano ou robô ----------------
+def test_operador_robo_e_humano():
+    from radar.operador import avaliar
+    rnd = random.Random(5)
+    t0 = 1_760_000_000_000 - (1_760_000_000_000 % 60000)
+    robo, humano = [], []
+    for i in range(400):  # robô: a cada 15 min, 24 h por dia, no fechamento da vela, tamanho calculado
+        t = t0 + i * 15 * 60000 + rnd.randint(0, 900)
+        robo.append(fill(t, "BTC" if i % 2 else "ETH", "B" if i % 2 else "A", 60000 + i, round(0.0123 + rnd.random() * 0.01, 5), 0, oid=i, tid=i))
+    k = 0
+    for d in range(20):  # humano: das 9h às 23h, horários quebrados, tamanhos redondos
+        for _ in range(8):
+            t = t0 + d * 86400000 + rnd.randint(12, 26) * 3600000 + rnd.randint(0, 3599999)
+            humano.append(fill(t, "SOL", "B", 150.0, rnd.choice([1, 2, 5, 10, 0.5]), 0, oid=10000 + k, tid=10000 + k)); k += 1
+    r, h = avaliar(robo), avaliar(humano)
+    assert r["rotulo"] == "Robô provável", r
+    assert h["rotulo"] == "Humano provável", h
+    assert avaliar(humano[:5])["nota"] is None

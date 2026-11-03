@@ -46,6 +46,19 @@ A cada 2 horas o GitHub Actions roda dois scripts e guarda o resultado aqui no r
    - Descarta as que não servem para liberar vaga: as não copiáveis na hora; as perdedoras e as sortudas depois de 21 dias.
    - Grava `saida/relatorio.json` (o app Nexus mostra na aba **Finanças → Radar**) e `saida/relatorio.md`.
 
+## Humano ou robô (`radar/operador.py`)
+
+Nota de 0 (humano) a 100 (robô), começando em 50, somando sinais tirados das ordens:
+- **Horário de dormir:** um bloco de 5 h ou mais sempre parado = humano.
+- **Horas ativas:** ordens espalhadas pelas 24 h = robô.
+- **Fechamento de vela:** muitas ordens nos segundos 0–2 do minuto = robô. O acaso dá uns 5 %.
+- **Rajadas:** moedas diferentes no mesmo segundo, ou 20 ou mais ordens por minuto.
+- **Tamanho redondo:** 0,5 · 100 · 1.000 = humano; quantidades quebradas = robô.
+- **Intervalos regulares:** pausas sempre do mesmo tamanho.
+- **ID próprio nas ordens (cloid):** coletado a partir de 03/11.
+
+65 ou mais = Robô provável; 35 ou menos = Humano provável. A lista exata com os pesos está em `CRITERIOS`.
+
 ## Arquivos
 
 - `config.json`: todos os números do filtro e da classificação. Mudou aqui, a próxima rodada já usa.

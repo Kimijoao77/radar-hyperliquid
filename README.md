@@ -64,6 +64,24 @@ Nota de 0 (humano) a 100 (robô), começando em 50, somando sinais tirados das o
 
 65 ou mais = Robô provável; 35 ou menos = Humano provável. A lista exata com os pesos está em `CRITERIOS`.
 
+## Laboratório (`lab/`): estratégias de alto risco, sem dinheiro
+
+Roda de hora em hora num workflow separado (`Laboratório`). Tudo é simulação com dados públicos.
+
+**1. Funding (`lab/funding.py`)** — comprar à vista e vender o mesmo valor no perpétuo da Hyperliquid: o preço se anula e
+sobra o funding (pago de hora em hora; positivo = quem está vendido recebe). Carteira simulada de US$ 1.000:
+- só moedas líquidas (US$ 5 mi negociados no dia e US$ 2 mi em posições abertas);
+- entra nas que pagam mais na média de 72 h (acima de 20 % ao ano), até 5 posições;
+- sai quando a média de 24 h cai abaixo de 5 % ao ano ou o funding fica negativo 6 horas seguidas;
+- troca uma posição só se a nova pagar 15 pontos ao ano a mais;
+- paga 0,045 % no perpétuo + 0,10 % à vista + 0,03 % de escorregamento em cada ponta, ao entrar e ao sair;
+- perpétuo com 2×: avisa quando uma alta de 40 % teria exigido reforçar a margem.
+
+Mostra o "teste no passado" (últimos 30 dias, refeito a cada hora) e o "ao vivo" (desde 03/11/2026).
+Grava `saida/funding.json`. Os números ficam em `config.json → lab.funding` (se não estiver lá, vale o padrão do código).
+
+Próximos: robôs de grade e DCA, cofres da Hyperliquid, pools de liquidez e empréstimo em cascata.
+
 ## Arquivos
 
 - `config.json`: todos os números do filtro e da classificação. Mudou aqui, a próxima rodada já usa.

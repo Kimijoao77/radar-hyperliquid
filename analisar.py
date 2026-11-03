@@ -7,6 +7,7 @@ import sys
 from datetime import datetime, timezone
 
 from radar import armazenamento as A
+from radar.copia import perfil_copia
 from radar.estilo import impressao
 from radar.operador import CRITERIOS, avaliar as avaliar_operador
 from radar.metricas import benjamini_hochberg, classificar, copiavel, numeros
@@ -73,6 +74,7 @@ def main() -> int:
             "depois": {k: v for k, v in depois.items() if k != "curva"},
             "curva": reduzir(geral.get("curva", [])),
             "estilo": impressao(ops, f),
+            "copia": perfil_copia(ops, f, c.get("na_entrada", {}).get("conta"), agora),
             "operador": operador,
             "copiavel": {"ok": ok[0], "motivo": ok[1]},
             "recentes": recentes, "abertas": abertas,

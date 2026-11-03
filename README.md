@@ -46,6 +46,12 @@ A cada 2 horas o GitHub Actions roda dois scripts e guarda o resultado aqui no r
    - Descarta só as perdedoras e as sortudas, depois de 21 dias, para liberar vaga.
    - Grava `saida/relatorio.json` (o app Nexus mostra na aba **Finanças → Radar**) e `saida/relatorio.md`.
 
+## Projeção de lucro (`radar/copia.py`)
+
+Para a aba **Copiando** do Nexus: o resultado de cada dia de cada carteira (até 150 dias), o saldo de referência
+(para virar % da conta), quanto do lucro sobra copiando com atraso (só operações mais longas que o atraso),
+o giro por dia e a taxa média (custo extra da cópia) e a alavancagem vista nas fotos da conta.
+
 ## Humano ou robô (`radar/operador.py`)
 
 Nota de 0 (humano) a 100 (robô), começando em 50, somando sinais tirados das ordens:

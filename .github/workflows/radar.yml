@@ -2,7 +2,7 @@ name: Radar
 
 on:
   schedule:
-    - cron: "23 */2 * * *"   # a cada 2 horas (minuto 23, longe da hora cheia)
+    - cron: "23 * * * *"     # de hora em hora (minuto 23, longe da hora cheia)
   workflow_dispatch: {}
 
 concurrency:

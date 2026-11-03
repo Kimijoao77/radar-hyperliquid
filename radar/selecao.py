@@ -1,4 +1,4 @@
-"""Pré-filtro do leaderboard e lista de observação.
+"""Pré-filtro do leaderboard, fila de triagem e lista de observação.
 
 A ideia do vídeo: olhar milhares de carteiras, separar poucas que valem a pena e acompanhar.
 Aqui o pré-filtro só usa o que o leaderboard já traz (saldo, PnL, ROI e volume por janela),
@@ -53,30 +53,35 @@ def candidatas(linhas: list[dict], f: dict) -> tuple[list[tuple[float, dict]], d
     return ok, motivos
 
 
-def atualizar_lista(lista: dict, linhas: list[dict], cfg: dict, hoje_ms: int) -> dict:
-    """Coloca carteiras novas na observação até o limite. Devolve um resumo do que fez."""
+def montar_fila(lista: dict, linhas: list[dict], cfg: dict, hoje_ms: int) -> tuple[list[dict], dict]:
+    """Uma vez por semana: as melhores do pré-filtro que ainda não estão no radar viram a fila de triagem.
+    Recusadas antes podem voltar depois de alguns dias (config: dias_para_testar_de_novo)."""
     ok, motivos = candidatas(linhas, cfg["filtro"])
-    ativas = [a for a, c in lista.items() if c.get("situacao") == "observando"]
-    vagas = max(0, cfg["max_carteiras"] - len(ativas))
-    novas = 0
-    data = datetime.fromtimestamp(hoje_ms / 1000, timezone.utc).strftime("%Y-%m-%d")
+    volta = cfg.get("dias_para_testar_de_novo", 30) * 86400000
+    fila = []
     for nota, l in ok:
-        if novas >= min(vagas, cfg["novas_por_dia"]):
+        if len(fila) >= cfg.get("triagem_por_semana", 60):
             break
         a = l["ethAddress"].lower()
-        if a in lista:
+        c = lista.get(a)
+        if c and not (c.get("situacao") == "recusada" and hoje_ms - c.get("em", 0) > volta):
             continue
         j = janelas(l)
-        lista[a] = {
-            "situacao": "observando", "desde": hoje_ms, "desde_data": data,
-            "apelido": l.get("displayName") or "", "nota_entrada": round(nota, 4),
-            "na_entrada": {"conta": round(float(l.get("accountValue") or 0), 2),
-                           **{f"{k}_{c}": round(v[c], 4) for k, v in j.items() for c in ("pnl", "roi")}},
-        }
-        novas += 1
+        fila.append({"a": a, "nota": round(nota, 4), "apelido": l.get("displayName") or "",
+                     "na_entrada": {"conta": round(float(l.get("accountValue") or 0), 2),
+                                    **{f"{k}_{c2}": round(v[c2], 4) for k, v in j.items() for c2 in ("pnl", "roi")}}})
     # apelido pode mudar
     por_end = {l["ethAddress"].lower(): l for l in linhas}
     for a, c in lista.items():
         if a in por_end and por_end[a].get("displayName"):
             c["apelido"] = por_end[a]["displayName"]
-    return {"leaderboard": len(linhas), "passaram": len(ok), "novas": novas, "ativas": len(ativas) + novas, "cortes": motivos}
+    return fila, {"leaderboard": len(linhas), "passaram": len(ok), "na_fila": len(fila), "cortes": motivos}
+
+
+def entrar(lista: dict, item: dict, hoje_ms: int) -> None:
+    """Põe na observação uma carteira que passou na triagem (é promissora)."""
+    lista[item["a"]] = {
+        "situacao": "observando", "desde": hoje_ms,
+        "desde_data": datetime.fromtimestamp(hoje_ms / 1000, timezone.utc).strftime("%Y-%m-%d"),
+        "apelido": item.get("apelido", ""), "nota_entrada": item.get("nota", 0), "na_entrada": item.get("na_entrada", {}),
+    }

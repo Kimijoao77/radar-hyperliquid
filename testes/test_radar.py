@@ -154,27 +154,34 @@ def test_ponta_a_ponta(tmp_path, monkeypatch):
 
     assert coletar.main(5) == 0
     lista = json.loads((tmp_path / "dados" / "carteiras.json").read_text())
-    assert set(lista) == {"0xbom", "0xsortudo", "0xhft", "0xruim", "0xmaker"}  # só a conta pequena fica de fora (giro não corta mais)
-    # a segunda coleta não duplica fills
+    ativas = {a for a, c in lista.items() if c["situacao"] == "observando"}
+    recusadas = {a for a, c in lista.items() if c["situacao"] == "recusada"}
+    # só entra quem já é promissora na triagem; a conta pequena nem chega à fila
+    assert ativas == {"0xbom"}, lista   # o hft perde para as taxas
+    assert recusadas == {"0xsortudo", "0xruim", "0xmaker", "0xhft"}
+    assert "0xpequena" not in lista
+    # a segunda coleta não duplica fills nem refaz a triagem (é semanal)
     assert coletar.main(5) == 0
-    fs = A.ler_fills("0xbom")
-    assert len(fs) == len(falsa.fills["0xbom"])
+    assert len(A.ler_fills("0xbom")) == len(falsa.fills["0xbom"])
+    est = json.loads((tmp_path / "dados" / "estado.json").read_text())
+    assert est["triagem"]["testadas"] == 5 and est["triagem"]["entraram"] == 1
 
-    # a análise vê todo o histórico como "antes" (as carteiras acabaram de entrar)
+    # uma carteira que deixa de ser promissora sai na hora e não aparece no relatório
+    lista = json.loads((tmp_path / "dados" / "carteiras.json").read_text())
+    lista["0xruim"] = {"situacao": "observando", "desde": agora, "desde_data": "2026-01-01", "na_entrada": {}}
+    A.anexar_fills("0xruim", [A.compactar(f) for f in falsa.fills["0xruim"]])
+    # e a "bom" já passou dos 2 meses: com habilidade confirmada, vira aprovada
+    lista["0xbom"]["desde"] = agora - 61 * 24 * H
+    A.gravar_json(A.DADOS / "carteiras.json", lista)
     assert analisar.main() == 0
     rel = json.loads((tmp_path / "saida" / "relatorio.json").read_text())
-    cl = {c["carteira"]: c["classe"] for c in rel["carteiras"]}
-    hft = next(c for c in rel["carteiras"] if c["carteira"] == "0xhft")
-    assert hft["copiavel"]["ok"] is False and hft["classe"] != "nao_copiavel"  # só informação
-    assert cl["0xruim"] == "perdendo"
-    assert cl["0xsortudo"] == "sorte"
-    assert cl["0xbom"] in ("promissora", "habilidade")
-    bom = next(c for c in rel["carteiras"] if c["carteira"] == "0xbom")
-    assert bom["estilo"]["pistas"]  # tem alguma pista do jeito de operar
-    assert rel["carteiras"][0]["carteira"] == "0xbom"
-    # carteira que não dá para copiar continua em observação (o João decide)
+    no_rel = {c["carteira"]: c for c in rel["carteiras"]}
+    assert "0xruim" not in no_rel
     lista = json.loads((tmp_path / "dados" / "carteiras.json").read_text())
-    assert lista["0xhft"]["situacao"] == "observando"
+    assert lista["0xruim"]["situacao"] == "descartada"
+    assert no_rel["0xbom"]["classe"] == "habilidade" and lista["0xbom"]["situacao"] == "aprovada"
+    assert all(c["classe"] in ("promissora", "habilidade") for c in rel["carteiras"])
+    assert rel["descartadas"] == 1 and rel["recusadas"] == 3  # a "ruim" virou descartada
 
 
 # ---------------- humano ou robô ----------------

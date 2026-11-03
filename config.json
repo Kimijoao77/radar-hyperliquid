@@ -1,9 +1,11 @@
 {
- "_leia": "Parâmetros do radar. Valores em dólares (USDC). Mude aqui e o próximo ciclo já usa.",
+ "_leia": "Parâmetros do radar. Valores em dólares (USDC). Mude aqui e o próximo ciclo já usa. Coleta de hora em hora; carteiras novas uma vez por semana (triagem); avaliação de 2 meses.",
  "peso_por_minuto": 1000,
  "max_carteiras": 120,
- "novas_por_dia": 25,
+ "triagem_por_semana": 60,
  "dias_de_historico_ao_entrar": 90,
+ "dias_de_avaliacao": 60,
+ "dias_para_testar_de_novo": 30,
  "filtro": {
   "conta_minima": 10000,
   "volume_mes_minimo": 200000,
@@ -25,7 +27,6 @@
   "q_maximo_habilidade": 0.1,
   "q_maximo_promissora": 0.25,
   "fator_lucro_minimo": 1.3,
-  "semanas_positivas_minimo": 0.6,
-  "dias_para_descartar": 21
+  "semanas_positivas_minimo": 0.6
  }
 }

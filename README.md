@@ -15,36 +15,35 @@ Tudo usa a API pública e gratuita da Hyperliquid (sem conta e sem chave). **Nad
 | 3. Cópia simulada | Copia as melhores com atraso real e ordens de US$ 10, sem dinheiro, para ver o que sobra depois do atraso e das taxas | depois |
 | 4. Cópia real | Liga no Cérebro (ou executa direto na Hyperliquid) com limites de risco | só se a 3 provar |
 
-## Como funciona (fase 1)
+## O plano (desde 03/11)
 
-A cada 2 horas o GitHub Actions roda dois scripts e guarda o resultado aqui no repositório:
+- **Avaliação de 2 meses** (`dias_de_avaliacao: 60`) para cada carteira que entra.
+- **Só promissoras ficam.** Quem deixa de ser promissora é descartada na hora e não aparece mais no app.
+- **Carteiras novas uma vez por semana**, por triagem: as melhores do leaderboard são medidas com 90 dias de histórico
+  e só entram as que já são promissoras (`triagem_por_semana: 60`). As recusadas podem ser testadas de novo depois de 30 dias.
+- **Análise de hora em hora** das carteiras no radar.
+- No fim dos 2 meses: com **habilidade confirmada**, vira **aprovada** e continua sendo acompanhada; sem confirmar, é descartada.
+
+## Como funciona
+
+A cada hora o GitHub Actions roda dois scripts e guarda o resultado aqui no repositório:
 
 1. **`coletar.py`**
-   - Uma vez por dia baixa o leaderboard (dezenas de milhares de carteiras) e aplica o **pré-filtro** (`config.json → filtro`):
-     - conta de pelo menos US$ 10 mil e volume relevante no mês;
-     - ROI do mês entre 3 % e 300 %: acima disso costuma ser uma aposta só;
-     - lucro no total;
-     - (o corte por giro alto, de market maker, está desligado desde 03/11: o João decide se copia).
-   - As melhores entram na **lista de observação** (até 120, no máximo 25 novas por dia).
-   - Para cada carteira observada, baixa os fills (cada execução de ordem) e tira uma foto do saldo e das posições. Na primeira vez, baixa os últimos 90 dias.
+   - Uma vez por semana baixa o leaderboard (dezenas de milhares de carteiras) e aplica o **pré-filtro** (`config.json → filtro`):
+     conta de pelo menos US$ 10 mil e volume relevante no mês; ROI do mês entre 3 % e 300 %; lucro no total.
+     As melhores vão para a **fila de triagem**.
+   - Para cada carteira no radar, baixa os fills (cada execução de ordem) novos e tira uma foto do saldo e das posições.
+   - Com o tempo que sobra, faz a **triagem** da fila (continua na próxima rodada se não terminar).
 2. **`analisar.py`**
    - Monta as **operações** (entrou → saiu) a partir dos fills, já descontando as taxas.
-   - Mede acerto, fator de lucro, retorno médio, queda máxima, semanas positivas, tempo segurando a posição e ordens limitadas × a mercado.
-   - Faz o **teste de sorte x habilidade**:
-     - p-valor por bootstrap: se o ganho real fosse zero, qual a chance de ver um resultado assim?
-     - **q** (Benjamini-Hochberg): desconta o fato de olharmos muitas carteiras de uma vez. Quanto menor, melhor; até 0,10 já é forte.
-     - Lucro que depende de uma única tacada = sorte.
-     - As duas metades do período precisam estar no azul.
-     - **O teste que mais vale:** o desempenho **depois** que a carteira entrou no radar, porque esse período não foi usado para escolhê-la.
-   - Classifica cada carteira:
-     - **Habilidade provável:** números fortes e continuou ganhando depois que entrou no radar.
-     - **Promissora:** números fortes, mas ainda falta o período acompanhado.
-     - **Em observação:** menos de 30 operações.
-     - **Sorte provável.**
-     - **Perdendo.**
-   - **Dá para copiar?** é só uma informação ao lado (mais de 60 operações por dia, posições de menos de 5 min ou cara de market maker). Não muda a classe nem descarta: o João decide.
-   - Descarta só as perdedoras e as sortudas, depois de 21 dias, para liberar vaga.
-   - Grava `saida/relatorio.json` (o app Nexus mostra na aba **Finanças → Radar**) e `saida/relatorio.md`.
+   - Mede acerto, fator de lucro, retorno médio, queda máxima, semanas positivas, tempo segurando a posição.
+   - **Sorte x habilidade:** p-valor por bootstrap e **q** (Benjamini-Hochberg, desconta o fato de olharmos muitas
+     carteiras); lucro de uma tacada só = sorte; as duas metades do período no azul; e o teste que mais vale,
+     o desempenho **depois** que a carteira entrou no radar.
+   - Classes: **Habilidade provável** (números fortes e continuou ganhando depois de entrar) e **Promissora**
+     (números fortes, falta o período acompanhado). As outras (sorte, perdendo) saem.
+   - **Dá para copiar?** é só informação: não muda a classe nem descarta.
+   - Grava `saida/relatorio.json` (o app Nexus mostra no app **Radar**; só as carteiras no radar) e `saida/relatorio.md`.
 
 ## Projeção de lucro (`radar/copia.py`)
 

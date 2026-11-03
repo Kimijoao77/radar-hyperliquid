@@ -325,9 +325,9 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 3.34,
+    "alavancagem_mediana": 2.54,
     "dias_semana": [
      48,
      47,
@@ -443,6 +443,50 @@
     "week_roi": 0.0489
    },
    "nota": 5.05,
+   "operador": {
+    "nota": 73,
+    "ordens": 2505,
+    "ordens_por_dia": 60.4,
+    "rotulo": "Robô provável",
+    "sinais": [
+     {
+      "leitura": "opera em todas as horas do dia, inclusive de madrugada",
+      "nome": "Horário de dormir",
+      "pontos": 18,
+      "valor": "nenhuma hora parada"
+     },
+     {
+      "leitura": "ordens espalhadas pelo dia inteiro",
+      "nome": "Horas ativas",
+      "pontos": 8,
+      "valor": "21 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "5% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 11/min"
+     },
+     {
+      "leitura": "tamanhos quebrados (0,4873...): calculados por programa ou digitados em dólares",
+      "nome": "Tamanho redondo",
+      "pontos": 8,
+      "valor": "8% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "11% no intervalo mais comum"
+     }
+    ]
+   },
    "q": 0.0028,
    "recentes": [
     {
@@ -686,41 +730,25 @@
      "t1": 1793661399348
     }
    ],
-   "saldo": 49174.6,
+   "saldo": 49604.3,
    "situacao": "observando"
   },
   {
    "abertas": [
     {
      "duracao_min": 0.0,
-     "entrada": 91.313781,
-     "fills": 34,
-     "lado": "long",
+     "entrada": 0.189812,
+     "fills": 12,
+     "lado": "short",
      "liquidada": false,
-     "moeda": "HYPE",
-     "nocional": 1204058.04,
-     "ordens_entrada": 23,
+     "moeda": "ENA",
+     "nocional": 349781.84,
+     "ordens_entrada": 8,
      "parcial": false,
-     "resultado": -752.7,
-     "retorno": -0.00063,
+     "resultado": -185.36,
+     "retorno": -0.00053,
      "saida": 0.0,
-     "t0": 1793353075151,
-     "t1": null
-    },
-    {
-     "duracao_min": 0.0,
-     "entrada": 3888.649993,
-     "fills": 40,
-     "lado": "long",
-     "liquidada": false,
-     "moeda": "xyz:GOLD",
-     "nocional": 374999.24,
-     "ordens_entrada": 3,
-     "parcial": false,
-     "resultado": -183.75,
-     "retorno": -0.00049,
-     "saida": 0.0,
-     "t0": 1793370309405,
+     "t0": 1793349460907,
      "t1": null
     },
     {
@@ -769,6 +797,22 @@
      "retorno": -0.00029,
      "saida": 0.0,
      "t0": 1793636252865,
+     "t1": null
+    },
+    {
+     "duracao_min": 0.0,
+     "entrada": 83.560549,
+     "fills": 68,
+     "lado": "long",
+     "liquidada": false,
+     "moeda": "HYPE",
+     "nocional": 1001358.71,
+     "ordens_entrada": 6,
+     "parcial": false,
+     "resultado": -349.78,
+     "retorno": -0.00035,
+     "saida": 0.0,
+     "t0": 1793680202547,
      "t1": null
     }
    ],
@@ -842,12 +886,12 @@
      19070.36
     ],
     [
-     1789080190868,
-     51802.99
-    ],
-    [
      1789081207701,
      147128.38
+    ],
+    [
+     1789613116126,
+     190134.1
     ],
     [
      1789613167935,
@@ -882,10 +926,6 @@
      596352.58
     ],
     [
-     1791129319847,
-     595350.25
-    ],
-    [
      1791177535351,
      597815.79
     ],
@@ -896,6 +936,10 @@
     [
      1791389508671,
      581677.38
+    ],
+    [
+     1791434846886,
+     655647.47
     ],
     [
      1791434852142,
@@ -922,10 +966,6 @@
      737135.08
     ],
     [
-     1791655367477,
-     737129.42
-    ],
-    [
      1791818435610,
      775638.2
     ],
@@ -946,6 +986,10 @@
      854185.88
     ],
     [
+     1791909506706,
+     863762.62
+    ],
+    [
      1791909597192,
      879015.45
     ],
@@ -960,10 +1004,6 @@
     [
      1792071125903,
      893608.07
-    ],
-    [
-     1792072316338,
-     892533.83
     ],
     [
      1792086543642,
@@ -994,16 +1034,16 @@
      841289.93
     ],
     [
+     1792672455614,
+     863098.49
+    ],
+    [
      1792774004263,
      857397.99
     ],
     [
      1792774071805,
      879622.35
-    ],
-    [
-     1792774125662,
-     863561.56
     ],
     [
      1792832594115,
@@ -1038,30 +1078,34 @@
      1085877.92
     ],
     [
-     1793638299623,
-     1211475.54
+     1793324863370,
+     1151697.76
+    ],
+    [
+     1793685163693,
+     1214236.64
     ]
    ],
    "depois": {
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 6.94,
+    "alavancagem_mediana": 7.02,
     "dias_semana": [
      6,
      8,
      10,
      15,
-     13,
+     14,
      5,
      8
     ],
     "duracao_min": {
-     "mediana": 1642.8,
+     "mediana": 1660.8,
      "p25": 687.9,
-     "p75": 4845.1
+     "p75": 4864.4
     },
     "horas_brt": [
      2,
@@ -1075,7 +1119,7 @@
      1,
      1,
      6,
-     6,
+     7,
      9,
      2,
      6,
@@ -1089,7 +1133,7 @@
      2,
      5
     ],
-    "long": 0.323,
+    "long": 0.333,
     "moedas": [
      [
       "BTC",
@@ -1121,38 +1165,38 @@
      "entra aos poucos, em várias ordens",
      "costuma fazer preço médio quando a operação vai contra"
     ],
-    "preco_medio": 0.662,
-    "saida_ganho_limitada": 0.81,
+    "preco_medio": 0.667,
+    "saida_ganho_limitada": 0.813,
     "saida_perda_a_mercado": 0.123,
-    "tamanho_medio": 713059.04,
-    "tamanho_variacao": 0.81,
+    "tamanho_medio": 707936.93,
+    "tamanho_variacao": 0.811,
     "tamanho_x_saldo": null
    },
    "geral": {
-    "acerto": 0.615,
-    "dias": 84.7,
-    "duracao_mediana_min": 1642.8,
+    "acerto": 0.621,
+    "dias": 85.2,
+    "duracao_mediana_min": 1660.8,
     "fator_lucro": 3.13,
-    "ganho_medio": 44520.62,
+    "ganho_medio": 43502.09,
     "liquidacoes": 1,
-    "maker": 0.808,
-    "metade1": 737135.08,
-    "metade2": 474340.45,
-    "n": 65,
-    "p": 0.002,
+    "maker": 0.81,
+    "metade1": 737129.42,
+    "metade2": 477107.22,
+    "n": 66,
+    "p": 0.0015,
     "perda_media": -22773.97,
     "peso_top5": 0.5,
     "por_dia": 0.77,
     "queda_max": 228108.18,
-    "resultado": 1211475.54,
-    "retorno_medio": 0.04293,
-    "sem_melhor": 910463.95,
+    "resultado": 1214236.64,
+    "retorno_medio": 0.04239,
+    "sem_melhor": 913225.05,
     "semanas": 12,
     "semanas_positivas": 0.667,
     "t": 3.55,
-    "taxas": 63608.92
+    "taxas": 64129.43
    },
-   "motivo": "números fortes (q = 0,009), falta confirmar no período acompanhado (0/20 operações)",
+   "motivo": "números fortes (q = 0,007), falta confirmar no período acompanhado (0/20 operações)",
    "na_entrada": {
     "allTime_pnl": 1131726.6146,
     "allTime_roi": 2.6726,
@@ -1165,24 +1209,52 @@
     "week_roi": 0.6427
    },
    "nota": 3.55,
-   "q": 0.0093,
+   "operador": {
+    "nota": 51,
+    "ordens": 1294,
+    "ordens_por_dia": 15.2,
+    "rotulo": "Indefinido",
+    "sinais": [
+     {
+      "leitura": "não tem um horário claro de parada",
+      "nome": "Horário de dormir",
+      "pontos": 4,
+      "valor": "1 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "19 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "5% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 8/min"
+     },
+     {
+      "leitura": "tamanhos quebrados (0,4873...): calculados por programa ou digitados em dólares",
+      "nome": "Tamanho redondo",
+      "pontos": 8,
+      "valor": "1% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "17% no intervalo mais comum"
+     }
+    ]
+   },
+   "q": 0.007,
    "recentes": [
-    {
-     "duracao_min": 604.3,
-     "entrada": 0.004841,
-     "fills": 121,
-     "lado": "short",
-     "liquidada": false,
-     "moeda": "PUMP",
-     "nocional": 607363.09,
-     "ordens_entrada": 13,
-     "parcial": false,
-     "resultado": 3353.48,
-     "retorno": 0.00552,
-     "saida": 0.004808,
-     "t0": 1792545917095,
-     "t1": 1792582176537
-    },
     {
      "duracao_min": 824.0,
      "entrada": 0.005127,
@@ -1406,9 +1478,25 @@
      "saida": 3.98127,
      "t0": 1793466455621,
      "t1": 1793638299623
+    },
+    {
+     "duracao_min": 5247.6,
+     "entrada": 3888.649993,
+     "fills": 64,
+     "lado": "long",
+     "liquidada": false,
+     "moeda": "xyz:GOLD",
+     "nocional": 374999.24,
+     "ordens_entrada": 3,
+     "parcial": false,
+     "resultado": 2761.1,
+     "retorno": 0.00736,
+     "saida": 3922.669442,
+     "t0": 1793370309405,
+     "t1": 1793685163693
     }
    ],
-   "saldo": 171559.84,
+   "saldo": 264847.59,
    "situacao": "observando"
   },
   {
@@ -1540,10 +1628,6 @@
      11977.68
     ],
     [
-     1789391191462,
-     12048.9
-    ],
-    [
      1789391816367,
      11220.68
     ],
@@ -1578,6 +1662,10 @@
     [
      1790818982490,
      32332.47
+    ],
+    [
+     1790864564581,
+     32379.51
     ],
     [
      1790871432873,
@@ -1618,10 +1706,6 @@
     [
      1792071816180,
      93480.64
-    ],
-    [
-     1792073318452,
-     93524.02
     ],
     [
      1792073998992,
@@ -1696,20 +1780,45 @@
      150534.33
     ],
     [
-     1793653421007,
-     171632.86
+     1793632916675,
+     156985.77
+    ],
+    [
+     1793701183578,
+     171964.13
     ]
    ],
    "depois": {
-    "n": 0
+    "acerto": 1.0,
+    "dias": 1.0,
+    "duracao_mediana_min": 138.4,
+    "fator_lucro": 99.0,
+    "ganho_medio": 331.26,
+    "liquidacoes": 0,
+    "maker": 0.0,
+    "metade1": 0,
+    "metade2": 331.26,
+    "n": 1,
+    "p": 1.0,
+    "perda_media": 0,
+    "peso_top5": 1.0,
+    "por_dia": 1.0,
+    "queda_max": 0.0,
+    "resultado": 331.26,
+    "retorno_medio": 0.00135,
+    "sem_melhor": 0.0,
+    "semanas": 1,
+    "semanas_positivas": 1.0,
+    "t": 0,
+    "taxas": 44.11
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
     "alavancagem_mediana": null,
     "dias_semana": [
      16,
-     1,
+     2,
      14,
      20,
      9,
@@ -1717,7 +1826,7 @@
      1
     ],
     "duracao_min": {
-     "mediana": 83.2,
+     "mediana": 84.1,
      "p25": 17.8,
      "p75": 929.4
     },
@@ -1727,7 +1836,7 @@
      0,
      0,
      0,
-     2,
+     3,
      2,
      1,
      1,
@@ -1751,7 +1860,7 @@
     "moedas": [
      [
       "xyz:SILVER",
-      22
+      23
      ],
      [
       "xyz:SNDK",
@@ -1776,37 +1885,37 @@
      "quase só vende (short)"
     ],
     "preco_medio": 0.032,
-    "saida_ganho_limitada": 0.819,
+    "saida_ganho_limitada": 0.815,
     "saida_perda_a_mercado": 1.0,
-    "tamanho_medio": 211454.24,
-    "tamanho_variacao": 0.45,
+    "tamanho_medio": 211990.14,
+    "tamanho_variacao": 0.446,
     "tamanho_x_saldo": null
    },
    "geral": {
-    "acerto": 0.742,
-    "dias": 68.3,
-    "duracao_mediana_min": 83.2,
-    "fator_lucro": 6.35,
-    "ganho_medio": 4428.37,
+    "acerto": 0.746,
+    "dias": 68.9,
+    "duracao_mediana_min": 84.1,
+    "fator_lucro": 6.36,
+    "ganho_medio": 4341.19,
     "liquidacoes": 2,
-    "maker": 0.773,
+    "maker": 0.77,
     "metade1": 32379.51,
-    "metade2": 139253.36,
-    "n": 62,
-    "p": 0.0005,
+    "metade2": 139584.62,
+    "n": 63,
+    "p": 0.0007,
     "perda_media": -2004.5,
     "peso_top5": 0.54,
     "por_dia": 0.91,
     "queda_max": 13971.49,
-    "resultado": 171632.86,
-    "retorno_medio": 0.01053,
-    "sem_melhor": 142865.72,
+    "resultado": 171964.13,
+    "retorno_medio": 0.01039,
+    "sem_melhor": 143196.99,
     "semanas": 10,
     "semanas_positivas": 0.8,
     "t": 3.37,
-    "taxas": 2111.23
+    "taxas": 2155.34
    },
-   "motivo": "números fortes (q = 0,004), falta confirmar no período acompanhado (0/20 operações)",
+   "motivo": "números fortes (q = 0,005), falta confirmar no período acompanhado (1/20 operações)",
    "na_entrada": {
     "allTime_pnl": 206175.1865,
     "allTime_roi": 20.0392,
@@ -1819,24 +1928,52 @@
     "week_roi": 1.8361
    },
    "nota": 3.37,
-   "q": 0.0035,
+   "operador": {
+    "nota": 6,
+    "ordens": 157,
+    "ordens_por_dia": 1.8,
+    "rotulo": "Humano provável",
+    "sinais": [
+     {
+      "leitura": "fica sempre as mesmas horas do dia sem operar, como quem dorme",
+      "nome": "Horário de dormir",
+      "pontos": -18,
+      "valor": "5 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "13 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "6% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 3/min"
+     },
+     {
+      "leitura": "digita tamanhos redondos (0,5 · 100 · 1.000), jeito de pessoa",
+      "nome": "Tamanho redondo",
+      "pontos": -15,
+      "valor": "62% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "4% no intervalo mais comum"
+     }
+    ]
+   },
+   "q": 0.0049,
    "recentes": [
-    {
-     "duracao_min": 3968.1,
-     "entrada": 57.135217,
-     "fills": 2,
-     "lado": "short",
-     "liquidada": false,
-     "moeda": "xyz:SILVER",
-     "nocional": 285676.08,
-     "ordens_entrada": 1,
-     "parcial": false,
-     "resultado": 9036.37,
-     "retorno": 0.03163,
-     "saida": 55.317806,
-     "t0": 1792439735255,
-     "t1": 1792677822785
-    },
     {
      "duracao_min": 4086.5,
      "entrada": 1376.452059,
@@ -2060,6 +2197,22 @@
      "saida": 839.481269,
      "t0": 1793633471399,
      "t1": 1793653421007
+    },
+    {
+     "duracao_min": 138.4,
+     "entrada": 49.04328,
+     "fills": 2,
+     "lado": "short",
+     "liquidada": false,
+     "moeda": "xyz:SILVER",
+     "nocional": 245216.4,
+     "ordens_entrada": 1,
+     "parcial": false,
+     "resultado": 331.26,
+     "retorno": 0.00135,
+     "saida": 48.968126,
+     "t0": 1793692881767,
+     "t1": 1793701183578
     }
    ],
    "saldo": 0.0,
@@ -2358,9 +2511,9 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 11.0,
+    "alavancagem_mediana": 10.08,
     "dias_semana": [
      12,
      11,
@@ -2474,6 +2627,50 @@
     "week_roi": 0.0597
    },
    "nota": 1.84,
+   "operador": {
+    "nota": 51,
+    "ordens": 193,
+    "ordens_por_dia": 2.2,
+    "rotulo": "Indefinido",
+    "sinais": [
+     {
+      "leitura": "não tem um horário claro de parada",
+      "nome": "Horário de dormir",
+      "pontos": 4,
+      "valor": "3 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "18 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "5% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 3/min"
+     },
+     {
+      "leitura": "tamanhos quebrados (0,4873...): calculados por programa ou digitados em dólares",
+      "nome": "Tamanho redondo",
+      "pontos": 8,
+      "valor": "1% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "3% no intervalo mais comum"
+     }
+    ]
+   },
    "q": 0.0902,
    "recentes": [
     {
@@ -2717,7 +2914,7 @@
      "t1": 1793653915589
     }
    ],
-   "saldo": 7489.96,
+   "saldo": 9158.88,
    "situacao": "observando"
   },
   {
@@ -2977,9 +3174,9 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 8.22,
+    "alavancagem_mediana": 8.49,
     "dias_semana": [
      2,
      4,
@@ -3096,6 +3293,50 @@
     "week_roi": 0.2809
    },
    "nota": 1.34,
+   "operador": {
+    "nota": 28,
+    "ordens": 650,
+    "ordens_por_dia": 7.4,
+    "rotulo": "Humano provável",
+    "sinais": [
+     {
+      "leitura": "não tem um horário claro de parada",
+      "nome": "Horário de dormir",
+      "pontos": 4,
+      "valor": "3 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "19 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "6% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 10/min"
+     },
+     {
+      "leitura": "digita tamanhos redondos (0,5 · 100 · 1.000), jeito de pessoa",
+      "nome": "Tamanho redondo",
+      "pontos": -15,
+      "valor": "65% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "19% no intervalo mais comum"
+     }
+    ]
+   },
    "q": 0.1496,
    "recentes": [
     {
@@ -3339,23 +3580,23 @@
      "t1": 1793514345390
     }
    ],
-   "saldo": 39132.07,
+   "saldo": 25398.36,
    "situacao": "observando"
   },
   {
    "abertas": [
     {
      "duracao_min": 0.0,
-     "entrada": 6.308314,
-     "fills": 219,
+     "entrada": 6.25596,
+     "fills": 245,
      "lado": "short",
      "liquidada": false,
      "moeda": "xyz:CXMT",
-     "nocional": 555131.6,
-     "ordens_entrada": 51,
+     "nocional": 550524.49,
+     "ordens_entrada": 63,
      "parcial": false,
-     "resultado": 7198.09,
-     "retorno": 0.01297,
+     "resultado": 7188.56,
+     "retorno": 0.01306,
      "saida": 6.29313,
      "t0": 1793327245506,
      "t1": null
@@ -3363,16 +3604,16 @@
     {
      "duracao_min": 0.0,
      "entrada": 89.373106,
-     "fills": 124,
+     "fills": 165,
      "lado": "short",
      "liquidada": false,
      "moeda": "xyz:UNITREE",
      "nocional": 281056.97,
      "ordens_entrada": 8,
      "parcial": false,
-     "resultado": -155.34,
-     "retorno": -0.00055,
-     "saida": 89.442202,
+     "resultado": -3023.12,
+     "retorno": -0.01076,
+     "saida": 90.48622,
      "t0": 1793342244448,
      "t1": null
     }
@@ -3651,7 +3892,7 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
     "alavancagem_mediana": null,
     "dias_semana": [
@@ -3769,6 +4010,56 @@
     "week_roi": 0.0956
    },
    "nota": 1.23,
+   "operador": {
+    "nota": 16,
+    "ordens": 1451,
+    "ordens_por_dia": 16.1,
+    "rotulo": "Humano provável",
+    "sinais": [
+     {
+      "leitura": "fica sempre as mesmas horas do dia sem operar, como quem dorme",
+      "nome": "Horário de dormir",
+      "pontos": -18,
+      "valor": "6 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "15 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "6% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 9/min"
+     },
+     {
+      "leitura": "mistura de redondos e quebrados",
+      "nome": "Tamanho redondo",
+      "pontos": 0,
+      "valor": "54% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "8% no intervalo mais comum"
+     },
+     {
+      "leitura": "ordens sem ID próprio",
+      "nome": "ID próprio na ordem",
+      "pontos": -5,
+      "valor": "0% das ordens"
+     }
+    ]
+   },
    "q": 0.1496,
    "recentes": [
     {
@@ -4035,18 +4326,18 @@
     },
     {
      "duracao_min": 0.0,
-     "entrada": 84.2,
-     "fills": 2,
+     "entrada": 83.94941,
+     "fills": 6,
      "lado": "short",
      "liquidada": false,
      "moeda": "HYPE",
-     "nocional": 29407.69,
+     "nocional": 31068.0,
      "ordens_entrada": 1,
      "parcial": false,
-     "resultado": -4.41,
-     "retorno": -0.00015,
+     "resultado": -13.73,
+     "retorno": -0.00044,
      "saida": 0.0,
-     "t0": 1793655831947,
+     "t0": 1793696778169,
      "t1": null
     }
    ],
@@ -4132,8 +4423,8 @@
      -3253.13
     ],
     [
-     1787670318138,
-     -3165.53
+     1787670385023,
+     -3166.06
     ],
     [
      1787670546356,
@@ -4152,8 +4443,8 @@
      -1631.29
     ],
     [
-     1787715442067,
-     -1454.13
+     1787716232366,
+     -1303.87
     ],
     [
      1787716417035,
@@ -4172,8 +4463,8 @@
      -4235.56
     ],
     [
-     1787906680426,
-     -4105.97
+     1787914983453,
+     -4070.0
     ],
     [
      1787920512296,
@@ -4184,16 +4475,16 @@
      -3362.56
     ],
     [
-     1787933152045,
-     -3247.03
+     1788000903861,
+     -2844.17
     ],
     [
      1788129300032,
      -2678.95
     ],
     [
-     1788191070331,
-     -2494.53
+     1788192041986,
+     -2378.51
     ],
     [
      1788286661654,
@@ -4204,16 +4495,16 @@
      -1461.08
     ],
     [
-     1788533185922,
-     -1353.63
+     1788708056884,
+     -4597.49
     ],
     [
      1788709015539,
      -4368.41
     ],
     [
-     1789718186011,
-     -3912.79
+     1789723366359,
+     -3706.31
     ],
     [
      1789825973235,
@@ -4224,111 +4515,111 @@
      -3649.77
     ],
     [
-     1790600935560,
-     -3439.35
+     1790622228054,
+     -2999.32
     ],
     [
      1790691856020,
      -2623.65
     ],
     [
-     1790771684688,
-     -2226.67
+     1790772019834,
+     -2342.89
     ],
     [
-     1790772839894,
-     -2342.03
+     1790774988162,
+     -2149.9
     ],
     [
      1790783361399,
      -1908.26
     ],
     [
-     1790968907612,
-     -1459.73
+     1791459885148,
+     -1230.63
     ],
     [
      1791473058977,
      -446.99
     ],
     [
-     1791483830865,
-     55.84
+     1791552959883,
+     433.26
     ],
     [
-     1791570581667,
-     827.78
+     1791651228920,
+     916.63
     ],
     [
      1791811915579,
      1248.73
     ],
     [
-     1791814962169,
-     1563.06
+     1791869196090,
+     2139.05
     ],
     [
      1792150218826,
      2640.49
     ],
     [
-     1792161303654,
-     3046.26
+     1792588139049,
+     3220.5
     ],
     [
-     1792594406202,
-     3408.87
+     1792604248252,
+     3585.69
     ],
     [
      1793118605681,
      4023.85
     ],
     [
-     1793121919209,
-     4303.89
-    ],
-    [
-     1793210625495,
-     5123.0
+     1793195213720,
+     4707.07
     ],
     [
      1793210911834,
      5248.37
     ],
     [
-     1793215655206,
-     5540.99
+     1793212657512,
+     5517.23
+    ],
+    [
+     1793217780605,
+     5940.57
     ],
     [
      1793218712526,
      6154.02
     ],
     [
-     1793273253858,
-     8074.17
-    ],
-    [
-     1793639465698,
-     9010.89
+     1793623408512,
+     8723.03
     ],
     [
      1793640463930,
      9280.81
     ],
     [
-     1793653105476,
-     10026.9
+     1793644302589,
+     9514.59
+    ],
+    [
+     1793678819491,
+     10388.5
     ]
    ],
    "depois": {
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 5.7,
+    "alavancagem_mediana": 6.07,
     "dias_semana": [
-     14,
+     15,
      15,
      24,
      8,
@@ -4337,9 +4628,9 @@
      4
     ],
     "duracao_min": {
-     "mediana": 104.3,
+     "mediana": 109.1,
      "p25": 20.8,
-     "p75": 1120.2
+     "p75": 1029.5
     },
     "horas_brt": [
      4,
@@ -4360,18 +4651,18 @@
      8,
      3,
      4,
-     0,
+     1,
      1,
      0,
      0,
      2,
      0
     ],
-    "long": 0.469,
+    "long": 0.464,
     "moedas": [
      [
       "HYPE",
-      87
+      88
      ],
      [
       "xyz:PURRDAT",
@@ -4390,38 +4681,38 @@
     "pistas": [
      "especialista em HYPE"
     ],
-    "preco_medio": 0.135,
-    "saida_ganho_limitada": 0.655,
+    "preco_medio": 0.134,
+    "saida_ganho_limitada": 0.668,
     "saida_perda_a_mercado": 0.372,
-    "tamanho_medio": 31385.36,
-    "tamanho_variacao": 0.317,
+    "tamanho_medio": 31364.97,
+    "tamanho_variacao": 0.316,
     "tamanho_x_saldo": null
    },
    "geral": {
-    "acerto": 0.875,
-    "dias": 89.6,
-    "duracao_mediana_min": 104.3,
-    "fator_lucro": 1.58,
-    "ganho_medio": 324.04,
+    "acerto": 0.876,
+    "dias": 89.9,
+    "duracao_mediana_min": 109.1,
+    "fator_lucro": 1.6,
+    "ganho_medio": 324.49,
     "liquidacoes": 1,
-    "maker": 0.658,
+    "maker": 0.669,
     "metade1": -1416.77,
-    "metade2": 11443.67,
-    "n": 96,
-    "p": 0.1235,
+    "metade2": 11805.27,
+    "n": 97,
+    "p": 0.1177,
     "perda_media": -1432.73,
-    "peso_top5": 0.53,
-    "por_dia": 1.07,
+    "peso_top5": 0.51,
+    "por_dia": 1.08,
     "queda_max": 9359.02,
-    "resultado": 10026.9,
-    "retorno_medio": 0.00369,
-    "sem_melhor": 8106.75,
+    "resultado": 10388.5,
+    "retorno_medio": 0.00378,
+    "sem_melhor": 8468.35,
     "semanas": 12,
     "semanas_positivas": 0.75,
-    "t": 1.13,
-    "taxas": 2150.56
+    "t": 1.17,
+    "taxas": 2164.49
    },
-   "motivo": "tende a ganhar (q = 0,192), mas ainda sem constância suficiente",
+   "motivo": "tende a ganhar (q = 0,183), mas ainda sem constância suficiente",
    "na_entrada": {
     "allTime_pnl": 83492.9812,
     "allTime_roi": 4.3486,
@@ -4433,25 +4724,53 @@
     "week_pnl": 6905.813,
     "week_roi": 0.7684
    },
-   "nota": 1.13,
-   "q": 0.1921,
+   "nota": 1.17,
+   "operador": {
+    "nota": 51,
+    "ordens": 345,
+    "ordens_por_dia": 3.8,
+    "rotulo": "Indefinido",
+    "sinais": [
+     {
+      "leitura": "não tem um horário claro de parada",
+      "nome": "Horário de dormir",
+      "pontos": 4,
+      "valor": "4 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "16 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "4% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 10/min"
+     },
+     {
+      "leitura": "tamanhos quebrados (0,4873...): calculados por programa ou digitados em dólares",
+      "nome": "Tamanho redondo",
+      "pontos": 8,
+      "valor": "15% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "10% no intervalo mais comum"
+     }
+    ]
+   },
+   "q": 0.1831,
    "recentes": [
-    {
-     "duracao_min": 53.5,
-     "entrada": 80.112556,
-     "fills": 12,
-     "lado": "long",
-     "liquidada": false,
-     "moeda": "HYPE",
-     "nocional": 30304.18,
-     "ordens_entrada": 1,
-     "parcial": false,
-     "resultado": 280.04,
-     "retorno": 0.00924,
-     "saida": 80.883938,
-     "t0": 1793118711917,
-     "t1": 1793121919209
-    },
     {
      "duracao_min": 1169.8,
      "entrada": 80.98,
@@ -4675,9 +4994,25 @@
      "saida": 83.112,
      "t0": 1793650730223,
      "t1": 1793653105476
+    },
+    {
+     "duracao_min": 383.1,
+     "entrada": 84.2,
+     "fills": 25,
+     "lado": "short",
+     "liquidada": false,
+     "moeda": "HYPE",
+     "nocional": 29407.69,
+     "ordens_entrada": 1,
+     "parcial": false,
+     "resultado": 361.6,
+     "retorno": 0.0123,
+     "saida": 83.12478,
+     "t0": 1793655831947,
+     "t1": 1793678819491
     }
    ],
-   "saldo": 5414.23,
+   "saldo": 5043.79,
    "situacao": "observando"
   },
   {
@@ -4724,7 +5059,7 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
     "alavancagem_mediana": null,
     "dias_semana": [
@@ -4823,6 +5158,12 @@
     "week_roi": 1.4787
    },
    "nota": 2.18,
+   "operador": {
+    "nota": null,
+    "ordens": 5,
+    "rotulo": "Poucos dados",
+    "sinais": []
+   },
    "q": null,
    "recentes": [
     {
@@ -4942,9 +5283,9 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 8.61,
+    "alavancagem_mediana": 8.74,
     "dias_semana": [
      0,
      1,
@@ -5046,6 +5387,50 @@
     "week_roi": 0.2195
    },
    "nota": 0.9,
+   "operador": {
+    "nota": 6,
+    "ordens": 1644,
+    "ordens_por_dia": 19.3,
+    "rotulo": "Humano provável",
+    "sinais": [
+     {
+      "leitura": "fica sempre as mesmas horas do dia sem operar, como quem dorme",
+      "nome": "Horário de dormir",
+      "pontos": -18,
+      "valor": "13 h seguidas paradas"
+     },
+     {
+      "leitura": "concentra as ordens em parte do dia",
+      "nome": "Horas ativas",
+      "pontos": -8,
+      "valor": "6 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "6% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 19/min"
+     },
+     {
+      "leitura": "digita tamanhos redondos (0,5 · 100 · 1.000), jeito de pessoa",
+      "nome": "Tamanho redondo",
+      "pontos": -15,
+      "valor": "99% das ordens"
+     },
+     {
+      "leitura": "fatias de uma ordem grande a cada poucos segundos (TWAP do site ou robô)",
+      "nome": "Intervalos regulares",
+      "pontos": 5,
+      "valor": "71% a cada ~5 s"
+     }
+    ]
+   },
    "q": null,
    "recentes": [
     {
@@ -5097,7 +5482,7 @@
      "t1": 1793542161569
     }
    ],
-   "saldo": 467922.9,
+   "saldo": 430862.02,
    "situacao": "observando"
   },
   {
@@ -5131,7 +5516,7 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {},
    "geral": {
     "n": 0
@@ -5149,9 +5534,53 @@
     "week_roi": 0.3076
    },
    "nota": 0,
+   "operador": {
+    "nota": 50,
+    "ordens": 3291,
+    "ordens_por_dia": 38.7,
+    "rotulo": "Indefinido",
+    "sinais": [
+     {
+      "leitura": "opera em todas as horas do dia, inclusive de madrugada",
+      "nome": "Horário de dormir",
+      "pontos": 18,
+      "valor": "nenhuma hora parada"
+     },
+     {
+      "leitura": "ordens espalhadas pelo dia inteiro",
+      "nome": "Horas ativas",
+      "pontos": 8,
+      "valor": "24 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "8% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 4/min"
+     },
+     {
+      "leitura": "digita tamanhos redondos (0,5 · 100 · 1.000), jeito de pessoa",
+      "nome": "Tamanho redondo",
+      "pontos": -15,
+      "valor": "68% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "5% no intervalo mais comum"
+     }
+    ]
+   },
    "q": null,
    "recentes": [],
-   "saldo": 68077.66,
+   "saldo": 50611.61,
    "situacao": "observando"
   },
   {
@@ -5211,9 +5640,9 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 1.82,
+    "alavancagem_mediana": 1.79,
     "dias_semana": [
      1,
      0,
@@ -5313,6 +5742,50 @@
     "week_roi": 0.0859
    },
    "nota": 0,
+   "operador": {
+    "nota": 28,
+    "ordens": 3616,
+    "ordens_por_dia": 93.4,
+    "rotulo": "Humano provável",
+    "sinais": [
+     {
+      "leitura": "fica sempre as mesmas horas do dia sem operar, como quem dorme",
+      "nome": "Horário de dormir",
+      "pontos": -18,
+      "valor": "7 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "13 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "6% das ordens"
+     },
+     {
+      "leitura": "chegou a 37 ordens num minuto (ou usa ordens escalonadas do site)",
+      "nome": "Rajadas",
+      "pontos": 10,
+      "valor": "pico de 37/min"
+     },
+     {
+      "leitura": "digita tamanhos redondos (0,5 · 100 · 1.000), jeito de pessoa",
+      "nome": "Tamanho redondo",
+      "pontos": -15,
+      "valor": "79% das ordens"
+     },
+     {
+      "leitura": "fatias de uma ordem grande a cada poucos segundos (TWAP do site ou robô)",
+      "nome": "Intervalos regulares",
+      "pontos": 5,
+      "valor": "28% a cada ~5 s"
+     }
+    ]
+   },
    "q": null,
    "recentes": [
     {
@@ -5332,7 +5805,7 @@
      "t1": 1793265132174
     }
    ],
-   "saldo": 34989.86,
+   "saldo": 36852.91,
    "situacao": "observando"
   },
   {
@@ -5392,9 +5865,9 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 7.78,
+    "alavancagem_mediana": 7.89,
     "dias_semana": [
      0,
      1,
@@ -5492,6 +5965,12 @@
     "week_roi": 0.3908
    },
    "nota": 0,
+   "operador": {
+    "nota": null,
+    "ordens": 3,
+    "rotulo": "Poucos dados",
+    "sinais": []
+   },
    "q": null,
    "recentes": [
     {
@@ -5511,7 +5990,7 @@
      "t1": 1792506065480
     }
    ],
-   "saldo": 306146.19,
+   "saldo": 298457.39,
    "situacao": "observando"
   },
   {
@@ -5545,7 +6024,7 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {},
    "geral": {
     "n": 0
@@ -5563,59 +6042,65 @@
     "week_roi": 0.294
    },
    "nota": 0,
+   "operador": {
+    "nota": null,
+    "ordens": 13,
+    "rotulo": "Poucos dados",
+    "sinais": []
+   },
    "q": null,
    "recentes": [],
-   "saldo": 624451.79,
+   "saldo": 535045.37,
    "situacao": "observando"
   },
   {
    "abertas": [
     {
      "duracao_min": 0.0,
-     "entrada": 2287.944925,
-     "fills": 24,
+     "entrada": 2275.393143,
+     "fills": 61,
      "lado": "short",
      "liquidada": false,
      "moeda": "ETH",
-     "nocional": 1830355.94,
-     "ordens_entrada": 8,
+     "nocional": 2959221.59,
+     "ordens_entrada": 34,
      "parcial": false,
-     "resultado": -357.67,
-     "retorno": -0.0002,
+     "resultado": -636.72,
+     "retorno": -0.00022,
      "saida": 0.0,
      "t0": 1793628597820,
      "t1": null
     },
     {
      "duracao_min": 0.0,
-     "entrada": 85.996422,
-     "fills": 14,
+     "entrada": 85.439851,
+     "fills": 16,
      "lado": "short",
      "liquidada": false,
      "moeda": "HYPE",
-     "nocional": 300987.48,
-     "ordens_entrada": 11,
+     "nocional": 384479.33,
+     "ordens_entrada": 13,
      "parcial": false,
-     "resultado": -56.75,
-     "retorno": -0.00019,
+     "resultado": -83.47,
+     "retorno": -0.00022,
      "saida": 0.0,
      "t0": 1793629003507,
      "t1": null
     },
     {
      "duracao_min": 0.0,
-     "entrada": 85.8485,
+     "entrada": 83.5,
      "fills": 1,
      "lado": "long",
      "liquidada": false,
      "moeda": "@107",
-     "nocional": 42924.25,
+     "nocional": 41750.0,
      "ordens_entrada": 1,
      "parcial": false,
-     "resultado": -0.28,
-     "retorno": -1e-05,
+     "resultado": -0.12,
+     "retorno": -0.0,
      "saida": 0.0,
-     "t0": 1793634490656,
+     "t0": 1793693885204,
      "t1": null
     }
    ],
@@ -5665,9 +6150,9 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 7.96,
+    "alavancagem_mediana": 7.94,
     "dias_semana": [
      0,
      1,
@@ -5768,6 +6253,56 @@
     "week_roi": 0.0643
    },
    "nota": -0.31,
+   "operador": {
+    "nota": 0,
+    "ordens": 112,
+    "ordens_por_dia": 1.7,
+    "rotulo": "Humano provável",
+    "sinais": [
+     {
+      "leitura": "fica sempre as mesmas horas do dia sem operar, como quem dorme",
+      "nome": "Horário de dormir",
+      "pontos": -18,
+      "valor": "6 h seguidas paradas"
+     },
+     {
+      "leitura": "concentra as ordens em parte do dia",
+      "nome": "Horas ativas",
+      "pontos": -8,
+      "valor": "12 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "9% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 4/min"
+     },
+     {
+      "leitura": "digita tamanhos redondos (0,5 · 100 · 1.000), jeito de pessoa",
+      "nome": "Tamanho redondo",
+      "pontos": -15,
+      "valor": "80% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "10% no intervalo mais comum"
+     },
+     {
+      "leitura": "ordens sem ID próprio",
+      "nome": "ID próprio na ordem",
+      "pontos": -5,
+      "valor": "0% das ordens"
+     }
+    ]
+   },
    "q": null,
    "recentes": [
     {
@@ -5819,7 +6354,7 @@
      "t1": 1793347787387
     }
    ],
-   "saldo": 269825.85,
+   "saldo": 419699.44,
    "situacao": "observando"
   },
   {
@@ -5894,7 +6429,7 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
     "alavancagem_mediana": null,
     "dias_semana": [
@@ -6002,6 +6537,44 @@
     "week_roi": 0.3067
    },
    "nota": -0.74,
+   "operador": {
+    "nota": 58,
+    "ordens": 47,
+    "ordens_por_dia": 0.6,
+    "rotulo": "Indefinido",
+    "sinais": [
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "14 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "0% das ordens"
+     },
+     {
+      "leitura": "12% dos segundos com ordens em moedas diferentes ao mesmo tempo",
+      "nome": "Rajadas",
+      "pontos": 15,
+      "valor": "pico de 4/min"
+     },
+     {
+      "leitura": "mistura de redondos e quebrados",
+      "nome": "Tamanho redondo",
+      "pontos": 0,
+      "valor": "21% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "19% no intervalo mais comum"
+     }
+    ]
+   },
    "q": null,
    "recentes": [
     {
@@ -6212,9 +6785,9 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 9.8,
+    "alavancagem_mediana": 9.96,
     "dias_semana": [
      0,
      0,
@@ -6322,6 +6895,50 @@
     "week_roi": 0.0426
    },
    "nota": -0.84,
+   "operador": {
+    "nota": 28,
+    "ordens": 139,
+    "ordens_por_dia": 1.9,
+    "rotulo": "Humano provável",
+    "sinais": [
+     {
+      "leitura": "não tem um horário claro de parada",
+      "nome": "Horário de dormir",
+      "pontos": 4,
+      "valor": "4 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "14 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "6% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 3/min"
+     },
+     {
+      "leitura": "digita tamanhos redondos (0,5 · 100 · 1.000), jeito de pessoa",
+      "nome": "Tamanho redondo",
+      "pontos": -15,
+      "valor": "64% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "16% no intervalo mais comum"
+     }
+    ]
+   },
    "q": null,
    "recentes": [
     {
@@ -6421,7 +7038,7 @@
      "t1": 1789730677472
     }
    ],
-   "saldo": 5429.97,
+   "saldo": 5092.62,
    "situacao": "observando"
   },
   {
@@ -6717,7 +7334,7 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
     "alavancagem_mediana": null,
     "dias_semana": [
@@ -6835,6 +7452,50 @@
     "week_roi": -0.123
    },
    "nota": 2.22,
+   "operador": {
+    "nota": 42,
+    "ordens": 257,
+    "ordens_por_dia": 2.9,
+    "rotulo": "Indefinido",
+    "sinais": [
+     {
+      "leitura": "opera em todas as horas do dia, inclusive de madrugada",
+      "nome": "Horário de dormir",
+      "pontos": 18,
+      "valor": "nenhuma hora parada"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "18 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "6% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 2/min"
+     },
+     {
+      "leitura": "digita tamanhos redondos (0,5 · 100 · 1.000), jeito de pessoa",
+      "nome": "Tamanho redondo",
+      "pontos": -15,
+      "valor": "89% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "2% no intervalo mais comum"
+     }
+    ]
+   },
    "q": 0.0683,
    "recentes": [
     {
@@ -7078,7 +7739,7 @@
      "t1": 1793655807682
     }
    ],
-   "saldo": 21876.6,
+   "saldo": 46850.53,
    "situacao": "observando"
   },
   {
@@ -7378,7 +8039,7 @@
     "taxas": 109.81
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
     "alavancagem_mediana": null,
     "dias_semana": [
@@ -7494,6 +8155,50 @@
     "week_roi": 0.1038
    },
    "nota": 1.78,
+   "operador": {
+    "nota": 29,
+    "ordens": 1319,
+    "ordens_por_dia": 17.8,
+    "rotulo": "Humano provável",
+    "sinais": [
+     {
+      "leitura": "fica sempre as mesmas horas do dia sem operar, como quem dorme",
+      "nome": "Horário de dormir",
+      "pontos": -18,
+      "valor": "8 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "15 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "5% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 12/min"
+     },
+     {
+      "leitura": "tamanhos quebrados (0,4873...): calculados por programa ou digitados em dólares",
+      "nome": "Tamanho redondo",
+      "pontos": 8,
+      "valor": "1% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "20% no intervalo mais comum"
+     }
+    ]
+   },
    "q": 0.0996,
    "recentes": [
     {
@@ -7969,7 +8674,7 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
     "alavancagem_mediana": null,
     "dias_semana": [
@@ -8076,6 +8781,50 @@
     "week_roi": 0.146
    },
    "nota": 0.66,
+   "operador": {
+    "nota": 0,
+    "ordens": 105,
+    "ordens_por_dia": 1.5,
+    "rotulo": "Humano provável",
+    "sinais": [
+     {
+      "leitura": "fica sempre as mesmas horas do dia sem operar, como quem dorme",
+      "nome": "Horário de dormir",
+      "pontos": -18,
+      "valor": "5 h seguidas paradas"
+     },
+     {
+      "leitura": "concentra as ordens em parte do dia",
+      "nome": "Horas ativas",
+      "pontos": -8,
+      "valor": "12 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "1% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 2/min"
+     },
+     {
+      "leitura": "digita tamanhos redondos (0,5 · 100 · 1.000), jeito de pessoa",
+      "nome": "Tamanho redondo",
+      "pontos": -15,
+      "valor": "90% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "5% no intervalo mais comum"
+     }
+    ]
+   },
    "q": 0.3492,
    "recentes": [
     {
@@ -8599,9 +9348,9 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 10.19,
+    "alavancagem_mediana": 10.48,
     "dias_semana": [
      8,
      7,
@@ -8718,7 +9467,51 @@
     "week_roi": 0.2948
    },
    "nota": 0.03,
-   "q": 0.5616,
+   "operador": {
+    "nota": 36,
+    "ordens": 4144,
+    "ordens_por_dia": 46.2,
+    "rotulo": "Indefinido",
+    "sinais": [
+     {
+      "leitura": "não tem um horário claro de parada",
+      "nome": "Horário de dormir",
+      "pontos": 4,
+      "valor": "2 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "13 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "5% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 12/min"
+     },
+     {
+      "leitura": "digita tamanhos redondos (0,5 · 100 · 1.000), jeito de pessoa",
+      "nome": "Tamanho redondo",
+      "pontos": -15,
+      "valor": "97% das ordens"
+     },
+     {
+      "leitura": "fatias de uma ordem grande a cada poucos segundos (TWAP do site ou robô)",
+      "nome": "Intervalos regulares",
+      "pontos": 5,
+      "valor": "24% a cada ~10 s"
+     }
+    ]
+   },
+   "q": 0.589,
    "recentes": [
     {
      "duracao_min": 17345.9,
@@ -8961,7 +9754,7 @@
      "t1": 1792007383928
     }
    ],
-   "saldo": 2725.23,
+   "saldo": 2473.2,
    "situacao": "observando"
   },
   {
@@ -9081,8 +9874,8 @@
      -2262.82
     ],
     [
-     1789583619283,
-     -2329.8
+     1789583951841,
+     -2352.65
     ],
     [
      1789631417823,
@@ -9105,12 +9898,12 @@
      -2561.58
     ],
     [
-     1789983930672,
-     -2635.65
+     1789984170300,
+     -2647.61
     ],
     [
-     1789993323072,
-     -2518.07
+     1789994712891,
+     -2485.65
     ],
     [
      1790009461395,
@@ -9129,12 +9922,12 @@
      -2775.61
     ],
     [
-     1790158451060,
-     -2802.2
+     1790160328048,
+     -2809.66
     ],
     [
-     1790184393209,
-     -2543.39
+     1790184642668,
+     -2549.17
     ],
     [
      1790202608394,
@@ -9153,16 +9946,16 @@
      -2468.24
     ],
     [
-     1790580696089,
-     -2516.99
+     1790582617773,
+     -2536.49
     ],
     [
-     1790603591207,
-     -2435.58
+     1790611264649,
+     -2463.12
     ],
     [
-     1790665657675,
-     -2403.68
+     1790665862087,
+     -2412.79
     ],
     [
      1790689429723,
@@ -9177,20 +9970,20 @@
      -2392.75
     ],
     [
-     1790927878619,
-     -2384.4
+     1790934411103,
+     -2332.26
     ],
     [
-     1790965712098,
-     -2274.47
+     1790967501294,
+     -2237.4
     ],
     [
-     1791057829157,
-     -2260.87
+     1791100784241,
+     -2299.32
     ],
     [
-     1791208049013,
-     -2421.14
+     1791215880253,
+     -2391.53
     ],
     [
      1791224649060,
@@ -9201,20 +9994,20 @@
      -2444.22
     ],
     [
-     1791382149810,
-     -2411.31
+     1791388920560,
+     -2394.68
     ],
     [
-     1791442806399,
-     -2447.08
+     1791484467201,
+     -2134.08
     ],
     [
-     1791641078245,
-     -2199.14
+     1791666878880,
+     -2195.19
     ],
     [
-     1791891162876,
-     -2181.71
+     1791897943742,
+     -2202.97
     ],
     [
      1792052743682,
@@ -9225,60 +10018,81 @@
      -2024.93
     ],
     [
-     1792345674169,
-     -1913.49
+     1792346416628,
+     -1930.15
     ],
     [
-     1792416613264,
-     -1852.27
+     1792433244820,
+     -1865.18
     ],
     [
-     1792527088257,
-     -1635.16
+     1792590446804,
+     -1656.35
     ],
     [
-     1793037339409,
-     -1228.27
+     1793098668666,
+     -1206.84
     ],
     [
-     1793108315561,
-     -1267.88
+     1793174312154,
+     -1402.33
     ],
     [
      1793193318731,
      -1495.95
     ],
     [
-     1793211240316,
-     -1426.92
+     1793257984600,
+     -1333.12
     ],
     [
-     1793283054806,
-     -1425.91
+     1793283960706,
+     -1424.99
     ],
     [
-     1793493300767,
-     -656.9
+     1793522032492,
+     -679.4
     ],
     [
-     1793616612763,
-     -645.39
+     1793621743855,
+     -647.2
     ],
     [
-     1793650184105,
-     -645.41
+     1793701311730,
+     -659.74
     ]
    ],
    "depois": {
-    "n": 0
+    "acerto": 0.0,
+    "dias": 1.0,
+    "duracao_mediana_min": 16.0,
+    "fator_lucro": 0.0,
+    "ganho_medio": 0,
+    "liquidacoes": 0,
+    "maker": 0.0,
+    "metade1": 0,
+    "metade2": -14.33,
+    "n": 1,
+    "p": 1.0,
+    "perda_media": -14.33,
+    "peso_top5": null,
+    "por_dia": 1.0,
+    "queda_max": 14.33,
+    "resultado": -14.33,
+    "retorno_medio": -0.00377,
+    "sem_melhor": 0.0,
+    "semanas": 1,
+    "semanas_positivas": 0.0,
+    "t": 0,
+    "taxas": 0.63
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 14.75,
+    "alavancagem_mediana": 14.99,
     "dias_semana": [
      84,
-     60,
+     61,
      69,
      43,
      36,
@@ -9286,7 +10100,7 @@
      38
     ],
     "duracao_min": {
-     "mediana": 39.5,
+     "mediana": 39.4,
      "p25": 9.1,
      "p75": 121.9
     },
@@ -9298,7 +10112,7 @@
      31,
      29,
      25,
-     16,
+     17,
      27,
      20,
      22,
@@ -9316,7 +10130,7 @@
      0,
      1
     ],
-    "long": 0.403,
+    "long": 0.402,
     "moedas": [
      [
       "BTC",
@@ -9324,7 +10138,7 @@
      ],
      [
       "xyz:BRENTOIL",
-      125
+      126
      ],
      [
       "xyz:XYZ100",
@@ -9335,34 +10149,34 @@
     "pistas": [],
     "preco_medio": 0.051,
     "saida_ganho_limitada": 0.039,
-    "saida_perda_a_mercado": 0.878,
-    "tamanho_medio": 9658.18,
-    "tamanho_variacao": 0.415,
+    "saida_perda_a_mercado": 0.879,
+    "tamanho_medio": 9641.5,
+    "tamanho_variacao": 0.417,
     "tamanho_x_saldo": null
    },
    "geral": {
-    "acerto": 0.303,
-    "dias": 75.1,
-    "duracao_mediana_min": 39.5,
-    "fator_lucro": 0.92,
+    "acerto": 0.302,
+    "dias": 75.7,
+    "duracao_mediana_min": 39.4,
+    "fator_lucro": 0.91,
     "ganho_medio": 66.33,
     "liquidacoes": 1,
     "maker": 0.107,
     "metade1": -2460.54,
-    "metade2": 1815.13,
-    "n": 350,
-    "p": 0.4814,
-    "perda_media": -31.46,
+    "metade2": 1800.8,
+    "n": 351,
+    "p": 0.5049,
+    "perda_media": -31.39,
     "peso_top5": null,
-    "por_dia": 4.66,
+    "por_dia": 4.64,
     "queda_max": 3001.62,
-    "resultado": -645.41,
-    "retorno_medio": 1e-05,
-    "sem_melhor": -1435.66,
+    "resultado": -659.74,
+    "retorno_medio": 0.0,
+    "sem_melhor": -1449.99,
     "semanas": 12,
     "semanas_positivas": 0.417,
-    "t": 0.03,
-    "taxas": 1972.25
+    "t": 0.0,
+    "taxas": 1972.88
    },
    "motivo": "no prejuízo depois das taxas",
    "na_entrada": {
@@ -9376,25 +10190,53 @@
     "week_pnl": 606.2079,
     "week_roi": 0.0298
    },
-   "nota": 0.03,
-   "q": 0.5616,
+   "nota": 0,
+   "operador": {
+    "nota": 6,
+    "ordens": 644,
+    "ordens_por_dia": 8.5,
+    "rotulo": "Humano provável",
+    "sinais": [
+     {
+      "leitura": "fica sempre as mesmas horas do dia sem operar, como quem dorme",
+      "nome": "Horário de dormir",
+      "pontos": -18,
+      "valor": "5 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "17 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "6% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 2/min"
+     },
+     {
+      "leitura": "digita tamanhos redondos (0,5 · 100 · 1.000), jeito de pessoa",
+      "nome": "Tamanho redondo",
+      "pontos": -15,
+      "valor": "62% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "1% no intervalo mais comum"
+     }
+    ]
+   },
+   "q": 0.589,
    "recentes": [
-    {
-     "duracao_min": 518.5,
-     "entrada": 78053.0,
-     "fills": 2,
-     "lado": "short",
-     "liquidada": false,
-     "moeda": "BTC",
-     "nocional": 7805.3,
-     "ordens_entrada": 1,
-     "parcial": false,
-     "resultado": 12.5,
-     "retorno": 0.0016,
-     "saida": 77864.0,
-     "t0": 1793542922254,
-     "t1": 1793574029907
-    },
     {
      "duracao_min": 4.9,
      "entrada": 110.23,
@@ -9618,9 +10460,25 @@
      "saida": 76929.9397,
      "t0": 1793649139865,
      "t1": 1793650184105
+    },
+    {
+     "duracao_min": 16.0,
+     "entrada": 105.51,
+     "fills": 2,
+     "lado": "short",
+     "liquidada": false,
+     "moeda": "xyz:BRENTOIL",
+     "nocional": 3804.69,
+     "ordens_entrada": 1,
+     "parcial": false,
+     "resultado": -14.33,
+     "retorno": -0.00377,
+     "saida": 105.89,
+     "t0": 1793700350215,
+     "t1": 1793701311730
     }
    ],
-   "saldo": 528.97,
+   "saldo": 503.84,
    "situacao": "observando"
   },
   {
@@ -9932,7 +10790,7 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
     "alavancagem_mediana": null,
     "dias_semana": [
@@ -10048,6 +10906,50 @@
     "week_roi": 0.0579
    },
    "nota": -1.67,
+   "operador": {
+    "nota": 43,
+    "ordens": 383,
+    "ordens_por_dia": 4.5,
+    "rotulo": "Indefinido",
+    "sinais": [
+     {
+      "leitura": "não tem um horário claro de parada",
+      "nome": "Horário de dormir",
+      "pontos": 4,
+      "valor": "4 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "17 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "6% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 3/min"
+     },
+     {
+      "leitura": "mistura de redondos e quebrados",
+      "nome": "Tamanho redondo",
+      "pontos": 0,
+      "valor": "40% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "3% no intervalo mais comum"
+     }
+    ]
+   },
    "q": 0.994,
    "recentes": [
     {
@@ -10315,32 +11217,32 @@
     {
      "duracao_min": 0.0,
      "entrada": 1.459688,
-     "fills": 569,
+     "fills": 572,
      "lado": "short",
      "liquidada": true,
      "moeda": "XRP",
      "nocional": 5558545.46,
      "ordens_entrada": 135,
      "parcial": false,
-     "resultado": 492210.1,
-     "retorno": 0.08855,
-     "saida": 1.410417,
+     "resultado": 492454.99,
+     "retorno": 0.08859,
+     "saida": 1.410376,
      "t0": 1790771746304,
      "t1": null
     },
     {
      "duracao_min": 0.0,
      "entrada": 82948.55313,
-     "fills": 174,
+     "fills": 175,
      "lado": "short",
      "liquidada": true,
      "moeda": "BTC",
      "nocional": 4307101.96,
      "ordens_entrada": 92,
      "parcial": false,
-     "resultado": 35520.06,
-     "retorno": 0.00825,
-     "saida": 83024.03796,
+     "resultado": 36941.83,
+     "retorno": 0.00858,
+     "saida": 83006.962559,
      "t0": 1791293792967,
      "t1": null
     },
@@ -10651,9 +11553,9 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
-    "alavancagem_mediana": 7.22,
+    "alavancagem_mediana": 7.3,
     "dias_semana": [
      61,
      55,
@@ -10770,6 +11672,50 @@
     "week_roi": 0.2647
    },
    "nota": -2.64,
+   "operador": {
+    "nota": 29,
+    "ordens": 2645,
+    "ordens_por_dia": 29.3,
+    "rotulo": "Humano provável",
+    "sinais": [
+     {
+      "leitura": "fica sempre as mesmas horas do dia sem operar, como quem dorme",
+      "nome": "Horário de dormir",
+      "pontos": -18,
+      "valor": "5 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "18 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "5% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 5/min"
+     },
+     {
+      "leitura": "tamanhos quebrados (0,4873...): calculados por programa ou digitados em dólares",
+      "nome": "Tamanho redondo",
+      "pontos": 8,
+      "valor": "3% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "4% no intervalo mais comum"
+     }
+    ]
+   },
    "q": 0.994,
    "recentes": [
     {
@@ -11013,7 +11959,7 @@
      "t1": 1793582569058
     }
    ],
-   "saldo": 1086477.29,
+   "saldo": 1036670.37,
    "situacao": "observando"
   },
   {
@@ -11292,7 +12238,7 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
     "alavancagem_mediana": null,
     "dias_semana": [
@@ -11408,6 +12354,50 @@
     "week_roi": 0.0078
    },
    "nota": 18.3,
+   "operador": {
+    "nota": 87,
+    "ordens": 10000,
+    "ordens_por_dia": 357.0,
+    "rotulo": "Robô provável",
+    "sinais": [
+     {
+      "leitura": "opera em todas as horas do dia, inclusive de madrugada",
+      "nome": "Horário de dormir",
+      "pontos": 18,
+      "valor": "nenhuma hora parada"
+     },
+     {
+      "leitura": "ordens espalhadas pelo dia inteiro",
+      "nome": "Horas ativas",
+      "pontos": 8,
+      "valor": "24 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "6% das ordens"
+     },
+     {
+      "leitura": "chegou a 28 ordens num minuto (ou usa ordens escalonadas do site)",
+      "nome": "Rajadas",
+      "pontos": 10,
+      "valor": "pico de 28/min"
+     },
+     {
+      "leitura": "tamanhos quebrados (0,4873...): calculados por programa ou digitados em dólares",
+      "nome": "Tamanho redondo",
+      "pontos": 8,
+      "valor": "8% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "30% no intervalo mais comum"
+     }
+    ]
+   },
    "q": null,
    "recentes": [
     {
@@ -11979,7 +12969,7 @@
     "n": 0
    },
    "desde": "2026-11-02",
-   "dias_observada": 0.2,
+   "dias_observada": 0.5,
    "estilo": {
     "alavancagem_mediana": 9.33,
     "dias_semana": [
@@ -12095,6 +13085,50 @@
     "week_roi": 0.3228
    },
    "nota": 3.83,
+   "operador": {
+    "nota": 51,
+    "ordens": 1115,
+    "ordens_por_dia": 12.5,
+    "rotulo": "Indefinido",
+    "sinais": [
+     {
+      "leitura": "não tem um horário claro de parada",
+      "nome": "Horário de dormir",
+      "pontos": 4,
+      "valor": "3 h seguidas paradas"
+     },
+     {
+      "leitura": "meio-termo",
+      "nome": "Horas ativas",
+      "pontos": 0,
+      "valor": "17 de 24"
+     },
+     {
+      "leitura": "nada de especial (o acaso dá uns 5 %)",
+      "nome": "Fechamento de vela",
+      "pontos": -4,
+      "valor": "5% das ordens"
+     },
+     {
+      "leitura": "ritmo que dá para fazer na mão",
+      "nome": "Rajadas",
+      "pontos": -4,
+      "valor": "pico de 11/min"
+     },
+     {
+      "leitura": "tamanhos quebrados (0,4873...): calculados por programa ou digitados em dólares",
+      "nome": "Tamanho redondo",
+      "pontos": 8,
+      "valor": "6% das ordens"
+     },
+     {
+      "leitura": "intervalos variados",
+      "nome": "Intervalos regulares",
+      "pontos": -3,
+      "valor": "10% no intervalo mais comum"
+     }
+    ]
+   },
    "q": null,
    "recentes": [
     {
@@ -12342,9 +13376,47 @@
    "situacao": "descartada"
   }
  ],
+ "config": {
+  "classificacao": {
+   "dias_para_descartar": 21,
+   "fator_lucro_minimo": 1.3,
+   "min_operacoes": 30,
+   "min_operacoes_acompanhadas": 20,
+   "q_maximo_habilidade": 0.1,
+   "q_maximo_promissora": 0.25,
+   "semanas_positivas_minimo": 0.6
+  },
+  "copiavel": {
+   "duracao_mediana_minima_min": 5,
+   "max_maker_com_duracao_curta": 0.9,
+   "max_operacoes_por_dia": 60
+  },
+  "dias_de_historico_ao_entrar": 90,
+  "filtro": {
+   "conta_minima": 10000,
+   "exigir_pnl_total_positivo": true,
+   "giro_mes_maximo": 400,
+   "roi_mes_maximo": 3.0,
+   "roi_mes_minimo": 0.03,
+   "volume_mes_minimo": 200000
+  },
+  "max_carteiras": 120,
+  "novas_por_dia": 25,
+  "peso_por_minuto": 1000
+ },
+ "criterios_operador": [
+  "Horário de dormir: maior bloco de horas seguidas com menos de 1 % das ordens (com 100 ordens ou mais). 5 h ou mais = humano (−18); nenhuma hora parada com 200 ordens ou mais = robô (+18); senão +4.",
+  "Horas ativas: horas do dia com pelo menos 2 % das ordens. 20 ou mais = robô (+8); 12 ou menos = humano (−8).",
+  "Fechamento de vela: ordens nos segundos 0 a 2 do minuto. 25 % ou mais = robô (+22); 12 % ou mais = +8; o acaso dá uns 5 %.",
+  "Rajadas: ordens em moedas diferentes no mesmo segundo (5 % ou mais = +15) e 20 ou mais ordens num minuto (+10).",
+  "Tamanho redondo: quantidade ou valor com até 2 algarismos significativos. 60 % ou mais = humano (−15); 20 % ou menos = robô (+8).",
+  "Intervalos regulares: se 20 % ou mais das pausas têm o mesmo tamanho (±5 s): até 30 s = fatias de ordem grande (+5); mais que isso = agenda fixa de robô (+15).",
+  "ID próprio na ordem (cloid): 80 % ou mais = +10; 10 % ou menos = −5 (só nos dados coletados a partir de 03/11).",
+  "A nota começa em 50 e soma os pontos: 65 ou mais = Robô provável; 35 ou menos = Humano provável; entre os dois = Indefinido. Precisa de pelo menos 20 ordens."
+ ],
  "descartadas": 2,
- "gerado": 1793676714390,
- "gerado_txt": "2026-11-03 03:31 UTC",
+ "gerado": 1793702635513,
+ "gerado_txt": "2026-11-03 10:43 UTC",
  "nomes": {
   "habilidade": "Habilidade provável",
   "nao_copiavel": "Não dá para copiar",
@@ -12363,11 +13435,11 @@
  },
  "ultima_coleta": {
   "carteiras": 23,
-  "em": 1793676706528,
+  "em": 1793702628112,
   "erros": 0,
-  "fills_novos": 179,
+  "fills_novos": 271,
   "minutos": 0.1,
-  "peso_gasto": 520
+  "peso_gasto": 524
  },
  "ultimo_filtro": {
   "ativas": 25,

@@ -80,7 +80,22 @@ sobra o funding (pago de hora em hora; positivo = quem está vendido recebe). Ca
 Mostra o "teste no passado" (últimos 30 dias, refeito a cada hora) e o "ao vivo" (desde 03/11/2026).
 Grava `saida/funding.json`. Os números ficam em `config.json → lab.funding` (se não estiver lá, vale o padrão do código).
 
-Próximos: robôs de grade e DCA, cofres da Hyperliquid, pools de liquidez e empréstimo em cascata.
+**2. Grade e DCA (`lab/grade.py`)** — velas de 1 h da Hyperliquid (~200 dias) de BTC, ETH, SOL e HYPE.
+16 configurações por moeda (grade ±10/±20 %, 10/20 degraus, 1×/3×; DCA a cada −2/−3 %, alvo +1,5/+3 %, 1×/3×).
+As 2 melhores grades e os 2 melhores DCA (retorno por pior queda, sem liquidação) seguem ao vivo desde o primeiro dia.
+Taxas: limitada 0,015 %, a mercado 0,045 %. Conservador: nunca compra e vende o mesmo degrau na mesma hora. → `saida/grade.json`
+
+**3. Cofres (`lab/cofres.py`)** — a cada 6 h: lista pública de cofres; os 40 maiores (abertos, US$ 100 mil+, 60 dias+)
+com histórico; índice de rendimento que ignora depósitos e saques; constante = p ≤ 0,05, pior queda ≤ 20 %,
+60 % das semanas no azul. Depósito simulado de US$ 1.000 nos 5 mais constantes + HLP, menos 10 % do lucro para o dono. → `saida/cofres.json`
+
+**4. Pools e looping (`lab/pools.py`)** — a cada 12 h, DefiLlama: pools de estáveis e de duas moedas voláteis
+(US$ 5 mi+, 30 dias de dados), só o rendimento de taxas (o de prêmio fica à parte), perda impermanente de 30 dias com
+o preço das moedas; looping de wstETH/weETH/rETH/cbETH contra ETH nos protocolos de empréstimo (2×, 3×, 4×) e o
+descolamento que liquida. Carteira simulada: 3 estáveis + 3 voláteis + o melhor looping. → `saida/pools.json`
+
+**5. Opções (`lab/opcoes.py`)** — de hora em hora, dados públicos da Deribit: vende put semanal ~10 % abaixo e call
+coberta ~10 % acima, em BTC e ETH, US$ 1.000 cada; vende pelo bid, paga a taxa e liquida no preço de entrega. → `saida/opcoes.json`
 
 ## Arquivos
 

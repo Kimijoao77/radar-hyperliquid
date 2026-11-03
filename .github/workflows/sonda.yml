@@ -1,0 +1,26 @@
+name: Sonda
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  sonda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - run: python lab/sonda.py
+      - name: Guardar
+        run: |
+          git config user.name "radar-bot"
+          git config user.email "radar-bot@users.noreply.github.com"
+          git add lab/amostras
+          git commit -q -m "Sonda: amostras das APIs" || exit 0
+          for i in 1 2 3 4 5; do git push -q && exit 0; git pull -q --rebase; done

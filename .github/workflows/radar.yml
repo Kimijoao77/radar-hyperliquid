@@ -1,8 +1,6 @@
 name: Radar
 
-on:
-  schedule:
-    - cron: "23 * * * *"     # de hora em hora (minuto 23, longe da hora cheia)
+on:   # só na mão: quem roda de hora em hora é o robos.yml
   workflow_dispatch: {}
 
 concurrency:

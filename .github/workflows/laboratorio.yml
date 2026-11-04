@@ -1,8 +1,6 @@
 name: Laboratório
 
-on:
-  schedule:
-    - cron: "41 * * * *"     # de hora em hora (minuto 41; o Radar roda no 23)
+on:   # só na mão: quem roda de hora em hora é o robos.yml
   workflow_dispatch: {}
 
 concurrency:

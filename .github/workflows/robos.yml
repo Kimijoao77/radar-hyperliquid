@@ -1,0 +1,33 @@
+name: Robôs (de hora em hora)
+
+# O agendamento do GitHub atrasa ou pula horas (em 03-04/11 rodou a cada 4 a 7 h). Por isso este fluxo fica ligado
+# ~5 h 30 min rodando o radar e o laboratório de hora em hora e, no fim, chama a si mesmo de novo. O agendamento
+# abaixo é só o reserva: se a corrente quebrar, ele recomeça na próxima vez que o GitHub disparar.
+on:
+  schedule:
+    - cron: "7 */2 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: robos
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  robos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Rodar de hora em hora por ~5 h 30 min
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash ciclo.sh

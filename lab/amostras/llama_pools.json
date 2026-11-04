@@ -1,0 +1,134 @@
+{
+ "status": 200,
+ "url": "https://yields.llama.fi/pools",
+ "corpo": {
+  "status": "success",
+  "data": {
+   "_tamanho": 15949,
+   "_amostra": [
+    {
+     "chain": "Ethereum",
+     "project": "lido",
+     "symbol": "STETH",
+     "tvlUsd": 22066337989,
+     "apyBase": 2.3002,
+     "apyReward": null,
+     "apy": 2.3002,
+     "rewardTokens": null,
+     "pool": "747c1d2a-c668-4682-b9f9-296708a3dd90",
+     "apyPct1D": 0.022,
+     "apyPct7D": 0.02865,
+     "apyPct30D": 0.1252,
+     "stablecoin": false,
+     "ilRisk": "no",
+     "exposure": "single",
+     "predictions": {
+      "predictedClass": "Stable/Up",
+      "predictedProbability": 71,
+      "binnedConfidence": 2
+     },
+     "poolMeta": null,
+     "mu": 3.39991,
+     "sigma": 0.05576,
+     "count": 1613,
+     "outlier": false,
+     "underlyingTokens": {
+      "_tamanho": 1,
+      "_amostra": [
+       "0x0000000000000000000000000000000000000000"
+      ]
+     },
+     "il7d": null,
+     "apyBase7d": null,
+     "apyMean30d": 2.64263,
+     "volumeUsd1d": null,
+     "volumeUsd7d": null,
+     "apyBaseInception": null
+    },
+    {
+     "chain": "Ethereum",
+     "project": "binance-staked-eth",
+     "symbol": "WBETH",
+     "tvlUsd": 8376756479,
+     "apyBase": 2.20205,
+     "apyReward": null,
+     "apy": 2.20205,
+     "rewardTokens": null,
+     "pool": "80b8bf92-b953-4c20-98ea-c9653ef2bb98",
+     "apyPct1D": 0.0084,
+     "apyPct7D": 0.02555,
+     "apyPct30D": 0.0533,
+     "stablecoin": false,
+     "ilRisk": "no",
+     "exposure": "single",
+     "predictions": {
+      "predictedClass": "Stable/Up",
+      "predictedProbability": 67,
+      "binnedConfidence": 2
+     },
+     "poolMeta": null,
+     "mu": 2.9074,
+     "sigma": 0.03071,
+     "count": 1234,
+     "outlier": false,
+     "underlyingTokens": {
+      "_tamanho": 1,
+      "_amostra": [
+       "0x0000000000000000000000000000000000000000"
+      ]
+     },
+     "il7d": null,
+     "apyBase7d": null,
+     "apyMean30d": 2.39008,
+     "volumeUsd1d": null,
+     "volumeUsd7d": null,
+     "apyBaseInception": null
+    },
+    {
+     "chain": "Ethereum",
+     "project": "ether.fi-stake",
+     "symbol": "WEETH",
+     "tvlUsd": 5029249426,
+     "apyBase": 2.78035,
+     "apyReward": 0,
+     "apy": 2.78035,
+     "rewardTokens": {
+      "_tamanho": 1,
+      "_amostra": [
+       "0x8F08B70456eb22f6109F57b8fafE862ED28E6040"
+      ]
+     },
+     "pool": "46bd2bdf-6d92-4066-b482-e885ee172264",
+     "apyPct1D": 0.04185,
+     "apyPct7D": 0.46694,
+     "apyPct30D": 0.43912,
+     "stablecoin": false,
+     "ilRisk": "no",
+     "exposure": "single",
+     "predictions": {
+      "predictedClass": "Stable/Up",
+      "predictedProbability": 64,
+      "binnedConfidence": 2
+     },
+     "poolMeta": null,
+     "mu": 3.0329,
+     "sigma": 0.08435,
+     "count": 881,
+     "outlier": false,
+     "underlyingTokens": {
+      "_tamanho": 1,
+      "_amostra": [
+       "0x0000000000000000000000000000000000000000"
+      ]
+     },
+     "il7d": null,
+     "apyBase7d": 2.78035,
+     "apyMean30d": 2.32215,
+     "volumeUsd1d": null,
+     "volumeUsd7d": null,
+     "apyBaseInception": null
+    }
+   ]
+  }
+ }
+}

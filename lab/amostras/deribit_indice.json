@@ -1,0 +1,15 @@
+{
+ "status": 200,
+ "url": "https://www.deribit.com/api/v2/public/get_index_price?index_name=btc_usd",
+ "corpo": {
+  "jsonrpc": "2.0",
+  "result": {
+   "estimated_delivery_price": 77489.16,
+   "index_price": 77489.16
+  },
+  "usIn": 1793722344048444,
+  "usOut": 1793722344048780,
+  "usDiff": 336,
+  "testnet": false
+ }
+}

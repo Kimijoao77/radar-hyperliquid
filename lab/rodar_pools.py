@@ -103,9 +103,12 @@ def main(raiz: Path = RAIZ, get=_get) -> int:
             item["valor"] = round(parte * v, 2)
         carteira.append(item)
     total = sum(c["valor"] for c in carteira)
+    # guarda um ponto por rodada (resultado da carteira) para o app desenhar a linha; acumula o teste inteiro
+    est.setdefault("curva", []).append([agora, round(total, 2)])
+    est["curva"] = est["curva"][-1500:]
     rel = {"gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
            "total_pools": len(pools), "parametros": f, "estaveis": est_l, "volateis": vol_l, "loops": lp[:8],
-           "carteira": {"inicio": est["inicio"], "capital": 1000, "saldo": round(total, 2), "lucro": round(total - 1000, 2), "itens": carteira}}
+           "carteira": {"inicio": est["inicio"], "capital": 1000, "saldo": round(total, 2), "lucro": round(total - 1000, 2), "itens": carteira, "curva": est["curva"]}}
     est["ultima"] = agora
     saida.parent.mkdir(exist_ok=True)
     saida.write_text(json.dumps(rel, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

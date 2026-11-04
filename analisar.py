@@ -3,6 +3,7 @@ descreve o estilo e grava saida/relatorio.json (o Nexus lê esse arquivo) e said
 """
 from __future__ import annotations
 
+from radar import proxima_segunda
 import sys
 from datetime import datetime, timezone
 
@@ -107,7 +108,7 @@ def main() -> int:
         "recusadas": sum(1 for c in lista.values() if c.get("situacao") == "recusada"),
         "por_classe": cont, "nomes": NOMES,
         "ultimo_filtro": est.get("ultimo_filtro"), "ultima_coleta": est.get("ultima_coleta"),
-        "triagem": est.get("triagem"), "fila": len(est.get("fila", [])), "proxima_triagem": est.get("leaderboard_em", 0) + 7 * DIA_MS,
+        "triagem": est.get("triagem"), "fila": len(est.get("fila", [])), "proxima_triagem": proxima_segunda(est.get("leaderboard_em", 0)),
         "carteiras": saida,
         "config": {k: v for k, v in cfg.items() if not k.startswith("_")},
         "criterios_operador": CRITERIOS,

@@ -8,6 +8,7 @@
 """
 from __future__ import annotations
 
+from radar import proxima_segunda
 import sys
 import time
 
@@ -72,7 +73,8 @@ def main(limite_min: float = 20.0) -> int:
     tempo = lambda: time.monotonic() - inicio < limite_min * 60  # noqa: E731
 
     # 1. leaderboard e fila de triagem, uma vez por semana
-    if "fila" not in est or agora - est.get("leaderboard_em", 0) > 7 * DIA_MS - 2 * 3600 * 1000:   # sem "fila": 1ª rodada do plano
+    # carteiras novas: toda segunda-feira às 06:00 de Brasília (o robô roda de hora em hora e pega a primeira rodada depois disso)
+    if "fila" not in est or agora >= proxima_segunda(est.get("leaderboard_em", 0)):   # sem "fila": 1ª rodada do plano
         try:
             linhas = api.leaderboard()
             fila, r = montar_fila(lista, linhas, cfg, agora)

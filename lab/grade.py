@@ -37,7 +37,7 @@ def _pontos(ts: list[int], curva: list[float], n: int = 80) -> list[list]:
     return out
 
 
-def grade(velas: list[dict], faixa: float, niveis: int, alav: float = 1.0, capital: float = 1000.0) -> dict:
+def grade(velas: list[dict], faixa: float, niveis: int, alav: float = 1.0, capital: float = 1000.0, ops: list | None = None) -> dict:
     """Grade "neutra" de compra: faixa ±faixa em volta do preço de abertura da primeira vela."""
     p0 = float(velas[0]["o"])
     baixo, alto = p0 * (1 - faixa), p0 * (1 + faixa)
@@ -52,6 +52,9 @@ def grade(velas: list[dict], faixa: float, niveis: int, alav: float = 1.0, capit
             segura.append(True)
         else:
             segura.append(False)
+    if ops is not None and any(segura):
+        n0 = sum(segura)
+        ops.append({"t": int(velas[0]["t"]), "tipo": "compra", "px": p0, "valor": round(qtd * p0 * n0, 2), "obs": f"{n0} degraus de começo"})
     ciclos, lucro_grade, fora, liquidada = 0, 0.0, 0, False
     curva, ts = [], []
     for v in velas:
@@ -65,11 +68,15 @@ def grade(velas: list[dict], faixa: float, niveis: int, alav: float = 1.0, capit
                 vendeu.add(i)
                 ciclos += 1
                 lucro_grade += qtd * (L[i + 1] - L[i])
+                if ops is not None:
+                    ops.append({"t": int(v["t"]), "tipo": "venda", "px": L[i + 1], "valor": round(qtd * L[i + 1], 2), "lucro": round(qtd * (L[i + 1] - L[i]) - qtd * (L[i] + L[i + 1]) * MAKER, 2)})
         for i in range(niveis):                               # depois as compras (não no degrau que acabou de vender)
             if not segura[i] and i not in vendeu and lo <= L[i]:
                 caixa -= qtd * L[i] * (1 + MAKER)
                 moeda += qtd
                 segura[i] = True
+                if ops is not None:
+                    ops.append({"t": int(v["t"]), "tipo": "compra", "px": L[i], "valor": round(qtd * L[i], 2)})
         if c < baixo or c > alto:
             fora += 1
         patrimonio = caixa + moeda * c
@@ -82,7 +89,7 @@ def grade(velas: list[dict], faixa: float, niveis: int, alav: float = 1.0, capit
                                                "fora_da_faixa": round(fora / max(1, len(curva)), 3), "liquidada": liquidada})
 
 
-def dca(velas: list[dict], passo: float, alvo: float, ordens: int = 5, escala: float = 1.5, alav: float = 1.0, capital: float = 1000.0) -> dict:
+def dca(velas: list[dict], passo: float, alvo: float, ordens: int = 5, escala: float = 1.5, alav: float = 1.0, capital: float = 1000.0, ops: list | None = None) -> dict:
     """Robô de DCA comprado: 1 compra base + até `ordens` compras de segurança a cada `passo` de queda; vende com `alvo` de lucro."""
     pesos = [escala ** k for k in range(ordens + 1)]
     base = capital * alav / sum(pesos)
@@ -99,18 +106,24 @@ def dca(velas: list[dict], passo: float, alvo: float, ordens: int = 5, escala: f
             caixa -= q * p_ent / alav + q * p_ent * TAKER
             qtd, gasto, n_comp = q, q * p_ent, 1
             preso_desde = t
+            if ops is not None:
+                ops.append({"t": t, "tipo": "compra", "px": p_ent, "valor": round(q * p_ent, 2), "obs": "compra base"})
         # compras de segurança
         while n_comp <= ordens and lo <= p_ent * (1 - passo * n_comp):
             px = p_ent * (1 - passo * n_comp)
             q = base * pesos[n_comp] / px
             caixa -= q * px / alav + q * px * MAKER
             qtd += q; gasto += q * px; n_comp += 1
+            if ops is not None:
+                ops.append({"t": t, "tipo": "compra", "px": px, "valor": round(q * px, 2), "obs": f"compra de segurança {n_comp - 1}"})
         medio = gasto / qtd
         if hi >= medio * (1 + alvo):                          # alvo: vende tudo
             px = medio * (1 + alvo)
             receita = qtd * px * (1 - MAKER)
             caixa += gasto / alav + (receita - gasto)
             ciclos += 1
+            if ops is not None:
+                ops.append({"t": t, "tipo": "venda", "px": px, "valor": round(receita, 2), "lucro": round(receita - gasto, 2), "obs": "alvo atingido"})
             maior_preso = max(maior_preso, (t - preso_desde) / HORA)
             qtd = gasto = 0.0
             n_comp = 0
@@ -152,10 +165,11 @@ def nome(c: dict) -> str:
     return f"DCA a cada −{round(c['passo'] * 100)} %, alvo +{c['alvo'] * 100:g} %{'' if c['alav'] == 1 else f', {c['alav']}×'}"
 
 
-def rodar(c: dict, velas: list[dict]) -> dict:
+def rodar(c: dict, velas: list[dict], ops: list | None = None) -> dict:
+    """ops: se for uma lista, recebe cada compra e venda (só no ao vivo; no passado seriam milhares)."""
     if c["tipo"] == "grade":
-        return grade(velas, c["faixa"], c["niveis"], c["alav"])
-    return dca(velas, c["passo"], c["alvo"], alav=c["alav"])
+        return grade(velas, c["faixa"], c["niveis"], c["alav"], ops=ops)
+    return dca(velas, c["passo"], c["alvo"], alav=c["alav"], ops=ops)
 
 
 def nota(r: dict) -> float:

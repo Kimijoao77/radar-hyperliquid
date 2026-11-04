@@ -47,13 +47,23 @@ def main(raiz: Path = RAIZ, api=None) -> int:
     ao_vivo = []
     for e in est.get("escolhidas", []):
         vs = [v for v in velas.get(e["moeda"], []) if int(v["t"]) >= est["inicio"]]
-        r = rodar(e["config"], vs) if len(vs) >= 2 else None
+        ops: list = []
+        r = rodar(e["config"], vs, ops) if len(vs) >= 2 else None
+        if r is not None:
+            r["ops"] = ops[-150:]
         ao_vivo.append({"moeda": e["moeda"], "config": e["config"], "nome": nome(e["config"]), "resultado": r})
     for r in passado:   # o app só precisa da curva das melhores
         if r is not passado[0] and r not in passado[:6]:
             r.pop("curva", None)
+    segurar = {}
+    if est.get("inicio"):
+        for m in ("BTC", "ETH"):
+            vs = [v for v in velas.get(m, []) if int(v["t"]) >= est["inicio"]]
+            if vs:
+                p0 = float(vs[0]["o"])
+                segurar[m] = [[est["inicio"], 0.0]] + [[int(v["t"]) + HORA, round(float(v["c"]) / p0 - 1, 5)] for v in vs]
     rel = {"gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-           "inicio_ao_vivo": est.get("inicio"), "moedas": MOEDAS, "capital": 1000, "passado": passado, "ao_vivo": ao_vivo}
+           "inicio_ao_vivo": est.get("inicio"), "moedas": MOEDAS, "capital": 1000, "passado": passado, "ao_vivo": ao_vivo, "segurar": segurar}
     (raiz / "saida").mkdir(exist_ok=True)
     (raiz / "saida" / "grade.json").write_text(json.dumps(rel, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     arq.parent.mkdir(parents=True, exist_ok=True)

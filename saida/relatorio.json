@@ -55,7 +55,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 42,
+     "fotos": 43,
      "posicionado": 0.0
     },
     "conta_ref": 18497.92,
@@ -832,7 +832,7 @@
      "exposicao_max": 3.46,
      "exposicao_mediana": 3.02,
      "exposicao_p90": 3.2,
-     "fotos": 42,
+     "fotos": 43,
      "posicionado": 1.0
     },
     "conta_ref": 49419.14,
@@ -1669,7 +1669,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 43,
+     "fotos": 44,
      "posicionado": 0.0
     },
     "conta_ref": 41195.4,
@@ -2514,11 +2514,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 10,
-     "configurada_mediana": 5.0,
-     "exposicao_max": 7.49,
+     "configurada_mediana": 5,
+     "exposicao_max": 7.56,
      "exposicao_mediana": 5.44,
      "exposicao_p90": 5.7,
-     "fotos": 46,
+     "fotos": 47,
      "posicionado": 1.0
     },
     "conta_ref": 87257.75,
@@ -3284,7 +3284,7 @@
      "t1": 1793900853885
     }
    ],
-   "saldo": 25613.82,
+   "saldo": 25367.44,
    "situacao": "observando"
   },
   {
@@ -3307,15 +3307,15 @@
     },
     {
      "duracao_min": 0.0,
-     "entrada": 616.160972,
-     "fills": 38,
+     "entrada": 616.151239,
+     "fills": 40,
      "lado": "long",
      "liquidada": false,
      "moeda": "XMR",
-     "nocional": 74333.04,
+     "nocional": 74630.09,
      "ordens_entrada": 6,
      "parcial": false,
-     "resultado": -7.88,
+     "resultado": -7.91,
      "retorno": -0.00011,
      "saida": 0.0,
      "t0": 1793897295280,
@@ -3353,11 +3353,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 10,
-     "configurada_mediana": 10,
+     "configurada_mediana": 10.0,
      "exposicao_max": 12.07,
-     "exposicao_mediana": 9.67,
+     "exposicao_mediana": 9.61,
      "exposicao_p90": 10.53,
-     "fotos": 42,
+     "fotos": 43,
      "posicionado": 1.0
     },
     "conta_ref": 104986.05,
@@ -3707,7 +3707,7 @@
    "dias_faltam": 57.9,
    "dias_observada": 2.1,
    "estilo": {
-    "alavancagem_mediana": 9.67,
+    "alavancagem_mediana": 9.61,
     "dias_semana": [
      21,
      52,
@@ -4110,7 +4110,7 @@
      "t1": 1793897070422
     }
    ],
-   "saldo": 73834.88,
+   "saldo": 74245.95,
    "situacao": "observando"
   },
   {
@@ -4183,7 +4183,7 @@
      "exposicao_max": 9.33,
      "exposicao_mediana": 6.66,
      "exposicao_p90": 9.33,
-     "fotos": 44,
+     "fotos": 45,
      "posicionado": 1.0
     },
     "conta_ref": 32172.4,
@@ -5097,10 +5097,10 @@
      "configurada_max": 25,
      "configurada_mediana": 7,
      "exposicao_max": 9.5,
-     "exposicao_mediana": 7.91,
+     "exposicao_mediana": 7.84,
      "exposicao_p90": 9.18,
-     "fotos": 45,
-     "posicionado": 0.933
+     "fotos": 46,
+     "posicionado": 0.935
     },
     "conta_ref": 566588.08,
     "dia0": "2026-08-13",
@@ -5496,7 +5496,7 @@
    "dias_faltam": 57.2,
    "dias_observada": 2.8,
    "estilo": {
-    "alavancagem_mediana": 7.91,
+    "alavancagem_mediana": 7.84,
     "dias_semana": [
      7,
      11,
@@ -5906,27 +5906,11 @@
      "t1": 1793891414047
     }
    ],
-   "saldo": 233785.9,
+   "saldo": 232144.33,
    "situacao": "observando"
   },
   {
    "abertas": [
-    {
-     "duracao_min": 0.0,
-     "entrada": 7469.569614,
-     "fills": 6,
-     "lado": "long",
-     "liquidada": false,
-     "moeda": "xyz:SP500",
-     "nocional": 40074.24,
-     "ordens_entrada": 4,
-     "parcial": false,
-     "resultado": 75.88,
-     "retorno": 0.00189,
-     "saida": 7529.2,
-     "t0": 1793386019924,
-     "t1": null
-    },
     {
      "duracao_min": 0.0,
      "entrada": 89.935,
@@ -5990,6 +5974,22 @@
      "saida": 0.0,
      "t0": 1793901175478,
      "t1": null
+    },
+    {
+     "duracao_min": 0.0,
+     "entrada": 1.2351,
+     "fills": 3,
+     "lado": "long",
+     "liquidada": false,
+     "moeda": "XRP",
+     "nocional": 10014.19,
+     "ordens_entrada": 1,
+     "parcial": false,
+     "resultado": -1.44,
+     "retorno": -0.00014,
+     "saida": 0.0,
+     "t0": 1793901594111,
+     "t1": null
     }
    ],
    "antes": {
@@ -6023,11 +6023,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 40,
-     "configurada_mediana": 25.0,
+     "configurada_mediana": 25,
      "exposicao_max": 10.66,
-     "exposicao_mediana": 9.16,
+     "exposicao_mediana": 9.19,
      "exposicao_p90": 9.84,
-     "fotos": 41,
+     "fotos": 42,
      "posicionado": 1.0
     },
     "conta_ref": 52132.6,
@@ -6410,7 +6410,7 @@
    "dias_faltam": 57.9,
    "dias_observada": 2.1,
    "estilo": {
-    "alavancagem_mediana": 9.16,
+    "alavancagem_mediana": 9.19,
     "dias_semana": [
      19,
      11,
@@ -6530,7 +6530,7 @@
    "nota": 3.47,
    "operador": {
     "nota": 57,
-    "ordens": 1557,
+    "ordens": 1558,
     "ordens_por_dia": 18.5,
     "rotulo": "Indefinido",
     "sinais": [
@@ -6815,7 +6815,7 @@
      "t1": 1793804698146
     }
    ],
-   "saldo": 7949.6,
+   "saldo": 8421.55,
    "situacao": "observando"
   },
   {
@@ -6855,7 +6855,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 46,
+     "fotos": 47,
      "posicionado": null
     },
     "conta_ref": 57964.76,
@@ -7709,15 +7709,15 @@
     },
     {
      "duracao_min": 0.0,
-     "entrada": 0.23858,
-     "fills": 1,
+     "entrada": 0.238838,
+     "fills": 3,
      "lado": "long",
      "liquidada": false,
      "moeda": "JUP",
-     "nocional": 119.29,
-     "ordens_entrada": 1,
+     "nocional": 1194.19,
+     "ordens_entrada": 3,
      "parcial": false,
-     "resultado": -0.04,
+     "resultado": -0.44,
      "retorno": -0.00036,
      "saida": 0.0,
      "t0": 1793901544134,
@@ -7755,11 +7755,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 20,
-     "configurada_mediana": 5.0,
-     "exposicao_max": 5.57,
+     "configurada_mediana": 5,
+     "exposicao_max": 5.65,
      "exposicao_mediana": 4.55,
      "exposicao_p90": 4.9,
-     "fotos": 42,
+     "fotos": 43,
      "posicionado": 1.0
     },
     "conta_ref": 139588.75,
@@ -8201,8 +8201,8 @@
    "nota": 3.0,
    "operador": {
     "nota": 67,
-    "ordens": 5431,
-    "ordens_por_dia": 525.6,
+    "ordens": 5433,
+    "ordens_por_dia": 525.8,
     "rotulo": "Robô provável",
     "sinais": [
      {
@@ -8492,7 +8492,7 @@
      "t1": 1793901327559
     }
    ],
-   "saldo": 8214.14,
+   "saldo": 8257.34,
    "situacao": "observando"
   },
   {
@@ -8532,7 +8532,7 @@
      "exposicao_max": 14.2,
      "exposicao_mediana": 10.05,
      "exposicao_p90": 12.82,
-     "fotos": 42,
+     "fotos": 43,
      "posicionado": 0.957
     },
     "conta_ref": 92824.02,
@@ -9359,11 +9359,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 10,
-     "configurada_mediana": 10,
+     "configurada_mediana": 10.0,
      "exposicao_max": 14.86,
-     "exposicao_mediana": 10.19,
+     "exposicao_mediana": 10.15,
      "exposicao_p90": 12.77,
-     "fotos": 42,
+     "fotos": 43,
      "posicionado": 1.0
     },
     "conta_ref": 10598.8,
@@ -9754,7 +9754,7 @@
    "dias_faltam": 57.9,
    "dias_observada": 2.1,
    "estilo": {
-    "alavancagem_mediana": 10.19,
+    "alavancagem_mediana": 10.15,
     "dias_semana": [
      25,
      21,
@@ -10163,7 +10163,7 @@
      "t1": 1793787945950
     }
    ],
-   "saldo": 1195.06,
+   "saldo": 1221.93,
    "situacao": "observando"
   },
   {
@@ -10220,7 +10220,7 @@
      "exposicao_max": 18.29,
      "exposicao_mediana": 10.74,
      "exposicao_p90": 13.16,
-     "fotos": 46,
+     "fotos": 47,
      "posicionado": 1.0
     },
     "conta_ref": 1957178.2,
@@ -11090,11 +11090,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 6,
-     "configurada_mediana": 6,
+     "configurada_mediana": 6.0,
      "exposicao_max": 8.59,
      "exposicao_mediana": 4.55,
-     "exposicao_p90": 7.2,
-     "fotos": 45,
+     "exposicao_p90": 7.25,
+     "fotos": 46,
      "posicionado": 1.0
     },
     "conta_ref": 10892.55,
@@ -11894,7 +11894,7 @@
      "t1": 1793889626736
     }
    ],
-   "saldo": 4577.01,
+   "saldo": 4521.63,
    "situacao": "observando"
   },
   {
@@ -11995,11 +11995,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 25,
-     "configurada_mediana": 25.0,
+     "configurada_mediana": 25,
      "exposicao_max": 29.79,
-     "exposicao_mediana": 21.77,
-     "exposicao_p90": 25.45,
-     "fotos": 46,
+     "exposicao_mediana": 21.66,
+     "exposicao_p90": 25.18,
+     "fotos": 47,
      "posicionado": 1.0
     },
     "conta_ref": 48203.9,
@@ -12320,7 +12320,7 @@
    "dias_faltam": 57.2,
    "dias_observada": 2.8,
    "estilo": {
-    "alavancagem_mediana": 21.77,
+    "alavancagem_mediana": 21.66,
     "dias_semana": [
      2,
      4,
@@ -12730,7 +12730,7 @@
      "t1": 1793806718971
     }
    ],
-   "saldo": 44791.69,
+   "saldo": 45118.1,
    "situacao": "observando"
   },
   {
@@ -12787,7 +12787,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 45,
+     "fotos": 46,
      "posicionado": null
     },
     "conta_ref": 216909.98,
@@ -13778,7 +13778,7 @@
      1.0,
      0.000708,
      0.00132,
-     9.16
+     9.19
     ],
     "0x24fb52e17e3d4fd62a119b8f53c1a3f3bfe65c2f": [
      -0.090976,
@@ -13786,7 +13786,7 @@
      1.0,
      0.00064,
      0.001706,
-     7.91
+     7.84
     ],
     "0x30a68666b5f91348e7fc78785802e0769d86e62b": [
      -0.254634,
@@ -13794,7 +13794,7 @@
      1.0,
      0.000742,
      0.001978,
-     21.77
+     21.66
     ],
     "0x3cc561c1276cccf56d74cc6d65c516ef88a998d2": [
      -0.048612,
@@ -13850,7 +13850,7 @@
      1.0,
      0.013767,
      0.025993,
-     9.67
+     9.61
     ],
     "0xccf595171e2e56655fb4d386b7424da16be69d42": [
      0.012522,
@@ -13874,7 +13874,7 @@
      1.0,
      0.002982,
      0.006195,
-     10.19
+     10.15
     ]
    },
    "2026-11-05": {
@@ -13908,7 +13908,7 @@
      1.0,
      0.000708,
      0.00132,
-     9.16
+     9.19
     ],
     "0x24fb52e17e3d4fd62a119b8f53c1a3f3bfe65c2f": [
      0.22759,
@@ -13916,7 +13916,7 @@
      1.0,
      0.00064,
      0.001706,
-     7.91
+     7.84
     ],
     "0x30a68666b5f91348e7fc78785802e0769d86e62b": [
      0.0,
@@ -13924,7 +13924,7 @@
      1.0,
      0.000742,
      0.001978,
-     21.77
+     21.66
     ],
     "0x3cc561c1276cccf56d74cc6d65c516ef88a998d2": [
      0.0,
@@ -13980,7 +13980,7 @@
      1.0,
      0.013767,
      0.025993,
-     9.67
+     9.61
     ],
     "0xccf595171e2e56655fb4d386b7424da16be69d42": [
      0.00239,
@@ -14004,7 +14004,7 @@
      1.0,
      0.002982,
      0.006195,
-     10.19
+     10.15
     ]
    }
   },
@@ -14022,8 +14022,8 @@
  ],
  "descartadas": 16,
  "fila": 0,
- "gerado": 1793901556394,
- "gerado_txt": "2026-11-05 17:59 UTC",
+ "gerado": 1793901652681,
+ "gerado_txt": "2026-11-05 18:00 UTC",
  "nomes": {
   "habilidade": "Habilidade provável",
   "observando": "Em observação",
@@ -14050,12 +14050,12 @@
  },
  "ultima_coleta": {
   "carteiras": 16,
-  "em": 1793901551621,
+  "em": 1793901648059,
   "erros": 0,
   "fila": 0,
-  "fills_novos": 152,
+  "fills_novos": 7,
   "minutos": 0.1,
-  "peso_gasto": 364
+  "peso_gasto": 355
  },
  "ultimo_filtro": {
   "cortes": {

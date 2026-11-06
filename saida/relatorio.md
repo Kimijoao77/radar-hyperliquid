@@ -1,11 +1,11 @@
-# Radar Hyperliquid — 2026-11-06 05:04 UTC
+# Radar Hyperliquid — 2026-11-06 06:04 UTC
 
 No radar: 15 carteiras promissoras (17 descartadas, 53 recusadas na triagem).
 
-- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 5232 operações, resultado US$ 14,266, acerto 82 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 5238 operações, resultado US$ 14,294, acerto 82 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0x0526345bf8e09eb32256008c2844c8949ee3bb9a`  — 2970 operações, resultado US$ 13,136, acerto 83 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0xccf595171e2e56655fb4d386b7424da16be69d42`  — 620 operações, resultado US$ 24,903, acerto 96 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0xf24504bb689f1461fbfd89712eb4872130ed4e47`  — 354 operações, resultado US$ 81,938, acerto 54 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0xf24504bb689f1461fbfd89712eb4872130ed4e47`  — 356 operações, resultado US$ 81,800, acerto 53 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0xc3d101ae37bba62baf199c6d5e5d8f0eecfd200e`  — 210 operações, resultado US$ 77,053, acerto 56 %, q = 0.0225. lucro consistente (q = 0,022) e continuou ganhando depois que entrou no radar
 - **Promissora** `0x4276dcb71aa01041cecdac9eca20d621825927f1`  — 330 operações, resultado US$ 20,422, acerto 57 %, q = 0.0006. números fortes (q = menos de 0,001), falta confirmar no período acompanhado (13/20 operações)
 - **Promissora** `0x24fb52e17e3d4fd62a119b8f53c1a3f3bfe65c2f`  — 75 operações, resultado US$ 1,276,554, acerto 60 %, q = 0.0013. números fortes (q = 0,001), falta confirmar no período acompanhado (8/20 operações)

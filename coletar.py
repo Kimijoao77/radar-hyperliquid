@@ -73,7 +73,7 @@ def main(limite_min: float = 20.0) -> int:
     tempo = lambda: time.monotonic() - inicio < limite_min * 60  # noqa: E731
 
     # 1. leaderboard e fila de triagem, uma vez por semana
-    # carteiras novas: toda segunda-feira às 06:00 de Brasília (o robô roda de hora em hora e pega a primeira rodada depois disso)
+    # carteiras novas: toda segunda-feira às 11:00 de Brasília (o robô roda de hora em hora e pega a primeira rodada depois disso)
     if "fila" not in est or agora >= proxima_segunda(est.get("leaderboard_em", 0)):   # sem "fila": 1ª rodada do plano
         try:
             linhas = api.leaderboard()

@@ -12,13 +12,15 @@ import requests
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 
-from lab.concentradas import (API, CAPITAL, FAIXAS, NOMES, POR_FAIXA, VERSAO, abrir, andar, escolher, fechar, num,  # noqa: E402
-                              valor_usd)
+from lab.concentradas import (API, BALANCO_MAX, CAPITAL, FAIXAS, NOMES, POR_FAIXA, TVL_MIN, VERSAO, VOLUME_MIN, abrir,  # noqa: E402
+                              andar, balanco, escolher, fechar, num, valor_usd)
 from lab.rodar_memecoins import Gecko  # noqa: E402
 
 S = requests.Session()
 S.headers["User-Agent"] = "laboratorio-investimentos/1.0"
-FILTRO = "is_blacklisted=false && tvl>=50000 && volume_24h>=500000"
+HORA_MS = 3600 * 1000
+FILTRO = f"is_blacklisted=false && tvl>={TVL_MIN} && volume_24h>={VOLUME_MIN}"
+MAX_CONSULTAS = 25      # velas de 1 h por rodada para medir o balanço das candidatas
 
 
 def _meteora(caminho: str, **params):
@@ -43,6 +45,30 @@ def main(raiz: Path = RAIZ, meteora=_meteora, gecko=None, agora: int | None = No
     lista = (meteora("/pools", page=1, page_size=100, sort_by="fee_tvl_ratio_24h:desc", filter_by=FILTRO) or {}).get("data") or []
     por_end = {p["address"]: p for p in lista}
     elegiveis = escolher(lista)
+
+    # 0) o balanço do preço nas últimas 24 h (velas de 1 h), da maior taxa para baixo, até achar as calmas
+    medidos = {k: v for k, v in (est.get("balanco") or {}).items() if agora - v[0] < 3 * HORA_MS}
+    calmas, consultas = [], 0
+    for pool in elegiveis:
+        if len(calmas) >= POR_FAIXA + 2:
+            break
+        addr = pool["address"]
+        if addr not in medidos:
+            if consultas >= MAX_CONSULTAS:
+                break
+            consultas += 1
+            try:
+                j = g.get(f"/networks/solana/pools/{addr}/ohlcv/hour", aggregate=1, limit=26, currency="token", token=pool["token_x"]["address"])
+                vs = sorted((((j or {}).get("data") or {}).get("attributes") or {}).get("ohlcv_list") or [], key=lambda v: v[0])
+                b = balanco([float(v[4]) for v in vs])
+            except Exception as ex:  # noqa: BLE001
+                print("concentradas: velas de 1 h falharam", pool.get("name"), str(ex)[:80])
+                continue
+            medidos[addr] = [agora, b]
+        b = medidos[addr][1]
+        if b is not None and b < BALANCO_MAX:
+            calmas.append(pool)
+    est["balanco"] = medidos
 
     # 1) as abertas: taxa da última hora enquanto o preço ficou na faixa; sai se fechou fora ou passou de 24 h
     velas_de, dados_de = {}, {}
@@ -82,7 +108,7 @@ def main(raiz: Path = RAIZ, meteora=_meteora, gecko=None, agora: int | None = No
     for k, f in est["faixas"].items():
         vagas = POR_FAIXA - len(f["abertas"])
         tem = {p["pool"] for p in f["abertas"]}
-        for pool in [p for p in elegiveis if p["address"] not in tem][:vagas]:
+        for pool in [p for p in calmas if p["address"] not in tem][:vagas]:
             dol = f["caixa"] / (POR_FAIXA - len(f["abertas"]))
             if dol < 1:
                 break
@@ -102,14 +128,16 @@ def main(raiz: Path = RAIZ, meteora=_meteora, gecko=None, agora: int | None = No
     est["ultima"] = agora
     rel = {"gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"), "versao": VERSAO,
            "capital": CAPITAL, "inicio": est["inicio"], "faixas": out,
+           "regra": "só SOL/USDC numa faixa abaixo do preço; pools com balanço < 2 %/h nas últimas 24 h; maior taxa entre elas",
            "topo": [{"nome": p.get("name"), "tvl": round(num(p.get("tvl"))), "volume_24h": round(num((p.get("volume") or {}).get("24h"))),
-                     "taxa_24h": num((p.get("fee_tvl_ratio") or {}).get("24h")), "apr": num(p.get("apr"))} for p in elegiveis[:10]]}
+                     "taxa_24h": num((p.get("fee_tvl_ratio") or {}).get("24h")), "apr": num(p.get("apr")),
+                     "balanco_1h": (est["balanco"].get(p["address"]) or [0, None])[1]} for p in calmas[:10]]}
     saida.parent.mkdir(exist_ok=True)
     saida.write_text(json.dumps(rel, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     arq.parent.mkdir(parents=True, exist_ok=True)
     arq.write_text(json.dumps(est, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print("concentradas: " + "; ".join(f"{k} {v['patrimonio'] - CAPITAL:+.2f} US$ ({len(v['abertas'])} abertas)" for k, v in out.items())
-          + f"; {len(elegiveis)} pools elegíveis")
+          + f"; {len(elegiveis)} pools elegíveis, {len(calmas)} calmas ({consultas} consultas de velas)")
     return 0
 
 

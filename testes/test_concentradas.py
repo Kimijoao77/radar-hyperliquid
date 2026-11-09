@@ -4,7 +4,7 @@ import json
 import pytest
 
 from lab import rodar_concentradas
-from lab.concentradas import FATOR, abrir, andar, escolher, fechar, liquidez, valor_usd, valor_y
+from lab.concentradas import FATOR, REDE, abrir, andar, balanco, escolher, fechar, liquidez, parte_moeda, valor_usd, valor_y
 
 T0 = 1_762_700_000_000 - 1_762_700_000_000 % 300000
 
@@ -29,15 +29,29 @@ def test_escolher():
     assert [p["address"] for p in escolher(ps)] == ["b", "a"]
 
 
-def test_taxa_so_dentro_da_faixa_e_saida():
+def test_balanco():
+    assert balanco([1.0] * 10) is None                       # menos de 24 h de velas
+    assert balanco([1.0] * 30) == pytest.approx(0)
+    assert balanco([1.0, 1.05] * 15) > 0.02                  # sobe e desce 5 % toda hora
+
+
+def test_so_sol_abaixo_do_preco():
     pos = abrir(pool(), "estreita", 1000, T0)
-    assert valor_usd(pos) == pytest.approx(1000 * (1 - 0.007), rel=1e-6)          # metade trocada a 1 % + 0,2 %
-    velas = [[(T0 + i * 300000) / 1000, 1, 1, 1, c, 10] for i, c in enumerate([1.0, 1.01, 0.99])]
+    assert pos["b"] == pytest.approx(1.0) and pos["a"] == pytest.approx(0.9)
+    assert valor_usd(pos) == pytest.approx(1000 * (1 - REDE), rel=1e-6)            # sem troca: só a rede
+    assert parte_moeda(pos["L"], 1.0, pos["a"], pos["b"]) == 0
+    # o preço cai 2 % e fica: recebe taxa e vira um pouco de moeda
+    velas = [[(T0 + i * 300000) / 1000, 1, 1, 1, 0.98, 10] for i in range(3)]
     assert andar(pos, velas, 2.0, 150, T0 + 3 * 300000) is None
-    taxa = 993 * 0.02 / 12 * FATOR["estreita"] * 3
-    assert pos["taxas"] == pytest.approx(taxa, rel=0.02)
-    assert andar(pos, [[(T0 + 3 * 300000) / 1000, 1, 1, 1, 0.9, 1]], 2.0, 150, T0 + 4 * 300000) == "saiu da faixa"
-    assert fechar(pos) < 1000
+    assert pos["taxas"] > 0 and 0 < parte_moeda(pos["L"], 0.98, pos["a"], pos["b"]) < 1
+    # sobe acima da entrada: fica todo em SOL e sai sem perda além da rede
+    pos2 = abrir(pool(), "estreita", 1000, T0)
+    assert andar(pos2, [[T0 / 1000, 1, 1, 1, 1.03, 1]], 2.0, 150, T0 + 300000) == "subiu: ficou todo em SOL"
+    assert fechar(pos2) == pytest.approx(1000 * (1 - REDE) * (1 - REDE), rel=1e-6)
+    # cai abaixo da faixa: vira toda moeda e paga a venda dela
+    pos3 = abrir(pool(), "estreita", 1000, T0)
+    assert andar(pos3, [[T0 / 1000, 1, 1, 1, 0.85, 1]], 2.0, 150, T0 + 300000) == "caiu abaixo da faixa"
+    assert fechar(pos3) < 950
 
 
 def test_rodar(tmp_path):
@@ -45,13 +59,17 @@ def test_rodar(tmp_path):
 
     class G:
         def get(self, caminho, **k):
+            if caminho.endswith("/hour"):                     # balanço: preço parado nas últimas 24 h (pool "d" balança muito)
+                c = [1.0, 1.1] * 13 if "/d/" in caminho else [1.0] * 26
+                return {"data": {"attributes": {"ohlcv_list": [[(T0 - (26 - i) * 3600 * 1000) / 1000, 1, 1, 1, x, 1] for i, x in enumerate(c)]}}}
             return {"data": {"attributes": {"ohlcv_list": [[(T0 + 3600 * 1000 + i * 300000) / 1000, 1, 1, 1, 1.0, 1] for i in range(12)]}}}
 
-    lista = {"data": [pool("a", ftvl24=80), pool("b", ftvl24=60), pool("c", ftvl24=40), pool("d", ftvl24=20)]}
+    lista = {"data": [pool("d", ftvl24=99), pool("a", ftvl24=80), pool("b", ftvl24=60), pool("c", ftvl24=40)]}
     met = lambda caminho, **k: lista if caminho == "/pools" else None  # noqa: E731
     assert rodar_concentradas.main(tmp_path, meteora=met, gecko=G(), agora=T0) == 0
     s = json.loads((tmp_path / "saida" / "concentradas.json").read_text())
     assert [len(f["abertas"]) for f in s["faixas"].values()] == [3, 3, 3]
+    assert all(p["pool"] != "d" for f in s["faixas"].values() for p in f["abertas"])     # a que balança fica de fora
     assert [p["nome"] for p in s["faixas"]["larga"]["abertas"]] == ["MEME-SOL"] * 3
     rodar_concentradas.main(tmp_path, meteora=met, gecko=G(), agora=T0 + 2 * 3600 * 1000)
     s = json.loads((tmp_path / "saida" / "concentradas.json").read_text())

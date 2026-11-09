@@ -1,36 +1,41 @@
 """Laboratório 9: pools de liquidez concentrada (DLMM da Meteora, Solana), sem dinheiro.
 
-As pools que mostram "3.000 % ao mês" são pares de moedas novas com volume enorme e liquidez numa faixa estreita de
-preço. O número da tela é a taxa das últimas 24 h multiplicada; aqui o teste recebe a taxa de verdade, hora a hora,
-só enquanto o preço fica dentro da faixa, e paga a perda quando o preço anda (a moeda que cai fica toda com você).
+Versão 2 (09/11/2026, depois do estudo de ~150 pools em 8 dias de velas de 1 h, ensaio coleta_pools/estudo_pools):
+a versão 1 trocava metade do SOL pela moeda na entrada (custo de ~1 % numa pool de taxa alta) e escolhia só a maior
+taxa do dia, que quase sempre é uma moeda sendo vendida em massa. No estudo, isso perdeu ~2 % por posição na metade
+ruim do período. Agora:
+  - depósito só em SOL/USDC, numa faixa logo abaixo do preço (sem troca nenhuma: custo só da rede). Se a moeda cai
+    para dentro da faixa, a posição recebe a taxa e vai virando moeda; se o preço sobe, a posição fica toda em SOL
+    (não perde nada) e sai para abrir de novo no preço novo;
+  - só pools com o preço calmo: o balanço da última 24 h (desvio das variações de 1 h) abaixo de 2 % por hora,
+    e com pelo menos 24 h de vida; entre essas, a maior taxa sobre o dinheiro da pool nas últimas 24 h.
+No estudo, essa regra ficou em −0,06 % na metade ruim e +1,3 % (faixa de 10 %) na boa, por posição de até 24 h.
+O teste ao vivo é que confirma: o estudo usou velas de 1 h e o dinheiro da pool de agora.
 
-Três faixas em volta do preço da entrada, US$ 1.000 cada, até 3 pools por faixa:
-  estreita ±5 %, média ±15 %, larga ±30 %.
-Escolha: as pools com a maior taxa sobre o dinheiro depositado nas últimas 24 h, com pelo menos US$ 50 mil de
-liquidez e US$ 500 mil de volume no dia, par com SOL ou USDC, fora da lista negra da Meteora.
-Taxa: a taxa da pool sobre o dinheiro dela na última hora (fee_tvl_ratio 1h), vezes o quanto a faixa concentra
-o dinheiro em relação a uma faixa de ±30 % (a média das posições na DLMM, suposição do teste): 5,8× na estreita,
-2× na média e 1× na larga, vezes a parte da hora em que o preço ficou dentro da faixa (velas de 5 min).
-Saída: quando uma vela de 5 min fecha fora da faixa (sai naquele preço) ou depois de 24 h; aí abre de novo na pool
-que estiver no topo. Custos: metade do dinheiro é trocada na entrada e na saída (paga a taxa da pool) + 0,2 % de
-escorregamento e rede em cada ponta.
-O valor da posição segue a conta da liquidez concentrada (Uniswap v3): abaixo da faixa vira toda a moeda,
-acima vira todo SOL/USDC. Em dólar, o SOL também conta (preço do SOL do momento).
+Três faixas abaixo do preço da entrada, US$ 1.000 cada, até 3 pools por faixa:
+  estreita (preço até −10 %), média (até −30 %), larga (até −60 %).
+Taxa: a taxa da pool sobre o dinheiro dela na última hora (fee_tvl_ratio 1h), vezes o quanto a faixa concentra o
+dinheiro (Uniswap v3, em relação a ±30 %), só nas velas de 5 min em que o preço ficou dentro da faixa.
+Saída: quando uma vela de 5 min fecha fora da faixa ou depois de 24 h. Custo de saída: a taxa da pool + 0,2 % só
+sobre a parte que virou moeda (é ela que precisa ser vendida).
 """
 from __future__ import annotations
 
 import math
 
-VERSAO = 1
+VERSAO = 2
 CAPITAL = 1000.0
 HORA = 3600 * 1000
 API = "https://dlmm.datapi.meteora.ag"
-FAIXAS = {"estreita": 0.05, "media": 0.15, "larga": 0.30}
-NOMES = {"estreita": "Faixa estreita (±5%)", "media": "Faixa média (±15%)", "larga": "Faixa larga (±30%)"}
+FAIXAS = {"estreita": 0.05, "media": 0.15, "larga": 0.30}   # largura da faixa abaixo do preço = 2 × r
+NOMES = {"estreita": "Faixa estreita (até −10%)", "media": "Faixa média (até −30%)", "larga": "Faixa larga (até −60%)"}
 POR_FAIXA = 3
 PRAZO_H = 24
 ESCORREGA = 0.002
 QUOTES = {"SOL", "USDC"}
+REDE = 0.0005          # taxa da rede para abrir ou fechar (sem troca)
+BALANCO_MAX = 0.02     # desvio das variações de 1 h nas últimas 24 h
+TVL_MIN, VOLUME_MIN = 10_000, 50_000
 
 
 def eficiencia(r: float) -> float:
@@ -53,7 +58,7 @@ def escolher(pools: list[dict]) -> list[dict]:
     out = []
     for p in pools:
         y = (p.get("token_y") or {}).get("symbol", "").upper()
-        if p.get("is_blacklisted") or y not in QUOTES or num(p.get("tvl")) < 50_000 or num((p.get("volume") or {}).get("24h")) < 500_000:
+        if p.get("is_blacklisted") or y not in QUOTES or num(p.get("tvl")) < TVL_MIN or num((p.get("volume") or {}).get("24h")) < VOLUME_MIN:
             continue
         if num(p.get("current_price")) <= 0 or num((p.get("token_y") or {}).get("price")) <= 0:
             continue
@@ -61,10 +66,31 @@ def escolher(pools: list[dict]) -> list[dict]:
     return sorted(out, key=lambda p: -num((p.get("fee_tvl_ratio") or {}).get("24h")))
 
 
+def balanco(closes: list[float]) -> float | None:
+    """Desvio das variações de 1 h (log) nas últimas 24 velas; None se a pool tem menos de 24 h de velas."""
+    cs = [c for c in closes if c > 0][-25:]
+    if len(cs) < 25:
+        return None
+    rets = [math.log(cs[i] / cs[i - 1]) for i in range(1, len(cs))]
+    m = sum(rets) / len(rets)
+    return math.sqrt(sum((r - m) ** 2 for r in rets) / len(rets))
+
+
+def parte_moeda(L: float, p: float, a: float, b: float) -> float:
+    """Fração do valor da posição que está na moeda (o resto está em SOL/USDC)."""
+    v = valor_y(L, p, a, b)
+    if v <= 0 or p >= b:
+        return 0.0
+    if p <= a:
+        return 1.0
+    sp, sb = math.sqrt(p), math.sqrt(b)
+    return L * (1 / sp - 1 / sb) * p / v
+
+
 def liquidez(valor_y: float, p0: float, a: float, b: float) -> float:
     """L de uma posição com valor_y (em unidades da moeda de cotação) no preço p0, faixa [a, b]."""
-    sp, sa, sb = math.sqrt(p0), math.sqrt(a), math.sqrt(b)
-    por_l = (1 / sp - 1 / sb) * p0 + (sp - sa)          # valor (em y) de L = 1
+    sp, sa, sb = math.sqrt(min(p0, b)), math.sqrt(a), math.sqrt(b)
+    por_l = (1 / sp - 1 / sb) * p0 + (sp - sa)          # valor (em y) de L = 1 (no topo da faixa: tudo em y)
     return valor_y / por_l
 
 
@@ -82,12 +108,13 @@ def valor_y(L: float, p: float, a: float, b: float) -> float:
 def abrir(pool: dict, faixa: str, dolares: float, agora: int) -> dict:
     r = FAIXAS[faixa]
     p0, py = num(pool["current_price"]), num(pool["token_y"]["price"])
-    custo = 0.5 * num(pool.get("dynamic_fee_pct") or (pool.get("pool_config") or {}).get("base_fee_pct")) / 100 + ESCORREGA
+    taxa = num(pool.get("dynamic_fee_pct") or (pool.get("pool_config") or {}).get("base_fee_pct")) / 100
+    custo = REDE                                         # só SOL/USDC, sem troca
     liquido = dolares * (1 - custo)
-    a, b = p0 * (1 - r), p0 * (1 + r)
+    a, b = p0 * (1 - 2 * r), p0                          # faixa logo abaixo do preço
     return {"pool": pool["address"], "nome": pool.get("name", ""), "token_x": pool["token_x"]["address"], "faixa": faixa,
             "entrou": agora, "ult_t": agora, "p0": p0, "a": a, "b": b, "L": liquidez(liquido / py, p0, a, b), "py": py,
-            "p": p0, "taxas": 0.0, "custo_entrada": round(dolares * custo, 4), "dolares": dolares, "taxa_pct": custo,
+            "p": p0, "taxas": 0.0, "custo_entrada": round(dolares * custo, 4), "dolares": dolares, "taxa_pct": taxa + ESCORREGA,
             "fora_min": 0, "dentro_min": 0}
 
 
@@ -112,7 +139,7 @@ def andar(pos: dict, velas: list, ftvl_1h_pct: float, py: float, agora: int) -> 
             pos["dentro_min"] += 5
         else:
             pos["fora_min"] += 5
-            return "saiu da faixa"
+            return "subiu: ficou todo em SOL" if c > pos["b"] else "caiu abaixo da faixa"
         if pos["ult_t"] >= pos["entrou"] + PRAZO_H * HORA:
             return "24 horas"
     if agora >= pos["entrou"] + PRAZO_H * HORA:
@@ -121,5 +148,7 @@ def andar(pos: dict, velas: list, ftvl_1h_pct: float, py: float, agora: int) -> 
 
 
 def fechar(pos: dict) -> float:
-    """Dólares que voltam ao caixa: valor da posição + taxas − custo de saída."""
-    return valor_usd(pos) * (1 - pos["taxa_pct"])
+    """Dólares que voltam ao caixa: valor da posição + taxas − custo de saída (vender a parte que virou moeda + rede)."""
+    v = valor_usd(pos)
+    moeda = parte_moeda(pos["L"], pos["p"], pos["a"], pos["b"]) * (v - pos["taxas"])
+    return v - moeda * pos["taxa_pct"] - v * REDE

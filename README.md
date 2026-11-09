@@ -68,6 +68,17 @@ Nota de 0 (humano) a 100 (robô), começando em 50, somando sinais tirados das o
 
 Roda de hora em hora num workflow separado (`Laboratório`). Tudo é simulação com dados públicos.
 
+**0. Cópia fiel (`lab/copia.py`, desde 09/11)** — a cópia como ela seria de verdade. A projeção do radar
+(`radar/copia.py`) só estima: pega o resultado do dia da carteira e desconta uma fração pelo atraso, sem saber em que
+preço o copiador entraria. Aqui cada mudança de posição da carteira vira uma ordem do copiador **1 minuto depois**, no
+**preço daquele minuto** (velas de 1 min da Hyperliquid; de 5 min para o que tem mais de 3 dias), com taxa de 0,045 % e
+0,05 % de escorregamento. O copiador segue a carteira **em proporção da conta** (mesma fração do saldo). Cada carteira
+ganha uma subconta de US$ 1.000; o teste é a soma. Começa sem posição e entra na primeira mudança de cada moeda.
+- **todas**: todas as carteiras do radar, com a alavancagem delas (no máximo 10× por subconta; zerou = liquidada).
+- **seletiva**: só as copiáveis (mediana de 30 min ou mais com a posição aberta e o radar diz que dá), com a exposição
+  levada a 2× da típica dela (no máximo 3×) e **parada de proteção**: caiu 25 % do pico, para de copiar aquela carteira.
+- Funding fica de fora. Spot e pares de terceiros também. → `saida/copia_fiel.json`, estado em `lab/dados/copia_estado.json`.
+
 **1. Funding (`lab/funding.py`)** — comprar à vista e vender o mesmo valor no perpétuo da Hyperliquid: o preço se anula e
 sobra o funding (pago de hora em hora; positivo = quem está vendido recebe). Carteira simulada de US$ 1.000:
 - só moedas líquidas (US$ 5 mi negociados no dia e US$ 2 mi em posições abertas);

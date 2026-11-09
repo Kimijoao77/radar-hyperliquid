@@ -24,7 +24,7 @@ for ordem, filtro in [("volume_24h:desc", "is_blacklisted=false && tvl>=10000 &&
 print("pools", len(pools))
 if pools:
     print("campos", sorted(pools[0].keys()))
-g = Gecko(intervalo=2.2, limite_espera=600)
+g = Gecko(intervalo=3.2, limite_espera=3000)
 def velas(addr, token):
     j = g.get(f"/networks/solana/pools/{addr}/ohlcv/hour", aggregate=1, limit=200, currency="usd", token=token)
     return (((j or {}).get("data") or {}).get("attributes") or {}).get("ohlcv_list") or []
@@ -40,7 +40,7 @@ for i, p in enumerate(pools[:360]):
     out["pools"].append({"p": p, "velas": v})
     if i % 40 == 0:
         print(i, round(time.time() - t0), "s", p.get("name"), len(v))
-    if time.time() - t0 > 40 * 60:
+    if time.time() - t0 > 35 * 60:
         break
 json.dump(out, open(saida, "w"))
-print("ok", len(out["pools"]))
+print("ok", len(out["pools"]), "com velas:", sum(1 for x in out["pools"] if len(x["velas"]) >= 60))

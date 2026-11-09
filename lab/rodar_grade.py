@@ -15,6 +15,7 @@ from radar.api import Hyperliquid  # noqa: E402
 
 MOEDAS = ["BTC", "ETH", "SOL", "HYPE"]
 VERSAO = 2          # 2 (09/11/2026): só 1×, DCA com pausa na queda, escolha pela pior nota dentro/fora da amostra
+REF_INICIO = 1793674800000   # 03/11/2026 00:00 em Brasília: o começo dos testes
 
 
 def _fechamentos(vs: list[dict]) -> list[float]:
@@ -80,13 +81,13 @@ def main(raiz: Path = RAIZ, api=None) -> int:
     for r in passado:   # o app só precisa da curva das melhores
         if r is not passado[0] and r not in passado[:6]:
             r.pop("curva", None)
-    segurar = {}
-    if est.get("inicio"):
-        for m in ("BTC", "ETH"):
-            vs = [v for v in velas.get(m, []) if int(v["t"]) >= est["inicio"]]
-            if vs:
-                p0 = float(vs[0]["o"])
-                segurar[m] = [[est["inicio"], 0.0]] + [[int(v["t"]) + HORA, round(float(v["c"]) / p0 - 1, 5)] for v in vs]
+    # "só segurar a moeda" desde o começo dos testes (03/11): o app compara cada teste com ela, desde o começo dele
+    segurar, desde = {}, min(est.get("inicio") or REF_INICIO, REF_INICIO)
+    for m in ("BTC", "ETH"):
+        vs = [v for v in velas.get(m, []) if int(v["t"]) >= desde]
+        if vs:
+            p0 = float(vs[0]["o"])
+            segurar[m] = [[desde, 0.0]] + [[int(v["t"]) + HORA, round(float(v["c"]) / p0 - 1, 5)] for v in vs]
     rel = {"gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
            "versao": VERSAO, "inicio_ao_vivo": est.get("inicio"), "moedas": MOEDAS, "capital": 1000, "passado": passado,
            "ao_vivo": ao_vivo, "segurar": segurar, "anterior": est.get("anterior", [])}

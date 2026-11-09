@@ -131,7 +131,7 @@ moedas novas da pump.fun. Duas estratégias com o mesmo caixa: a mais disputada 
 dobrou na 1ª hora. 1 % do patrimônio por compra, 3 % de custo em cada lado, metade a 2×, o resto a 5×, parada em −50 %
 e prazo de 24 h, com as velas de 5 min (o pior caso quando a parada e o alvo caem na mesma vela). → `saida/memecoins.json`
 
-**8. Pools concentradas (`lab/concentradas.py`, desde 09/11; versão 2 desde 09/11 às 17h)** — de hora em hora, API da
+**8. Pools concentradas (`lab/concentradas.py`, desde 09/11; versão 3 desde 09/11 às 19h)** — de hora em hora, API da
 Meteora (DLMM, Solana) e velas do GeckoTerminal. Versão 2, depois do estudo de ~150 pools em 8 dias (ensaio
 `coleta_pools.py` + `estudo_pools.py`): depósito **só em SOL/USDC numa faixa logo abaixo do preço** (sem troca na
 entrada; se o preço sobe, fica todo em SOL e sai sem perda) e **só pools com o preço calmo** (desvio das variações de
@@ -139,7 +139,9 @@ entrada; se o preço sobe, fica todo em SOL e sai sem perda) e **só pools com o
 mil+ de volume). Três faixas abaixo do preço (até −10 %, −30 %, −60 %), US$ 1.000 cada, até 3 pools por faixa; recebe a
 taxa da última hora só enquanto o preço está na faixa, sai quando uma vela de 5 min fecha fora ou em 24 h; na saída
 paga a venda só da parte que virou moeda. No estudo: −0,06 % por posição na metade ruim do período e +1,3 % na boa
-(faixa estreita); a versão 1 (troca de metade na entrada, só a maior taxa) perdeu ~2 % na metade ruim. → `saida/concentradas.json`
+(faixa estreita); a versão 1 (troca de metade na entrada, só a maior taxa) perdeu ~2 % na metade ruim. Versão 3: quando o
+preço sobe acima da faixa a posição (toda em SOL) espera 3 h antes de reabrir, em vez de sair e pagar entrada toda hora;
+o valor é medido em SOL/USDC no preço do SOL da entrada (a variação do SOL não entra); rede a 0,02 % por ponta. → `saida/concentradas.json`
 
 ## Arquivos
 

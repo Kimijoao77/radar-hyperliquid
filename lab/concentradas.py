@@ -16,14 +16,16 @@ Três faixas abaixo do preço da entrada, US$ 1.000 cada, até 3 pools por faixa
   estreita (preço até −10 %), média (até −30 %), larga (até −60 %).
 Taxa: a taxa da pool sobre o dinheiro dela na última hora (fee_tvl_ratio 1h), vezes o quanto a faixa concentra o
 dinheiro (Uniswap v3, em relação a ±30 %), só nas velas de 5 min em que o preço ficou dentro da faixa.
-Saída: quando uma vela de 5 min fecha fora da faixa ou depois de 24 h. Custo de saída: a taxa da pool + 0,2 % só
+Saída: quando uma vela de 5 min fecha abaixo da faixa, quando o preço fica 3 h acima dela (versão 3; antes saía
+na hora e pagava entrada e saída toda hora) ou depois de 24 h. Versão 3: o valor é medido em SOL/USDC no preço do SOL
+da entrada (o teste mede a pool; a variação do SOL é outra coisa) e a rede custa 0,02 % por ponta. Custo de saída: a taxa da pool + 0,2 % só
 sobre a parte que virou moeda (é ela que precisa ser vendida).
 """
 from __future__ import annotations
 
 import math
 
-VERSAO = 2
+VERSAO = 3
 CAPITAL = 1000.0
 HORA = 3600 * 1000
 API = "https://dlmm.datapi.meteora.ag"
@@ -33,7 +35,8 @@ POR_FAIXA = 3
 PRAZO_H = 24
 ESCORREGA = 0.002
 QUOTES = {"SOL", "USDC"}
-REDE = 0.0005          # taxa da rede para abrir ou fechar (sem troca)
+REDE = 0.0002          # taxa da rede para abrir ou fechar (sem troca; na Solana custa centavos)
+ESPERA_ACIMA_H = 3     # preço acima da faixa (todo em SOL, sem perda): espera 3 h antes de reabrir no preço novo
 BALANCO_MAX = 0.02     # desvio das variações de 1 h nas últimas 24 h
 TVL_MIN, VOLUME_MIN = 10_000, 50_000
 
@@ -126,7 +129,7 @@ def andar(pos: dict, velas: list, ftvl_1h_pct: float, py: float, agora: int) -> 
     """Passa as velas de 5 min (preço de x em y) desde a última vez: recebe a taxa enquanto dentro da faixa.
 
     Devolve o motivo da saída ("saiu da faixa" ou "24 horas") ou None se continua."""
-    pos["py"] = py or pos["py"]
+    # versão 3: o valor fica em SOL/USDC no preço do SOL da entrada (o teste mede a pool, não a variação do SOL)
     vs = sorted(([int(v[0] * 1000) if v[0] < 1e12 else int(v[0]), float(v[4])] for v in velas), key=lambda v: v[0])
     taxa_5min = max(0.0, ftvl_1h_pct) / 100 / 12 * FATOR[pos["faixa"]]
     for t, c in vs:
@@ -137,9 +140,15 @@ def andar(pos: dict, velas: list, ftvl_1h_pct: float, py: float, agora: int) -> 
         if pos["a"] <= c <= pos["b"]:
             pos["taxas"] += valor_y(pos["L"], c, pos["a"], pos["b"]) * pos["py"] * taxa_5min
             pos["dentro_min"] += 5
-        else:
+            pos["acima_desde"] = None
+        elif c < pos["a"]:
             pos["fora_min"] += 5
-            return "subiu: ficou todo em SOL" if c > pos["b"] else "caiu abaixo da faixa"
+            return "caiu abaixo da faixa"
+        else:                                            # acima: todo em SOL, não perde nada; só reabre se ficar lá
+            pos["fora_min"] += 5
+            pos["acima_desde"] = pos.get("acima_desde") or t
+            if t + 5 * 60 * 1000 - pos["acima_desde"] >= ESPERA_ACIMA_H * HORA:
+                return "subiu e ficou 3 h acima: reabre no preço novo"
         if pos["ult_t"] >= pos["entrou"] + PRAZO_H * HORA:
             return "24 horas"
     if agora >= pos["entrou"] + PRAZO_H * HORA:

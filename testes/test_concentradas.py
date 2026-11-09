@@ -44,10 +44,12 @@ def test_so_sol_abaixo_do_preco():
     velas = [[(T0 + i * 300000) / 1000, 1, 1, 1, 0.98, 10] for i in range(3)]
     assert andar(pos, velas, 2.0, 150, T0 + 3 * 300000) is None
     assert pos["taxas"] > 0 and 0 < parte_moeda(pos["L"], 0.98, pos["a"], pos["b"]) < 1
-    # sobe acima da entrada: fica todo em SOL e sai sem perda além da rede
+    # sobe acima da entrada: fica todo em SOL; só sai depois de 3 h lá em cima, sem perda além da rede
     pos2 = abrir(pool(), "estreita", 1000, T0)
-    assert andar(pos2, [[T0 / 1000, 1, 1, 1, 1.03, 1]], 2.0, 150, T0 + 300000) == "subiu: ficou todo em SOL"
-    assert fechar(pos2) == pytest.approx(1000 * (1 - REDE) * (1 - REDE), rel=1e-6)
+    assert andar(pos2, [[T0 / 1000, 1, 1, 1, 1.03, 1]], 2.0, 150, T0 + 300000) is None
+    acima = [[(T0 + i * 300000) / 1000, 1, 1, 1, 1.03, 1] for i in range(1, 37)]
+    assert andar(pos2, acima, 2.0, 999, T0 + 37 * 300000) == "subiu e ficou 3 h acima: reabre no preço novo"
+    assert fechar(pos2) == pytest.approx(1000 * (1 - REDE) * (1 - REDE), rel=1e-6)    # o SOL que mudou de preço não conta
     # cai abaixo da faixa: vira toda moeda e paga a venda dela
     pos3 = abrir(pool(), "estreita", 1000, T0)
     assert andar(pos3, [[T0 / 1000, 1, 1, 1, 0.85, 1]], 2.0, 150, T0 + 300000) == "caiu abaixo da faixa"

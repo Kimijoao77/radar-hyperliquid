@@ -1,31 +1,71 @@
 {
- "inicio": 1793721600000,
+ "versao": 2,
+ "anterior": [
+  {
+   "moeda": "HYPE",
+   "nome": "Grade ±10 %, 20 degraus, 3×",
+   "retorno": -0.3572,
+   "pior_queda": 0.4072,
+   "segurar_moeda": -0.1535,
+   "de": 1793721600000,
+   "ate": 1794217804260
+  },
+  {
+   "moeda": "BTC",
+   "nome": "Grade ±20 %, 20 degraus, 3×",
+   "retorno": -0.0557,
+   "pior_queda": 0.1224,
+   "segurar_moeda": -0.0405,
+   "de": 1793721600000,
+   "ate": 1794217804260
+  },
+  {
+   "moeda": "HYPE",
+   "nome": "DCA a cada −2 %, alvo +3 %, 3×",
+   "retorno": -0.1694,
+   "pior_queda": 0.2556,
+   "segurar_moeda": -0.1535,
+   "de": 1793721600000,
+   "ate": 1794217804260
+  },
+  {
+   "moeda": "ETH",
+   "nome": "DCA a cada −3 %, alvo +1.5 %, 3×",
+   "retorno": 0.0581,
+   "pior_queda": 0.0306,
+   "segurar_moeda": -0.0769,
+   "de": 1793721600000,
+   "ate": 1794217804260
+  }
+ ],
+ "inicio": 1794218400000,
  "escolhidas": [
   {
    "moeda": "HYPE",
    "config": {
     "tipo": "grade",
     "faixa": 0.1,
-    "niveis": 20,
-    "alav": 3
+    "niveis": 10,
+    "alav": 1
    }
   },
   {
    "moeda": "BTC",
    "config": {
     "tipo": "grade",
-    "faixa": 0.2,
-    "niveis": 20,
-    "alav": 3
+    "faixa": 0.1,
+    "niveis": 10,
+    "alav": 1
    }
   },
   {
    "moeda": "HYPE",
    "config": {
     "tipo": "dca",
-    "passo": 0.02,
+    "passo": 0.03,
     "alvo": 0.03,
-    "alav": 3
+    "alav": 1,
+    "pausa": true
    }
   },
   {
@@ -34,7 +74,8 @@
     "tipo": "dca",
     "passo": 0.03,
     "alvo": 0.015,
-    "alav": 3
+    "alav": 1,
+    "pausa": false
    }
   }
  ]

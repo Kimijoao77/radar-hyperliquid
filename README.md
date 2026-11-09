@@ -74,7 +74,8 @@ preço o copiador entraria. Aqui cada mudança de posição da carteira vira uma
 **preço daquele minuto** (velas de 1 min da Hyperliquid; de 5 min para o que tem mais de 3 dias), com taxa de 0,045 % e
 0,05 % de escorregamento. O copiador segue a carteira **em proporção da conta** (mesma fração do saldo). Cada carteira
 ganha uma subconta de US$ 1.000; o teste é a soma. Começa sem posição e entra na primeira mudança de cada moeda.
-- **todas**: todas as carteiras do radar, com a alavancagem delas (no máximo 10× por subconta; zerou = liquidada).
+- Um copy trading só (desde 09/11, versão 3): o **seletivo**. A regra "todas" (todas as carteiras, na alavancagem delas,
+  até 10×) ficou só nos testes, para comparar.
 - **seletiva**: só as copiáveis (mediana de 30 min ou mais com a posição aberta e o radar diz que dá), com a exposição
   levada a 2× da típica dela (no máximo 3×) e **parada de proteção**: caiu 25 % do pico, para de copiar aquela carteira.
 - Funding fica de fora. Spot e pares de terceiros também. → `saida/copia_fiel.json`, estado em `lab/dados/copia_estado.json`.
@@ -91,15 +92,21 @@ sobra o funding (pago de hora em hora; positivo = quem está vendido recebe). Ca
 - sai quando a média de 24 h cai abaixo de 5 % ao ano ou o funding fica negativo 6 horas seguidas;
 - troca uma posição só se a nova pagar 15 pontos ao ano a mais;
 - paga 0,045 % no perpétuo + 0,10 % à vista + 0,03 % de escorregamento em cada ponta, ao entrar e ao sair;
-- perpétuo com 2×: avisa quando uma alta de 40 % teria exigido reforçar a margem.
+- perpétuo com 2×: avisa quando uma alta de 40 % teria exigido reforçar a margem;
+- versão 2 (09/11): só moedas com mercado à vista de verdade (`COM_SPOT`: BTC, ETH, SOL, HYPE e outras grandes). A
+  versão 1 escolhia moedas pequenas (USELESS, PONS, CASHCAT) que pagavam bem, mas que não dá para comprar à vista
+  numa corretora comum: o teste não era repetível.
 
 Mostra o "teste no passado" (últimos 30 dias, refeito a cada hora) e o "ao vivo" (desde 03/11/2026).
 Grava `saida/funding.json`. Os números ficam em `config.json → lab.funding` (se não estiver lá, vale o padrão do código).
 
 **2. Grade e DCA (`lab/grade.py`)** — velas de 1 h da Hyperliquid (~200 dias) de BTC, ETH, SOL e HYPE.
-16 configurações por moeda (grade ±10/±20 %, 10/20 degraus, 1×/3×; DCA a cada −2/−3 %, alvo +1,5/+3 %, 1×/3×).
-As 2 melhores grades e os 2 melhores DCA (retorno por pior queda, sem liquidação) seguem ao vivo desde o primeiro dia.
+12 configurações por moeda (grade ±10/±20 %, 10/20 degraus; DCA a cada −2/−3 %, alvo +1,5/+3 %, com e sem pausa na queda).
 Taxas: limitada 0,015 %, a mercado 0,045 %. Conservador: nunca compra e vende o mesmo degrau na mesma hora. → `saida/grade.json`
+Versão 2 (09/11): **só 1×** (na versão 1 as escolhidas eram 3× e, na semana de queda, a grade de HYPE perdeu 36 %); o DCA
+ganhou a **pausa na queda** (só abre ciclo novo com o preço acima da média de 7 dias); e a escolha das 2 grades e dos 2 DCA
+que vão ao vivo usa a **pior nota** entre os primeiros 2/3 do passado e o último 1/3, que a escolha não vê (para não
+escolher a dedo a regra que só deu certo no passado). O resultado da versão 1 fica em `anterior`.
 
 **3. Cofres (`lab/cofres.py`)** — a cada 6 h: lista pública de cofres; os 40 maiores (abertos, US$ 100 mil+, 60 dias+)
 com histórico; índice de rendimento que ignora depósitos e saques; constante = p ≤ 0,05, pior queda ≤ 20 %,

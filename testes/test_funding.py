@@ -65,6 +65,15 @@ def test_universo_filtra_liquidez():
     assert [x["moeda"] for x in u] == ["BTC"]
 
 
+def test_universo_so_com_mercado_a_vista():
+    # versão 2: uma moeda pequena líquida no perpétuo, mas sem mercado à vista fundo, fica de fora
+    meta = {"universe": [{"name": "ETH"}, {"name": "CASHCAT"}]}
+    ctx = [{"oraclePx": "2000", "dayNtlVlm": "9e8", "openInterest": "1e5", "funding": "0.00001"},
+           {"oraclePx": "0.01", "dayNtlVlm": "1e7", "openInterest": "1e9", "funding": "0.0002"}]
+    assert [x["moeda"] for x in universo([meta, ctx], PADRAO)] == ["ETH"]
+    assert [x["moeda"] for x in universo([meta, ctx], {**PADRAO, "so_com_spot": False})] == ["ETH", "CASHCAT"]
+
+
 def test_rodar_ponta_a_ponta(tmp_path):
     import lab.rodar_funding as R
     (tmp_path / "config.json").write_text(json.dumps({"peso_por_minuto": 100000}), encoding="utf-8")

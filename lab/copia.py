@@ -33,9 +33,12 @@ MINIMO = 10.0               # ordem mínima da Hyperliquid (US$)
 CAPITAL = 1000.0            # cada subconta
 MINUTO = 60_000
 
+# Um copy trading só (pedido do João em 09/11/2026): o seletivo. O "todas" (todas as carteiras, na alavancagem delas, até
+# 10×) ficou como regra de comparação nos testes; de 03/11 a 09/11 ele deu +5,7 % e o seletivo +8,1 % (sem a melhor
+# carteira: −6,8 % e +0,7 %).
+TODAS = {"nome": "Cópia fiel: todas", "atraso_s": 60, "teto": 10.0, "alvo": None, "parada": None, "filtro": False}
 VARIANTES = {
-    "todas": {"nome": "Cópia fiel: todas", "atraso_s": 60, "teto": 10.0, "alvo": None, "parada": None, "filtro": False},
-    "seletiva": {"nome": "Cópia fiel: só as copiáveis", "atraso_s": 60, "teto": 3.0, "alvo": 2.0, "parada": 0.25,
+    "seletiva": {"nome": "Copy trading", "atraso_s": 60, "teto": 3.0, "alvo": 2.0, "parada": 0.25,
                  "filtro": True, "duracao_minima_min": 30},
 }
 

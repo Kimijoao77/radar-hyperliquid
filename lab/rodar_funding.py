@@ -10,7 +10,7 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 
-from lab.funding import DIA, HORA, Banco, cfg_de, coletar, ranking, simular, universo  # noqa: E402
+from lab.funding import COM_SPOT, DIA, HORA, Banco, cfg_de, coletar, ranking, simular, universo  # noqa: E402
 from radar.api import Hyperliquid  # noqa: E402
 
 
@@ -35,12 +35,12 @@ def main(raiz: Path = RAIZ, api=None) -> int:
         print("funding: sem dados ainda")
         return 0
     est.setdefault("inicio_ao_vivo", ult)
-    moedas = sorted(banco.s)
+    moedas = sorted(m for m in banco.s if not p.get("so_com_spot") or m in COM_SPOT)
     ao_vivo = simular(banco, moedas, est["inicio_ao_vivo"], ult, p)
     passado = simular(banco, moedas, ult - p["dias_passado"] * DIA, ult, p)
     rel = {
         "gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-        "ultima_hora": ult, "parametros": p, "moedas_acompanhadas": len(nomes),
+        "versao": 2, "ultima_hora": ult, "parametros": p, "moedas_acompanhadas": len(nomes),
         "ranking": ranking(banco, uni, ult)[:20],
         "ao_vivo": ao_vivo, "passado": passado,
         "coleta": {"horas_novas": novas, "peso": api.lim.total, "segundos": round(time.monotonic() - inicio_relogio)},

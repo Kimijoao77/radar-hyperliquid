@@ -70,11 +70,11 @@ def test_posicao_que_some_da_foto_sem_fill_vira_zerou():
     pr.juntar("CAT", velas_minuto([1.0, 1.0, 0.9, 0.9, 0.8]))
     sc = C.nova_subconta("w", T0 - M, 1.0)
     log = []
-    C.avancar(sc, fs, C.Saldos([{"t": T0 - M, "v": 1000}]), pr, dict(C.VARIANTES["todas"]), T0 + 3 * 60 * M, log, evs)
+    C.avancar(sc, fs, C.Saldos([{"t": T0 - M, "v": 1000}]), pr, dict(C.TODAS), T0 + 3 * 60 * M, log, evs)
     assert sc["pos"] == {} and log[-1]["obs"] == "sumiu da conta dela" and log[-1]["px"] == pytest.approx(0.8 * (1 + C.ESCORREGA))
     # zerar o que a cópia não tem não é "pulo"
     sc2 = C.nova_subconta("w", T0 + 60 * M, 1.0)
-    assert C.avancar(sc2, fs, C.Saldos([]), pr, dict(C.VARIANTES["todas"]), T0 + 3 * 60 * M, [], evs) == {}
+    assert C.avancar(sc2, fs, C.Saldos([]), pr, dict(C.TODAS), T0 + 3 * 60 * M, [], evs) == {}
 
 
 def test_mercados_de_terceiros_ficam_de_fora():
@@ -91,7 +91,7 @@ def test_copia_ganha_na_alta_com_o_custo_do_atraso():
     pr = precos_eth(seq)
     fs = [fill(T0 + 10, "ETH", "B", 200, 100, 0), fill(T0 + 7 * M + 10, "ETH", "A", 200, 110, 200)]
     sc = C.nova_subconta("w", T0 - M, 1.0)
-    var = dict(C.VARIANTES["todas"])
+    var = dict(C.TODAS)
     C.avancar(sc, fs, C.Saldos([{"t": T0 - M, "v": 10_000}]), pr, var, T0 + 10 * M, [])
     # entrou perto de 100 e saiu perto de 110 com 2×: perto de +20 %, menos taxas e escorregamento
     assert sc["pos"] == {}
@@ -105,7 +105,7 @@ def test_short_perde_na_alta_e_vira_de_lado():
           fill(T0 + 4 * M, "ETH", "B", 200, 110, -100)]           # vira comprado 1×
     sc = C.nova_subconta("w", T0 - M, 1.0)
     log = []
-    C.avancar(sc, fs, C.Saldos([{"t": T0 - M, "v": 10_000}]), pr, dict(C.VARIANTES["todas"]), T0 + 10 * M, log)
+    C.avancar(sc, fs, C.Saldos([{"t": T0 - M, "v": 10_000}]), pr, dict(C.TODAS), T0 + 10 * M, log)
     q, a = sc["pos"]["ETH"]
     assert q > 0 and a == pytest.approx(110 * (1 + C.ESCORREGA), rel=1e-6)
     assert log[1]["resultado"] < -90                                 # perdeu ~10 % de 1.000 no vendido
@@ -116,7 +116,7 @@ def test_teto_corta_a_alavancagem():
     pr = precos_eth([100] * 5)
     fs = [fill(T0 + 10, "ETH", "B", 3000, 100, 0)]                  # a carteira põe 30× o saldo
     sc = C.nova_subconta("w", T0 - M, 1.0)
-    C.avancar(sc, fs, C.Saldos([{"t": T0 - M, "v": 10_000}]), pr, dict(C.VARIANTES["todas"]), T0 + 4 * M, [])
+    C.avancar(sc, fs, C.Saldos([{"t": T0 - M, "v": 10_000}]), pr, dict(C.TODAS), T0 + 4 * M, [])
     q, _ = sc["pos"]["ETH"]
     assert q * 100 == pytest.approx(10 * 1000, rel=0.01)            # no máximo 10× da subconta
 
@@ -138,7 +138,7 @@ def test_liquidada_quando_zera():
     fs = [fill(T0 + 10, "ETH", "B", 1000, 100, 0)]                  # 10× e cai 15 %
     sc = C.nova_subconta("w", T0 - M, 1.0)
     for k in range(2, 5):
-        C.avancar(sc, fs, C.Saldos([{"t": T0 - M, "v": 10_000}]), pr, dict(C.VARIANTES["todas"]), T0 + k * M, [])
+        C.avancar(sc, fs, C.Saldos([{"t": T0 - M, "v": 10_000}]), pr, dict(C.TODAS), T0 + k * M, [])
     assert not sc["vivo"] and sc["parou"].startswith("liquidada") and sc["patrimonio"] == 0
 
 
@@ -149,7 +149,7 @@ def test_seletiva_filtra_e_reduz_a_alavancagem():
     assert C.copiavel(rapida, var)[0] is False
     assert C.copiavel(lenta, var) == (True, "")
     assert C.fator_de(lenta, var) == pytest.approx(0.25)
-    assert C.fator_de(lenta, C.VARIANTES["todas"]) == 1.0
+    assert C.fator_de(lenta, C.TODAS) == 1.0
 
 
 def test_rodar_ponta_a_ponta(tmp_path, monkeypatch):
@@ -193,10 +193,10 @@ def test_rodar_ponta_a_ponta(tmp_path, monkeypatch):
     assert rodar_copia.main(tmp_path, Api(), agora) == 0
     out = json.loads((tmp_path / "saida" / "copia_fiel.json").read_text())
     assert out["refeito"] is True and out["versao"] == rodar_copia.VERSAO
-    todas = out["variantes"]["todas"]
+    assert list(out["variantes"]) == ["seletiva"]                    # um copy trading só
+    todas = out["variantes"]["seletiva"]
     assert todas["carteiras"] == 1 and todas["ordens"] == 2
-    assert 0.04 < todas["retorno"] < 0.05                             # 1× (10 × 2000 = saldo dela) e +5 %
-    assert out["variantes"]["seletiva"]["retorno"] > 0
+    assert 0.04 < todas["retorno"] < 0.05                             # 1× (2× / exposição típica 2 = fator 1) e +5 %
     # a curva tem a história: uma hora cheia por ponto desde o começo, mais o agora
     horas = [p[0] for p in todas["curva"]]
     base = rodar_copia.ms_do_dia(rodar_copia.INICIO_PADRAO)
@@ -205,8 +205,8 @@ def test_rodar_ponta_a_ponta(tmp_path, monkeypatch):
     # segunda rodada: nada novo, nada muda (e a curva só ganha as horas novas)
     assert rodar_copia.main(tmp_path, Api(), agora + 3600_000) == 0
     out2 = json.loads((tmp_path / "saida" / "copia_fiel.json").read_text())
-    assert out2["refeito"] is False and out2["variantes"]["todas"]["ordens"] == 2
-    assert len(out2["variantes"]["todas"]["curva"]) == len(todas["curva"]) + 2
+    assert out2["refeito"] is False and out2["variantes"]["seletiva"]["ordens"] == 2
+    assert len(out2["variantes"]["seletiva"]["curva"]) == len(todas["curva"]) + 2
     importlib.reload(armazenamento)
 
 
@@ -234,7 +234,7 @@ def test_rodar_deixa_de_fora_quem_opera_em_mercados_de_terceiros(tmp_path, monke
     from lab import rodar_copia
     assert rodar_copia.main(tmp_path, Api(), t1 + 3600_000) == 0
     out = json.loads((tmp_path / "saida" / "copia_fiel.json").read_text())
-    for nome in ("todas", "seletiva"):
+    for nome in ("seletiva",):
         v = out["variantes"][nome]
         assert v["carteiras"] == 0 and "terceiros" in v["fora"][0]["motivo"]
     importlib.reload(armazenamento)

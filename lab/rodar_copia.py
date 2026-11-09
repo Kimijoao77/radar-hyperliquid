@@ -25,7 +25,8 @@ HORA = 3_600_000
 LIMITE_1M = int(3.2 * DIA)            # a Hyperliquid guarda ~5000 velas por intervalo: 1 min cobre ~3,4 dias
 MAX_LOG = 300
 MAX_CURVA = 2000
-VERSAO = 2                            # 2 (09/11): fills do mesmo instante em cadeia, sem HIP-3, curva de hora em hora
+VERSAO = 3                            # 2 (09/11): fills do mesmo instante em cadeia, sem HIP-3, curva de hora em hora
+                                      # 3 (09/11): um copy trading só (o seletivo)
 MAX_TERCEIROS = 0.8                   # carteira com mais que isso dos fills em mercados de terceiros fica de fora
 
 

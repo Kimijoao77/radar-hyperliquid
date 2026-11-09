@@ -89,8 +89,11 @@ def grade(velas: list[dict], faixa: float, niveis: int, alav: float = 1.0, capit
                                                "fora_da_faixa": round(fora / max(1, len(curva)), 3), "liquidada": liquidada})
 
 
-def dca(velas: list[dict], passo: float, alvo: float, ordens: int = 5, escala: float = 1.5, alav: float = 1.0, capital: float = 1000.0, ops: list | None = None) -> dict:
-    """Robô de DCA comprado: 1 compra base + até `ordens` compras de segurança a cada `passo` de queda; vende com `alvo` de lucro."""
+def dca(velas: list[dict], passo: float, alvo: float, ordens: int = 5, escala: float = 1.5, alav: float = 1.0, capital: float = 1000.0,
+        ops: list | None = None, media_h: int = 0, historico: list[float] | None = None) -> dict:
+    """Robô de DCA comprado: 1 compra base + até `ordens` compras de segurança a cada `passo` de queda; vende com `alvo` de lucro.
+    media_h > 0: pausa na tendência de queda — só abre um ciclo novo se o último fechamento estiver acima da média das
+    últimas `media_h` horas (o ciclo já aberto segue normal). `historico`: fechamentos de antes, para a média já valer."""
     pesos = [escala ** k for k in range(ordens + 1)]
     base = capital * alav / sum(pesos)
     caixa, qtd, gasto, n_comp = capital, 0.0, 0.0, 0
@@ -98,8 +101,15 @@ def dca(velas: list[dict], passo: float, alvo: float, ordens: int = 5, escala: f
     ciclos, horas_presas, maior_preso, preso_desde = 0, 0, 0, None
     liquidada = False
     curva, ts = [], []
+    fechados = list(historico or [])[-media_h:] if media_h else []
+    soma, pausadas = sum(fechados), 0
     for v in velas:
         lo, hi, c, t = float(v["l"]), float(v["h"]), float(v["c"]), int(v["t"])
+        if qtd == 0 and media_h and len(fechados) >= media_h and fechados[-1] < soma / media_h:
+            pausadas += 1                                     # tendência de queda: fica no caixa nesta hora
+            curva.append(caixa); ts.append(t)
+            fechados.append(c); soma += c - fechados.pop(0)
+            continue
         if qtd == 0:                                          # abre um ciclo na abertura da vela
             p_ent = float(v["o"])
             q = base / p_ent
@@ -137,10 +147,15 @@ def dca(velas: list[dict], passo: float, alvo: float, ordens: int = 5, escala: f
                 curva.append(0.0); ts.append(t)
                 break
         curva.append(patrimonio); ts.append(t)
+        if media_h:
+            fechados.append(c); soma += c
+            if len(fechados) > media_h:
+                soma -= fechados.pop(0)
     if qtd and preso_desde:
         maior_preso = max(maior_preso, (ts[-1] - preso_desde) / HORA)
     return _resumo(velas, curva, ts, capital, {"ciclos": ciclos, "horas_com_posicao": round(horas_presas / max(1, len(curva)), 3),
-                                               "maior_tempo_preso_h": round(maior_preso), "liquidada": liquidada})
+                                               "maior_tempo_preso_h": round(maior_preso), "liquidada": liquidada,
+                                               "horas_pausado": round(pausadas / max(1, len(curva)), 3)})
 
 
 def _resumo(velas, curva, ts, capital, extra) -> dict:
@@ -153,27 +168,39 @@ def _resumo(velas, curva, ts, capital, extra) -> dict:
             "dias": round(horas / 24, 1), "curva": _pontos(ts, curva), **extra}
 
 
+MEDIA_H = 168                                             # pausa do DCA: média de 7 dias
+
+# Versão 2 (09/11/2026): só 1×. Na versão 1 as escolhidas eram todas 3× e, numa semana de queda, a grade de HYPE
+# perdeu 36 %. O DCA ganhou a pausa na tendência de queda (com e sem, para comparar).
 CONFIGS = (
-    [{"tipo": "grade", "faixa": f, "niveis": n, "alav": a} for f in (0.10, 0.20) for n in (10, 20) for a in (1, 3)]
-    + [{"tipo": "dca", "passo": s, "alvo": g, "alav": a} for s in (0.02, 0.03) for g in (0.015, 0.03) for a in (1, 3)]
+    [{"tipo": "grade", "faixa": f, "niveis": n, "alav": 1} for f in (0.10, 0.20) for n in (10, 20)]
+    + [{"tipo": "dca", "passo": s, "alvo": g, "alav": 1, "pausa": pz} for s in (0.02, 0.03) for g in (0.015, 0.03) for pz in (False, True)]
 )
 
 
 def nome(c: dict) -> str:
     if c["tipo"] == "grade":
         return f"Grade ±{round(c['faixa'] * 100)} %, {c['niveis']} degraus{'' if c['alav'] == 1 else f', {c['alav']}×'}"
-    return f"DCA a cada −{round(c['passo'] * 100)} %, alvo +{c['alvo'] * 100:g} %{'' if c['alav'] == 1 else f', {c['alav']}×'}"
+    return (f"DCA a cada −{round(c['passo'] * 100)} %, alvo +{c['alvo'] * 100:g} %{'' if c['alav'] == 1 else f', {c['alav']}×'}"
+            + (", pausa na queda" if c.get("pausa") else ""))
 
 
-def rodar(c: dict, velas: list[dict], ops: list | None = None) -> dict:
-    """ops: se for uma lista, recebe cada compra e venda (só no ao vivo; no passado seriam milhares)."""
+def rodar(c: dict, velas: list[dict], ops: list | None = None, historico: list[float] | None = None) -> dict:
+    """ops: se for uma lista, recebe cada compra e venda (só no ao vivo; no passado seriam milhares).
+    historico: fechamentos de antes das velas (a média da pausa já vale desde a primeira hora)."""
     if c["tipo"] == "grade":
         return grade(velas, c["faixa"], c["niveis"], c["alav"], ops=ops)
-    return dca(velas, c["passo"], c["alvo"], alav=c["alav"], ops=ops)
+    return dca(velas, c["passo"], c["alvo"], alav=c["alav"], ops=ops, media_h=MEDIA_H if c.get("pausa") else 0, historico=historico)
 
 
 def nota(r: dict) -> float:
-    """Para escolher as que vão para o ao vivo: retorno por risco (liquidada = fora)."""
+    """Retorno por risco (liquidada = fora)."""
     if r.get("liquidada"):
         return -9
     return r["retorno"] / max(0.05, r["pior_queda"])
+
+
+def nota_honesta(dentro: dict, fora: dict) -> float:
+    """Para escolher as que vão para o ao vivo sem escolher a dedo: a pior das duas notas — a dos primeiros 2/3 do
+    passado (onde a regra foi escolhida) e a do último 1/3 (que a escolha não viu)."""
+    return min(nota(dentro), nota(fora))

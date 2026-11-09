@@ -48,4 +48,31 @@ def test_dca_alavancado_quebra_numa_queda_sem_volta():
 
 
 def test_nomes():
-    assert len(CONFIGS) == 16 and nome(CONFIGS[0]).startswith("Grade ±10 %")
+    assert len(CONFIGS) == 12 and nome(CONFIGS[0]).startswith("Grade ±10 %")
+    assert all(c["alav"] == 1 for c in CONFIGS)                  # versão 2: sem alavancagem
+    assert nome({"tipo": "dca", "passo": 0.02, "alvo": 0.015, "alav": 1, "pausa": True}).endswith("pausa na queda")
+
+
+def test_dca_com_pausa_fica_no_caixa_na_queda_longa():
+    # já vinha caindo (a média de 7 dias está acima do preço) e continua caindo devagar por 300 horas: sem pausa, o DCA
+    # fica preso e perde muito; com a pausa, não abre ciclo (a pausa não fecha um ciclo já aberto, só evita abrir)
+    hist = [120 - 20 * i / 167 for i in range(168)]
+    precos = [100 * (1 - 0.003 * i) for i in range(1, 301)]
+    sem = dca(velas(precos), 0.02, 0.015)
+    com = dca(velas(precos), 0.02, 0.015, media_h=168, historico=hist)
+    assert sem["retorno"] < -0.3 and com["retorno"] > sem["retorno"] + 0.25
+    assert com["horas_pausado"] > 0.5
+
+
+def test_dca_com_pausa_volta_a_operar_na_alta():
+    hist = [90.0] * 168                                           # vinha de baixo: a média é 90
+    precos = [100 + (i % 6) for i in range(200)]                  # anda acima da média, sobe e desce
+    r = dca(velas(precos), 0.02, 0.015, media_h=168, historico=hist)
+    assert r["ciclos"] >= 1 and r["horas_pausado"] < 0.2
+
+
+def test_escolha_honesta_usa_a_pior_nota():
+    from lab.grade import nota_honesta
+    boa = {"retorno": 0.2, "pior_queda": 0.1}
+    ruim = {"retorno": -0.05, "pior_queda": 0.2}
+    assert nota_honesta(boa, ruim) < 0 < nota_honesta(boa, boa)

@@ -40,6 +40,17 @@ PADRAO = {
     "escorregamento": 0.0003,         # por lado, em cada ponta
     "alavancagem_perp": 2,
     "dias_passado": 30,
+    "so_com_spot": True,              # só moedas que dá para comprar à vista de verdade (lista abaixo)
+}
+
+# Versão 2 (09/11/2026): a operação precisa COMPRAR a moeda à vista. Na versão 1 o teste escolhia moedas pequenas
+# (USELESS, PONS, CASHCAT) que pagavam bem, mas que não têm mercado à vista fundo nas corretoras comuns: o teste
+# não dava para repetir de verdade. Agora só entram moedas grandes, com mercado à vista nas maiores corretoras
+# (e HYPE, à vista na própria Hyperliquid). Nomes como na Hyperliquid (kPEPE = mil PEPE).
+COM_SPOT = {
+    "BTC", "ETH", "SOL", "XRP", "BNB", "DOGE", "ADA", "AVAX", "LINK", "LTC", "DOT", "TRX", "BCH", "SUI", "TON", "NEAR",
+    "APT", "ARB", "OP", "ATOM", "UNI", "AAVE", "HYPE", "ENA", "kPEPE", "WIF", "TAO", "SEI", "TIA", "INJ", "FIL", "ETC",
+    "XLM", "HBAR", "ICP", "RENDER", "FET", "ONDO", "WLD", "JUP", "PENDLE", "LDO", "CRV", "POL", "ALGO", "STX", "IMX",
 }
 
 
@@ -87,7 +98,7 @@ def universo(meta_ctx: list, p: dict) -> list[dict]:
     meta, ctxs = meta_ctx
     out = []
     for m, c in zip(meta.get("universe", []), ctxs):
-        if m.get("isDelisted"):
+        if m.get("isDelisted") or (p.get("so_com_spot") and m["name"] not in COM_SPOT):
             continue
         px = float(c.get("oraclePx") or c.get("markPx") or 0)
         vlm = float(c.get("dayNtlVlm") or 0)

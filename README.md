@@ -120,6 +120,17 @@ descolamento que liquida. Carteira simulada: 3 estáveis + 3 voláteis + o melho
 **5. Opções (`lab/opcoes.py`)** — de hora em hora, dados públicos da Deribit: vende put semanal ~10 % abaixo e call
 coberta ~10 % acima, em BTC e ETH, US$ 1.000 cada; vende pelo bid, paga a taxa e liquida no preço de entrega. → `saida/opcoes.json`
 
+**6. Apostas esportivas (`lab/apostas.py`, desde 09/11)** — a cada 3 h, football-data.co.uk (grátis): odds da bolsa
+(Betfair Exchange) e a média das casas, pegas na sexta e na terça à tarde, e os resultados. Aposta US$ 10 na bolsa quando
+a odd, já sem a comissão de 5 %, paga acima da justa (média das casas sem a margem, método da potência). O ajuste (limiar,
+faixa de odds, com ou sem empate) é escolhido na temporada de 2 anos atrás e conferido nas seguintes; cada aposta é
+comparada com a odd de fechamento da bolsa (CLV). A Pinnacle saiu dos dados em 2025. → `saida/apostas.json`
+
+**7. Memecoins (`lab/memecoins.py`, desde 09/11)** — de hora em hora, GeckoTerminal (grátis, poucas chamadas por minuto):
+moedas novas da pump.fun. Duas estratégias com o mesmo caixa: a mais disputada no lançamento e a que sobreviveu e
+dobrou na 1ª hora. 1 % do patrimônio por compra, 3 % de custo em cada lado, metade a 2×, o resto a 5×, parada em −50 %
+e prazo de 24 h, com as velas de 5 min (o pior caso quando a parada e o alvo caem na mesma vela). → `saida/memecoins.json`
+
 ## Arquivos
 
 - `config.json`: todos os números do filtro e da classificação. Mudou aqui, a próxima rodada já usa.

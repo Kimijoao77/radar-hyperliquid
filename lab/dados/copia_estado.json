@@ -1,5 +1,5 @@
 {
- "ate": 1794224700000,
+ "ate": 1794228300000,
  "inicio": 1793674800000,
  "variantes": {
   "seletiva": {
@@ -619,6 +619,14 @@
     [
      1794224700000,
      0.0831
+    ],
+    [
+     1794225600000,
+     0.08
+    ],
+    [
+     1794228300000,
+     0.08401
     ]
    ],
    "fora": {
@@ -631,66 +639,6 @@
     "0xc3d101ae37bba62baf199c6d5e5d8f0eecfd200e": "segura as posições 21.1 min (mediana): curto demais para copiar com atraso"
    },
    "log": [
-    {
-     "lado": "compra",
-     "moeda": "XRP",
-     "px": 1.204615,
-     "realizado": 0.0,
-     "resultado": -0.12,
-     "t": 1793920422322,
-     "valor": 256.62,
-     "w": "0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356"
-    },
-    {
-     "lado": "compra",
-     "moeda": "XRP",
-     "px": 1.204252,
-     "realizado": 0.0,
-     "resultado": -0.07,
-     "t": 1793920447682,
-     "valor": 165.17,
-     "w": "0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356"
-    },
-    {
-     "lado": "venda",
-     "moeda": "ZEC",
-     "px": 1290.523909,
-     "realizado": 0.0,
-     "resultado": -0.02,
-     "t": 1793923887893,
-     "valor": 42.99,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
-    {
-     "lado": "venda",
-     "moeda": "ZEC",
-     "px": 1289.574159,
-     "realizado": 0.0,
-     "resultado": -0.02,
-     "t": 1793923955766,
-     "valor": 43.06,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
-    {
-     "lado": "venda",
-     "moeda": "ZEC",
-     "px": 1288.04749,
-     "realizado": 0.0,
-     "resultado": -0.02,
-     "t": 1793924064868,
-     "valor": 43.25,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
-    {
-     "lado": "venda",
-     "moeda": "ZEC",
-     "px": 1288.329685,
-     "realizado": 0.0,
-     "resultado": -0.02,
-     "t": 1793924114122,
-     "valor": 43.26,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
     {
      "lado": "venda",
      "moeda": "ZEC",
@@ -3631,10 +3579,72 @@
      "t": 1794222636110,
      "valor": 121.35,
      "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "compra",
+     "moeda": "AVAX",
+     "obs": "saiu do radar",
+     "px": 8.034815,
+     "realizado": 1.31,
+     "resultado": 0.28,
+     "t": 1794225600000,
+     "valor": 2287.22,
+     "w": "0x30a68666b5f91348e7fc78785802e0769d86e62b"
+    },
+    {
+     "lado": "compra",
+     "moeda": "ETH",
+     "obs": "saiu do radar",
+     "px": 2113.6563,
+     "realizado": 90.29,
+     "resultado": 90.0,
+     "t": 1794225600000,
+     "valor": 649.7,
+     "w": "0x30a68666b5f91348e7fc78785802e0769d86e62b"
+    },
+    {
+     "lado": "compra",
+     "moeda": "BIO",
+     "px": 0.02006,
+     "realizado": 8.0,
+     "resultado": 7.8,
+     "t": 1794225059389,
+     "valor": 452.46,
+     "w": "0xccf595171e2e56655fb4d386b7424da16be69d42"
+    },
+    {
+     "lado": "venda",
+     "moeda": "XRP",
+     "px": 1.098892,
+     "realizado": 0.26,
+     "resultado": 0.07,
+     "t": 1794227807499,
+     "valor": 432.48,
+     "w": "0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356"
+    },
+    {
+     "lado": "venda",
+     "moeda": "USUAL",
+     "px": 0.010458,
+     "realizado": 0.0,
+     "resultado": -0.23,
+     "t": 1794226121724,
+     "valor": 502.24,
+     "w": "0xccf595171e2e56655fb4d386b7424da16be69d42"
+    },
+    {
+     "lado": "venda",
+     "moeda": "AAVE",
+     "px": 133.20863,
+     "realizado": 0.0,
+     "resultado": -0.08,
+     "t": 1794227433271,
+     "valor": 172.65,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
     }
    ],
    "pulos": {
-    "ordem pequena": 92
+    "ordem pequena": 94
    },
    "subs": {
     "0x0cdf0ab9ead733ecf321d09432b5208adae2902f": {
@@ -3646,7 +3656,7 @@
      "ordens": 8,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 859.26,
+     "patrimonio": 866.96,
      "pico": 1051.4336280950083,
      "pos": {
       "HYPE": [
@@ -3661,14 +3671,14 @@
     },
     "0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356": {
      "capital": 1000.0,
-     "colateral": 1056.6855642257412,
+     "colateral": 1056.7551112272806,
      "expo_max": 3.001157494937972,
      "fator": 0.2,
      "inicio": 1793674800000,
-     "ordens": 79,
+     "ordens": 80,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1012.65,
+     "patrimonio": 1025.15,
      "pico": 1092.9339470572115,
      "pos": {
       "BTC": [
@@ -3682,14 +3692,10 @@
       "SOL": [
        2.8328912701407507,
        87.25119135505112
-      ],
-      "XRP": [
-       393.5590449955239,
-       1.0982207321463693
       ]
      },
-     "taxas": 12.096942500023895,
-     "ult": 1794215011151,
+     "taxas": 12.29155798928677,
+     "ult": 1794227747499,
      "vivo": true,
      "w": "0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356"
     },
@@ -3712,28 +3718,19 @@
     },
     "0x30a68666b5f91348e7fc78785802e0769d86e62b": {
      "capital": 1000.0,
-     "colateral": 1166.1428743880685,
+     "colateral": 1256.4208052887875,
      "expo_max": 3.008572400555211,
      "fator": 0.20366598778004072,
      "inicio": 1793674800000,
-     "ordens": 31,
-     "parou": null,
-     "parou_em": null,
-     "patrimonio": 1256.94,
+     "ordens": 33,
+     "parou": "saiu do radar",
+     "parou_em": 1794225600000,
+     "patrimonio": 1256.42,
      "pico": 1305.8610981803881,
-     "pos": {
-      "AVAX": [
-       -284.6633727424162,
-       8.03940794967637
-      ],
-      "ETH": [
-       -0.3073806224102715,
-       2407.4035476320314
-      ]
-     },
-     "taxas": 9.215154003827585,
+     "pos": {},
+     "taxas": 10.53676559190953,
      "ult": 1794214421247,
-     "vivo": true,
+     "vivo": false,
      "w": "0x30a68666b5f91348e7fc78785802e0769d86e62b"
     },
     "0x816b8dd5f08543d7486a4ec075979a263d14ec51": {
@@ -3745,7 +3742,7 @@
      "ordens": 38,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 900.89,
+     "patrimonio": 906.79,
      "pico": 1003.619158123108,
      "pos": {
       "BTC": [
@@ -3760,20 +3757,16 @@
     },
     "0xccf595171e2e56655fb4d386b7424da16be69d42": {
      "capital": 1000.0,
-     "colateral": 1735.4280925954602,
+     "colateral": 1743.0034680348585,
      "expo_max": 3.0069875433022735,
      "fator": 0.6622516556291391,
      "inicio": 1793674800000,
-     "ordens": 98,
+     "ordens": 100,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1638.7,
+     "patrimonio": 1620.05,
      "pico": 1702.1116532351907,
      "pos": {
-      "BIO": [
-       -22555.835804573573,
-       0.02041442972301205
-      ],
       "MERL": [
        -52337.24360308292,
        0.03140856386659778
@@ -3782,28 +3775,36 @@
        -599275.121928681,
        0.0016403912476041268
       ],
+      "USUAL": [
+       -48025.292460610806,
+       0.01045781436115602
+      ],
       "kPEPE": [
        -326221.4810969033,
        0.005010683708020134
       ]
      },
-     "taxas": 54.02148134069503,
-     "ult": 1794224171193,
+     "taxas": 54.45109594830518,
+     "ult": 1794227754764,
      "vivo": true,
      "w": "0xccf595171e2e56655fb4d386b7424da16be69d42"
     },
     "0xf24504bb689f1461fbfd89712eb4872130ed4e47": {
      "capital": 1000.0,
-     "colateral": 1003.9612983299659,
-     "expo_max": 3.0004876280861037,
+     "colateral": 1003.8836070562579,
+     "expo_max": 3.0005394698810237,
      "fator": 0.3527336860670194,
      "inicio": 1793674800000,
-     "ordens": 407,
+     "ordens": 408,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 912.11,
+     "patrimonio": 912.4,
      "pico": 1053.8742268860728,
      "pos": {
+      "AAVE": [
+       -1.2960667443086002,
+       133.20862962082703
+      ],
       "ARB": [
        -2741.9218392969283,
        0.17632022803450503
@@ -3821,8 +3822,8 @@
        0.06392244948614478
       ]
      },
-     "taxas": 14.40373995190988,
-     "ult": 1794222576110,
+     "taxas": 14.481431225617795,
+     "ult": 1794227373271,
      "vivo": true,
      "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
     },
@@ -3839,7 +3840,7 @@
      "pico": 1043.4614669593184,
      "pos": {},
      "taxas": 22.01967438896861,
-     "ult": 1794175224430,
+     "ult": 1794224708916,
      "vivo": true,
      "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
     }

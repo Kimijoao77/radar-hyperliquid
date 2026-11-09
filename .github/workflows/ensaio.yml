@@ -7,11 +7,16 @@ permissions:
 jobs:
   ensaio:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - run: cp -r . /tmp/copia && python ensaio_conc.py /tmp/copia
+      - run: python coleta_pools.py /tmp/pools.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pools
+          path: /tmp/pools.json
+          retention-days: 3

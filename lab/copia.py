@@ -10,6 +10,13 @@ Cada carteira ganha uma subconta de US$ 1.000 quando entra na cópia; o teste é
 A cópia começa sem posição e entra na primeira mudança de cada moeda (seguindo a posição inteira da carteira dali em diante).
 Funding não entra na conta (é pequeno perto do resto em operações de horas).
 
+Dois cuidados com os dados (versão 2, 09/11):
+- Fills do mesmo instante (uma ordem grande que pega vários preços) chegam da API em qualquer ordem. A posição depois do
+  minuto é o fim da cadeia "posição antes (sp) → posição depois", não o último fill da lista. Antes disso a cópia às
+  vezes ficava com um resto de posição que a carteira já tinha fechado.
+- Mercados de terceiros (HIP-3, "xyz:GOLD", "para:…") têm conta e saldo separados, que a foto do radar não vê. Sem o
+  saldo certo não dá para copiar na proporção certa, então ficam de fora (como spot).
+
 Variantes (VARIANTES):
 - todas    todas as carteiras do radar, com a alavancagem delas (no máximo 10× por subconta)
 - seletiva só as que dá para copiar (mediana de 30 min ou mais segurando a posição e o radar diz que dá), com
@@ -67,6 +74,14 @@ class Precos:
     def ultimo_t(self, moeda: str) -> int:
         return self.v[moeda][-1][1] if self.v.get(moeda) else 0
 
+    def ultimo(self, moeda: str, t: int) -> float | None:
+        """O último fechamento até `t`, mesmo velho (mercado encerrado): só para zerar uma posição que sobrou."""
+        vs = self.v.get(moeda)
+        if not vs:
+            return None
+        i = bisect.bisect_right(self._t[moeda], t) - 1
+        return vs[i][3] if i >= 0 else None
+
     def em(self, moeda: str, t: int) -> float | None:
         vs = self.v.get(moeda)
         if not vs:
@@ -88,20 +103,82 @@ def posicao_apos(f: dict) -> float:
     return float(f.get("sp", 0.0)) + (float(f["z"]) if f.get("s") == "B" else -float(f["z"]))
 
 
-def eventos(fills: list[dict], depois_de: int, atraso_ms: int) -> list[dict]:
+def copiavel_mercado(moeda: str) -> bool:
+    """Só os perpétuos da Hyperliquid: spot ("@n", "A/B") e mercados de terceiros ("xyz:GOLD") ficam de fora."""
+    return not (moeda.startswith("@") or "/" in moeda or ":" in moeda)
+
+
+def _perto(a: float, b: float) -> bool:
+    return abs(a - b) <= 1e-9 * max(1.0, abs(a), abs(b))
+
+
+def em_ordem(fills: list[dict]) -> list[dict]:
+    """Os fills de UMA moeda em ordem: por tempo e, no mesmo instante (a API não garante a ordem), seguindo a cadeia
+    posição antes (sp) → posição depois."""
+    fs = sorted(fills, key=lambda f: f["t"])
+    out: list[dict] = []
+    pos = None
+    i = 0
+    while i < len(fs):
+        j = i
+        while j < len(fs) and fs[j]["t"] == fs[i]["t"]:
+            j += 1
+        resto = fs[i:j]
+        while resto:
+            k = None
+            if pos is not None:                       # continua a cadeia de onde parou
+                k = next((n for n, f in enumerate(resto) if _perto(float(f.get("sp", 0.0)), pos)), None)
+            if k is None:                             # começo da cadeia: o "antes" que não é o "depois" de outro fill
+                depois = [posicao_apos(f) for f in resto]
+                k = next((n for n, f in enumerate(resto)
+                          if not any(_perto(float(f.get("sp", 0.0)), d) for m, d in enumerate(depois) if m != n)), 0)
+            f = resto.pop(k)
+            out.append(f)
+            pos = posicao_apos(f)
+        i = j
+    return out
+
+
+def parte_terceiros(fills: list[dict]) -> float:
+    """Que fração dos fills em perpétuos foi em mercados de terceiros (HIP-3)."""
+    perps = [f for f in fills if not (f["c"].startswith("@") or "/" in f["c"])]
+    return sum(1 for f in perps if ":" in f["c"]) / len(perps) if perps else 0.0
+
+
+def eventos(fills: list[dict], depois_de: int, atraso_ms: int, fotos: list[dict] | None = None) -> list[dict]:
     """Junta os fills de cada moeda por minuto (o copiador olha a posição dela e age `atraso` depois do último fill do
-    minuto). Só fills com t > depois_de e só mercados perpétuos (spot "@n" e pares "A/B" ficam de fora).
+    minuto). Só fills com t > depois_de e só os perpétuos da Hyperliquid (copiavel_mercado).
+    Com `fotos` (as fotos da conta), uma posição que some da foto sem fill de fechamento (mercado encerrado, ajuste da
+    bolsa) vira um evento "zerou" na hora da foto, para a cópia não ficar com um resto que a carteira já não tem.
     Volta [{t (do último fill), exec, moeda, pos, px}] em ordem de execução."""
-    grupos: dict[tuple[str, int], dict] = {}
+    por_moeda: dict[str, list[dict]] = {}
     for f in fills:
-        if f["t"] <= depois_de or "z" not in f or f["c"].startswith("@") or "/" in f["c"]:
-            continue
-        chave = (f["c"], f["t"] // MINUTO)
-        g = grupos.get(chave)
-        if g is None or f["t"] >= g["t"]:
-            grupos[chave] = {"t": f["t"], "moeda": f["c"], "pos": posicao_apos(f), "px": float(f["p"]),
-                             "exec": f["t"] + atraso_ms}
-    return sorted(grupos.values(), key=lambda e: (e["exec"], e["moeda"]))
+        if "z" in f and copiavel_mercado(f["c"]):
+            por_moeda.setdefault(f["c"], []).append(f)
+    evs = []
+    caminho: dict[str, tuple[list[int], list[float]]] = {}
+    for moeda, fs in por_moeda.items():
+        ordem = em_ordem(fs)                          # a história toda, para a cadeia saber a posição de antes
+        caminho[moeda] = ([f["t"] for f in ordem], [posicao_apos(f) for f in ordem])
+        ultimo: dict[int, dict] = {}
+        for f in ordem:
+            if f["t"] > depois_de:
+                ultimo[f["t"] // MINUTO] = f          # na ordem da cadeia, o último do minuto fica
+        for f in ultimo.values():
+            evs.append({"t": f["t"], "moeda": moeda, "pos": posicao_apos(f), "px": float(f["p"]),
+                        "exec": f["t"] + atraso_ms})
+    zerado: dict[str, int] = {}
+    for ft in sorted(fotos or [], key=lambda x: x["t"]):
+        tem = {p[0] for p in ft.get("pos") or []}
+        for moeda, (ts, ps) in caminho.items():
+            i = bisect.bisect_right(ts, ft["t"]) - 1
+            if i < 0 or moeda in tem or _perto(ps[i], 0.0) or zerado.get(moeda) == ts[i]:
+                continue
+            zerado[moeda] = ts[i]                     # um "zerou" por posição sumida
+            if ft["t"] > depois_de:
+                evs.append({"t": ft["t"], "moeda": moeda, "pos": 0.0, "px": None, "exec": ft["t"] + atraso_ms,
+                            "obs": "sumiu da conta dela"})
+    return sorted(evs, key=lambda e: (e["exec"], e["moeda"]))
 
 
 class Saldos:
@@ -190,7 +267,12 @@ def fechar_tudo(sc: dict, precos: Precos, t: int, log: list | None, motivo: str)
 def aplicar(sc: dict, ev: dict, saldo_carteira: float, precos: Precos, var: dict, log: list | None) -> str | None:
     """Ajusta a subconta para a nova posição da carteira. Volta None (ok) ou o motivo de ter pulado."""
     t, m = ev["exec"], ev["moeda"]
+    q = sc["pos"].get(m, (0.0, 0.0))[0]
+    if ev["pos"] == 0 and q == 0:
+        return None                                               # ela zerou uma posição que a cópia não tinha
     p = precos.em(m, t)
+    if p is None and ev["pos"] == 0:
+        p = precos.ultimo(m, t)                                   # para zerar, serve o último preço conhecido
     if p is None:
         return "sem preço"
     if not saldo_carteira or saldo_carteira <= 0:
@@ -198,18 +280,17 @@ def aplicar(sc: dict, ev: dict, saldo_carteira: float, precos: Precos, var: dict
     pat = patrimonio(sc, precos, t)
     if pat <= 0:
         return "subconta zerada"
-    fracao = ev["pos"] * ev["px"] / saldo_carteira                # quanto do saldo dela está na moeda (com sinal)
+    fracao = ev["pos"] * ev["px"] / saldo_carteira if ev["pos"] else 0.0   # quanto do saldo dela está na moeda
     alvo_valor = fracao * sc["fator"] * pat
     teto = var["teto"] * pat - exposicao(sc, precos, t, sem=m)     # o que ainda cabe sem passar do teto
     if abs(alvo_valor) > max(0.0, teto):
         alvo_valor = math.copysign(max(0.0, teto), alvo_valor)
     alvo = alvo_valor / p
-    q = sc["pos"].get(m, (0.0, 0.0))[0]
     delta = alvo - q
     if abs(delta) * p < MINIMO and not (alvo == 0 and q != 0):
         return "ordem pequena"
     preco = p * (1 + ESCORREGA) if delta > 0 else p * (1 - ESCORREGA)
-    negociar(sc, m, delta, preco, t, log)
+    negociar(sc, m, delta, preco, t, log, ev.get("obs", ""))
     sc["expo_max"] = max(sc["expo_max"], exposicao(sc, precos, t) / max(1e-9, patrimonio(sc, precos, t)))
     return None
 
@@ -249,12 +330,16 @@ def fator_de(c: dict, var: dict) -> float:
     return max(0.05, min(1.0, var["alvo"] / x))
 
 
-def avancar(sc: dict, fills: list[dict], saldos: Saldos, precos: Precos, var: dict, ate: int, log: list | None) -> dict:
-    """Processa os fills novos da carteira cuja execução cai até `ate`. Volta a contagem do que foi pulado."""
+def avancar(sc: dict, fills: list[dict], saldos: Saldos, precos: Precos, var: dict, ate: int, log: list | None,
+            evs: list[dict] | None = None) -> dict:
+    """Processa os fills novos da carteira cuja execução cai até `ate`. Volta a contagem do que foi pulado.
+    `evs`: os eventos já prontos (eventos(fills, 0, atraso)), para não refazer a cada hora de uma rodada longa."""
     pulos: dict[str, int] = {}
     if not sc["vivo"]:
         return pulos
-    for ev in eventos(fills, sc["ult"], var["atraso_s"] * 1000):
+    if evs is None:
+        evs = eventos(fills, 0, var["atraso_s"] * 1000)
+    for ev in evs[bisect.bisect_right(evs, sc["ult"], key=lambda e: e["t"]):]:
         if ev["exec"] > ate:
             break
         motivo = aplicar(sc, ev, saldos.em(ev["t"]), precos, var, log)

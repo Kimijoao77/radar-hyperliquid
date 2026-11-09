@@ -78,6 +78,11 @@ ganha uma subconta de US$ 1.000; o teste é a soma. Começa sem posição e entr
 - **seletiva**: só as copiáveis (mediana de 30 min ou mais com a posição aberta e o radar diz que dá), com a exposição
   levada a 2× da típica dela (no máximo 3×) e **parada de proteção**: caiu 25 % do pico, para de copiar aquela carteira.
 - Funding fica de fora. Spot e pares de terceiros também. → `saida/copia_fiel.json`, estado em `lab/dados/copia_estado.json`.
+- Versão 2 (09/11), que refez tudo desde 03/11: fills do mesmo instante seguem a cadeia "posição antes → depois" (a API
+  manda em qualquer ordem, e a cópia ficava com restos de posições que a carteira já tinha fechado); posição que some da
+  foto da conta sem fill (mercado encerrado) zera na cópia também; mercados de terceiros (HIP-3, `xyz:GOLD`) ficam de
+  fora, porque têm saldo separado que a foto não vê, e quem opera mais de 80 % neles não entra; a curva tem um ponto
+  por hora cheia, inclusive na rodada que refaz os dias passados.
 
 **1. Funding (`lab/funding.py`)** — comprar à vista e vender o mesmo valor no perpétuo da Hyperliquid: o preço se anula e
 sobra o funding (pago de hora em hora; positivo = quem está vendido recebe). Carteira simulada de US$ 1.000:

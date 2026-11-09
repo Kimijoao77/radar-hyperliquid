@@ -1,10 +1,10 @@
 """Laboratório 5: vender opções de cripto (Deribit, dados públicos), sem dinheiro.
 
-Duas estratégias, cada uma com US$ 1.000 de mentira, em BTC e em ETH:
+Desde 09/11 (versão 2), só a ideia da lista: vender proteção (puts), US$ 1.000 de mentira em BTC e outros em ETH.
 - Put semanal ~10 % abaixo do preço ("garantida em dinheiro"): recebe o prêmio; se no vencimento o preço estiver abaixo
   do preço de exercício, paga a diferença (é como ser obrigado a comprar a moeda mais caro).
-- Call coberta semanal ~10 % acima: tem a moeda e vende o direito de comprá-la mais caro; recebe o prêmio, mas se o
-  preço passar do exercício, a alta acima dele fica com o comprador.
+A versão 1 também vendia call coberta (compra a moeda e vende o direito de comprá-la 10 % mais caro). Ela só seguia o
+preço da moeda: na queda de 03 a 09/11 perdeu junto com o BTC e o ETH. Saiu; o resultado dela fica em "anterior".
 Vende pelo preço de compra do livro (bid), paga a taxa da Deribit (0,03 % da moeda, no máximo 12,5 % do prêmio) e liquida
 pelo preço oficial de entrega (08:00 UTC). Quantidade fracionada (a Deribit exige no mínimo 0,1 BTC / 1 ETH na real).
 """
@@ -15,7 +15,8 @@ from datetime import datetime, timezone
 DIA = 86400000
 API = "https://www.deribit.com/api/v2/public/"
 MESES = {m: i + 1 for i, m in enumerate(["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"])}
-ESTRATEGIAS = [{"id": f"{tipo}-{moeda}", "tipo": tipo, "moeda": moeda} for tipo in ("put", "call") for moeda in ("BTC", "ETH")]
+ESTRATEGIAS = [{"id": f"put-{moeda}", "tipo": "put", "moeda": moeda} for moeda in ("BTC", "ETH")]
+VERSAO = 2
 DISTANCIA = 0.10
 CAPITAL = 1000.0
 

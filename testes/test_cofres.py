@@ -37,13 +37,22 @@ def test_rodar(tmp_path):
     import lab.rodar_cofres as R
     lista = [{"apr": 0.2, "summary": {"vaultAddress": f"0x{i}", "name": f"c{i}", "tvl": str(1e6 - i), "isClosed": False, "createTimeMillis": 0}} for i in range(3)]
 
+    import math
+
     class Api:
         def _post(self, corpo, peso):
             bom = corpo["vaultAddress"] != "0x2"
             return {"name": corpo["vaultAddress"], "leaderCommission": 0.1, "followers": [1, 2],
                     "portfolio": port(150, (lambda k: 3 + (k % 3)) if bom else (lambda k: (-1) ** k * 80))}
+
+        def velas(self, moeda, iv, a, b):                    # BTC sobe e desce ~15 % (há quedas de mais de 5 %)
+            return [{"t": i * D, "c": str(100 * (1 + 0.15 * math.sin(i / 6)))} for i in range(0, 160)]
     assert R.main(tmp_path, Api(), lambda: lista) == 0
     rel = json.loads((tmp_path / "saida" / "cofres.json").read_text())
     assert rel["cofres"][0]["constante"] and rel["carteira"]["capital"] == 1000
+    assert rel["versao"] == 2
+    bom = next(c for c in rel["cofres"] if c["cofre"] == "0x0")
+    assert bom["independente"] and abs(bom["beta"]) < 0.3 and bom["trechos_queda"] > 0
     est = json.loads((tmp_path / "lab" / "dados" / "cofres_estado.json").read_text())
     assert "0x2" not in est["escolhidos"] and est["escolhidos"][-1].startswith("0xdfc24b")
+    assert abs(est["pesos"][est["escolhidos"][-1]] - 0.4) < 1e-9 and abs(sum(est["pesos"].values()) - 1) < 1e-9

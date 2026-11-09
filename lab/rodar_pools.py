@@ -1,4 +1,4 @@
-"""Roda o laboratório de pools e looping (a cada 12 horas): ranking e carteira simulada."""
+"""Roda o laboratório de pools e looping (a cada 12 horas): ranking e carteira simulada (protegida desde a versão 2)."""
 from __future__ import annotations
 
 import json
@@ -12,7 +12,9 @@ import requests
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 
-from lab.pools import EMPRESTIMO, POOLS, PRECOS, PADRAO, chave_preco, com_perda, estaveis, loops, perda_impermanente, volateis  # noqa: E402
+from lab.pools import (EMPRESTIMO, POOLS, PRECOS, PADRAO, VERSAO_CARTEIRA, chave_preco, com_perda, estaveis, loops,  # noqa: E402
+                       sem_repetir, valor_protegido, volateis, volateis_protegiveis)
+from radar.api import Hyperliquid  # noqa: E402
 
 HORA = 3600 * 1000
 ANO = 365 * 24 * HORA
@@ -33,12 +35,23 @@ def precos_atuais(chaves: list[str], get=_get) -> dict:
     return {k: v.get("price") for k, v in out.items()}
 
 
-def main(raiz: Path = RAIZ, get=_get) -> int:
+def funding_desde(api, moeda: str, t0: int, t1: int) -> float:
+    """Soma das taxas de funding (por hora) de uma moeda entre t0 e t1: a venda no perpétuo recebe quando é positiva."""
+    try:
+        h = api._post({"type": "fundingHistory", "coin": moeda, "startTime": t0 + 1, "endTime": t1}, 20) or []
+    except Exception as ex:  # noqa: BLE001
+        print("pools: funding falhou", moeda, str(ex)[:80])
+        return 0.0
+    return sum(float(x.get("fundingRate") or 0) for x in h)
+
+
+def main(raiz: Path = RAIZ, get=_get, api=None) -> int:
     agora = int(time.time() * 1000)
     saida = raiz / "saida" / "pools.json"
     arq = raiz / "lab" / "dados" / "pools_estado.json"
     est = json.loads(arq.read_text(encoding="utf-8")) if arq.exists() else {}
-    if saida.exists() and agora - est.get("ultima", 0) < 12 * HORA - 10 * 60 * 1000:
+    nova_versao = est.get("versao") != VERSAO_CARTEIRA
+    if not nova_versao and saida.exists() and agora - est.get("ultima", 0) < 12 * HORA - 10 * 60 * 1000:
         print("pools: rodou há menos de 12 h")
         return 0
     f = PADRAO
@@ -51,70 +64,84 @@ def main(raiz: Path = RAIZ, get=_get) -> int:
         precos.update(get(PRECOS.format(moedas=",".join(chaves[i:i + 20]))).get("coins", {}))
     vol_l = [com_perda(v, precos) for v in vol_l]
     lp = loops(pools, emp)
+    api = api or Hyperliquid(1000)
+    perps = {u["name"] for u in (api._post({"type": "meta"}, 20) or {}).get("universe", [])}
+    prot = volateis_protegiveis(pools, f, perps)
 
-    # carteira simulada: 3 estáveis + 3 voláteis + o melhor looping (3×), partes iguais
+    # versão nova da carteira: guarda o resultado da anterior e recomeça
+    if nova_versao:
+        anterior = list(est.get("anterior") or [])
+        velho = json.loads(saida.read_text(encoding="utf-8")) if saida.exists() else {}
+        c = velho.get("carteira") or {}
+        if c.get("capital"):
+            anterior.append({"nome": "3 estáveis + 3 pares sem proteção + looping sem contar o ETH", "retorno": round(c["saldo"] / c["capital"] - 1, 4),
+                             "de": c.get("inicio"), "ate": velho.get("gerado")})
+        est = {"versao": VERSAO_CARTEIRA, "anterior": anterior}
+    # carteira simulada: 3 estáveis + 3 pares protegidos + o melhor looping (protegido), partes iguais
     if not est.get("itens"):
-        itens = [{"tipo": "estavel", "id": v["id"], "nome": f"{v['par']} ({v['projeto']}, {v['rede']})"} for v in est_l[:3]]
-        boas = sorted([v for v in vol_l if v.get("liquido_30d") is not None], key=lambda v: -v["liquido_30d"])[:3]
-        itens += [{"tipo": "volatil", "id": v["id"], "nome": f"{v['par']} ({v['projeto']}, {v['rede']})", "chaves": [chave_preco(v["rede"], t) for t in v["tokens"]]} for v in boas]
+        itens = [{"tipo": "estavel", "id": v["id"], "nome": f"{v['par']} ({v['projeto']}, {v['rede']})"} for v in sem_repetir(est_l, 3)]
+        itens += [{"tipo": "volatil", "id": v["id"], "nome": f"{v['par']} ({v['projeto']}, {v['rede']})", "moeda_perp": v["moeda_perp"],
+                   "chaves": [chave_preco(v["rede"], t) for t in v["tokens"]]} for v in prot[:3]]
         if lp:
             n = max(lp[0]["niveis"], key=lambda n: n["vezes"])
-            itens.append({"tipo": "loop", "id": f"{lp[0]['protocolo']}|{lp[0]['rede']}|{lp[0]['token']}", "vezes": n["vezes"],
-                          "nome": f"{lp[0]['token']} {n['vezes']}× ({lp[0]['protocolo']}, {lp[0]['rede']})"})
-        est = {"inicio": agora, "itens": itens, "fotos": []}
-    # foto de agora dos itens da carteira
+            itens.append({"tipo": "loop", "id": f"{lp[0]['protocolo']}|{lp[0]['rede']}|{lp[0]['token']}", "vezes": n["vezes"], "moeda_perp": "ETH",
+                          "chaves": ["coingecko:ethereum"], "nome": f"{lp[0]['token']} {n['vezes']}× ({lp[0]['protocolo']}, {lp[0]['rede']})"})
+        est.update({"inicio": agora, "itens": itens, "fotos": []})
+    # foto de agora: rendimento de cada item, preço da moeda protegida e o funding desde a foto anterior
     por_id = {p["pool"]: p for p in pools}
-    foto = {"t": agora, "v": {}}
+    foto = {"t": agora, "v": {}, "f": {}}
     chaves_c = sorted({k for it in est["itens"] for k in it.get("chaves", [])})
     pa = precos_atuais(chaves_c, get) if chaves_c else {}
+    if est["fotos"]:
+        for m in sorted({it["moeda_perp"] for it in est["itens"] if it.get("moeda_perp")}):
+            foto["f"][m] = funding_desde(api, m, est["fotos"][-1]["t"], agora)
     for it in est["itens"]:
         if it["tipo"] in ("estavel", "volatil"):
             p = por_id.get(it["id"])
-            foto["v"][it["id"]] = [((p or {}).get("apyBase") or 0) / 100] + [pa.get(k) for k in it.get("chaves", [])]
+            apy = ((p or {}).get("apyBase") or 0) / 100
+            if it["tipo"] == "estavel":
+                foto["v"][it["id"]] = [apy]
+            else:
+                ps = [pa.get(k) for k in it["chaves"]]
+                vol = [x for x in ps if x and abs(x - 1) > 0.05]        # o lado que não é estável
+                foto["v"][it["id"]] = [apy, vol[0] if len(vol) == 1 else None]
         else:
-            prot, rede, tok = it["id"].split("|")
-            l = next((x for x in lp if x["protocolo"] == prot and x["rede"] == rede and x["token"] == tok), None)
+            prot_, rede, tok = it["id"].split("|")
+            l = next((x for x in lp if x["protocolo"] == prot_ and x["rede"] == rede and x["token"] == tok), None)
             n = next((n for n in (l or {}).get("niveis", []) if n["vezes"] == it["vezes"]), None)
-            foto["v"][it["id"]] = [n["ao_ano"] if n else None]
+            foto["v"][it["id"]] = [n["ao_ano"] if n else None, pa.get("coingecko:ethereum")]
     est["fotos"].append(foto)
     est["fotos"] = est["fotos"][-800:]
     # valor de cada item desde o começo
     parte = 1000 / max(1, len(est["itens"]))
     carteira = []
     for it in est["itens"]:
-        v, ult = 1.0, None
-        prim = None
-        for ft in est["fotos"]:
-            x = ft["v"].get(it["id"])
-            if not x:
-                continue
-            if ult is not None and ult[1][0] is not None:
-                v *= 1 + ult[1][0] * (ft["t"] - ult[0]) / ANO
-            ult = (ft["t"], x)
-            prim = prim or x
-        item = {**{k: it[k] for k in ("tipo", "nome")}, "taxas": round(parte * (v - 1), 2)}
-        if it["tipo"] == "volatil" and prim and ult and all(prim[1:]) and all(ult[1][1:]):
-            ra, rb = ult[1][1] / prim[1], ult[1][2] / prim[2]
-            il = perda_impermanente(ra / rb)
-            segurar = (ra + rb) / 2
-            item.update({"perda": round(parte * segurar * il, 2), "moedas": round(parte * (segurar - 1), 2)})
-            item["valor"] = round(parte * segurar * (1 + il) * v, 2)
+        if it["tipo"] == "estavel":
+            v, ult = 1.0, None
+            for ft in est["fotos"]:
+                x = ft["v"].get(it["id"])
+                if not x:
+                    continue
+                if ult is not None and ult[1][0] is not None:
+                    v *= 1 + ult[1][0] * (ft["t"] - ult[0]) / ANO
+                ult = (ft["t"], x)
+            carteira.append({"tipo": "estavel", "nome": it["nome"], "taxas": round(parte * (v - 1), 2), "valor": round(parte * v, 2)})
         else:
-            item["valor"] = round(parte * v, 2)
-        carteira.append(item)
+            carteira.append({"tipo": it["tipo"], "nome": it["nome"], "moeda": it["moeda_perp"], **valor_protegido(est["fotos"], it, parte, ANO)})
     total = sum(c["valor"] for c in carteira)
     # guarda um ponto por rodada (resultado da carteira) para o app desenhar a linha; acumula o teste inteiro
     est.setdefault("curva", []).append([agora, round(total, 2)])
     est["curva"] = est["curva"][-1500:]
     rel = {"gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-           "total_pools": len(pools), "parametros": f, "estaveis": est_l, "volateis": vol_l, "loops": lp[:8],
+           "total_pools": len(pools), "parametros": f, "versao": VERSAO_CARTEIRA, "estaveis": est_l, "volateis": vol_l, "protegiveis": prot[:8],
+           "loops": lp[:8], "anterior": est.get("anterior", []),
            "carteira": {"inicio": est["inicio"], "capital": 1000, "saldo": round(total, 2), "lucro": round(total - 1000, 2), "itens": carteira, "curva": est["curva"]}}
     est["ultima"] = agora
     saida.parent.mkdir(exist_ok=True)
     saida.write_text(json.dumps(rel, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     arq.parent.mkdir(parents=True, exist_ok=True)
     arq.write_text(json.dumps(est, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    print(f"pools: {len(pools)} pools; {len(est_l)} estáveis, {len(vol_l)} voláteis, {len(lp)} loopings; carteira {total - 1000:+.2f} US$")
+    print(f"pools: {len(pools)} pools; {len(est_l)} estáveis, {len(prot)} pares protegíveis, {len(lp)} loopings; carteira {total - 1000:+.2f} US$")
     return 0
 
 

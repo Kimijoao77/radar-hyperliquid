@@ -37,12 +37,15 @@ def test_looping():
     assert 0 < n[3]["descolamento_que_liquida"] < n[2]["descolamento_que_liquida"]
 
 
-def test_rodar(tmp_path):
+def test_rodar(tmp_path, monkeypatch):
     import lab.rodar_pools as R
     pools = [pool(), pool(pool="s", symbol="USDC-USDT", stablecoin=True, ilRisk="no", exposure="multi", apyBase=6),
+             pool(pool="s2", symbol="USDC-USDT", stablecoin=True, ilRisk="no", exposure="multi", apyBase=5),
+             pool(pool="x", symbol="PAXG-WETH", apyBase=40),                         # sem lado estável: não dá para proteger
              pool(pool="w", project="aave-v3", symbol="WSTETH", exposure="single", ilRisk="no", apyBase=0.1),
              pool(pool="e", project="aave-v3", symbol="WETH", exposure="single", ilRisk="no", apyBase=2),
              pool(pool="l", project="lido", symbol="STETH", exposure="single", ilRisk="no", apyBase=3)]
+    preco = {"eth": 100.0}
 
     def get(url):
         if url.endswith("/pools"):
@@ -52,9 +55,35 @@ def test_rodar(tmp_path):
         if "/chart/" in url:
             return {"coins": {"ethereum:0xa": {"prices": [{"price": 100}, {"price": 120}]}, "ethereum:0xb": {"prices": [{"price": 1}, {"price": 1}]}}}
         if "/prices/current/" in url:
-            return {"coins": {"ethereum:0xa": {"price": 110}, "ethereum:0xb": {"price": 1}}}
+            return {"coins": {"ethereum:0xa": {"price": preco["eth"]}, "ethereum:0xb": {"price": 1}, "coingecko:ethereum": {"price": preco["eth"]}}}
         raise AssertionError(url)
-    assert R.main(tmp_path, get) == 0
+
+    class Api:
+        def _post(self, corpo, peso):
+            if corpo["type"] == "meta":
+                return {"universe": [{"name": "ETH"}, {"name": "BTC"}]}
+            if corpo["type"] == "fundingHistory":
+                return [{"fundingRate": "0.00001"}] * 12
+            raise AssertionError(corpo)
+
+    # resultado da versão 1 gravado antes: vira "anterior"
+    (tmp_path / "saida").mkdir()
+    (tmp_path / "saida" / "pools.json").write_text(json.dumps({"gerado": 5, "carteira": {"capital": 1000, "saldo": 992.59, "inicio": 1}}))
+    t = {"agora": 1_790_000_000.0}
+    monkeypatch.setattr(R.time, "time", lambda: t["agora"])
+    assert R.main(tmp_path, get, Api()) == 0
     rel = json.loads((tmp_path / "saida" / "pools.json").read_text())
     assert rel["estaveis"][0]["id"] == "s" and rel["volateis"][0]["perda_30d"] < 0 and rel["loops"]
-    assert len(rel["carteira"]["itens"]) == 3 and rel["carteira"]["capital"] == 1000
+    assert rel["anterior"][0]["retorno"] == pytest.approx(-0.0074, abs=1e-4)
+    tipos = [i["tipo"] for i in rel["carteira"]["itens"]]
+    assert tipos == ["estavel", "volatil", "loop"]                    # USDC-USDT só uma vez; PAXG-WETH fora
+    # 12 h depois o ETH sobe 10 %: a proteção anula quase todo o efeito do preço
+    preco["eth"] = 110.0
+    t["agora"] += 12 * 3600
+    assert R.main(tmp_path, get, Api()) == 0
+    rel = json.loads((tmp_path / "saida" / "pools.json").read_text())
+    parte = 1000 / 3
+    vol, loop = rel["carteira"]["itens"][1], rel["carteira"]["itens"][2]
+    assert vol["moedas"] > 0 and vol["protecao"] < 0 and abs(vol["moedas"] + vol["protecao"]) < 0.01 * parte
+    assert abs(loop["moedas"] + loop["protecao"]) < 0.001 * parte and loop["funding"] > 0
+    assert len(rel["anterior"]) == 1

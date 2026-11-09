@@ -57,6 +57,15 @@ def test_rodar(tmp_path):
         if metodo == "get_index_price":
             return {"index_price": 78000}
         return {"data": []}
+    # estado da versão 1 com uma call coberta: ela sai e vai para "anterior"
+    (tmp_path / "lab" / "dados").mkdir(parents=True)
+    velha = novo({"id": "call-ETH", "tipo": "call", "moeda": "ETH"}, 2000, ms(2026, 11, 3))
+    velha.update(patrimonio=931.34, segurar=926.71)
+    (tmp_path / "lab" / "dados" / "opcoes_estado.json").write_text(json.dumps({"call-ETH": velha}))
     assert R.main(tmp_path, get, ms(2026, 11, 6, 10)) == 0
     rel = json.loads((tmp_path / "saida" / "opcoes.json").read_text())
-    assert len(rel["estrategias"]) == 4 and all(s["aberta"] for s in rel["estrategias"])
+    assert [s["id"] for s in rel["estrategias"]] == ["put-BTC", "put-ETH"] and all(s["aberta"] for s in rel["estrategias"])
+    assert rel["anterior"][0]["nome"] == "Call coberta ETH" and rel["anterior"][0]["retorno"] == pytest.approx(-0.0687, abs=1e-4)
+    # rodar de novo não duplica o anterior
+    assert R.main(tmp_path, get, ms(2026, 11, 6, 11)) == 0
+    assert len(json.loads((tmp_path / "saida" / "opcoes.json").read_text())["anterior"]) == 1

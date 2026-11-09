@@ -5,7 +5,12 @@ protocolo (faz mercado e liquidações). Aqui o robô:
 1. lê a lista pública de cofres (milhares) e fica com os abertos, com dinheiro e com histórico;
 2. para os maiores, baixa o histórico (saldo e lucro) e monta um índice de rendimento que ignora depósitos e saques;
 3. mede constância (semanas no azul), pior queda e o teste de sorte (bootstrap), igual ao Radar;
-4. faz um "depósito" simulado de US$ 1.000 dividido entre os 5 mais constantes (+ HLP), já tirando os 10 % do dono.
+4. faz um "depósito" simulado de US$ 1.000, já tirando os 10 % do dono.
+
+Desde 09/11/2026 o laboratório também mede se cada cofre acompanha o BTC: a "beta" (quanto ele anda quando o BTC anda)
+e o rendimento médio nos períodos em que o BTC caiu 5 % ou mais. Os cofres da carteira em curso passam nesse filtro
+(beta perto de zero): a perda deles de 03 a 09/11 foi dos gestores, não do BTC. Numa carteira nova, um cofre de trader
+só entra se passar no filtro; o HLP fica com 40 % e os escolhidos dividem o resto.
 """
 from __future__ import annotations
 
@@ -16,7 +21,50 @@ import numpy as np
 DIA = 86400000
 LISTA = "https://stats-data.hyperliquid.xyz/Mainnet/vaults"
 HLP = "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303"
-PADRAO = {"tvl_minimo": 100_000, "idade_minima_dias": 60, "detalhar": 40, "carteira": 5, "capital": 1000.0, "comissao": 0.10}
+PADRAO = {"tvl_minimo": 100_000, "idade_minima_dias": 60, "detalhar": 40, "carteira": 4, "capital": 1000.0, "comissao": 0.10,
+          "peso_hlp": 0.40, "beta_maxima": 0.30, "queda_btc": -0.05, "nas_quedas_minimo": -0.01}
+VERSAO = 2
+
+
+def preco_em(velas: list[list[float]], t: int) -> float | None:
+    """Fechamento do BTC no último dia até t."""
+    antes = None
+    for tv, c in velas:
+        if tv > t:
+            break
+        antes = c
+    return antes
+
+
+def contra_btc(ind: list[list[float]], velas: list[list[float]], p: dict) -> dict:
+    """Quanto o cofre anda junto com o BTC: beta (por trechos de ~1 semana) e o rendimento médio nos trechos em que o BTC
+    caiu 5 % ou mais. velas = [[t, fechamento]] diárias do BTC, em ordem."""
+    pts, ult = [], None
+    for t, x in ind:
+        if ult is None or t - ult[0] >= 5 * DIA:
+            pts.append((t, x))
+            ult = (t, x)
+    rv, rb = [], []
+    for (t0, x0), (t1, x1) in zip(pts, pts[1:]):
+        b0, b1 = preco_em(velas, t0), preco_em(velas, t1)
+        if b0 and b1 and x0 > 0:
+            rv.append(x1 / x0 - 1)
+            rb.append(b1 / b0 - 1)
+    if len(rv) < 6:
+        return {"beta": None, "nas_quedas": None, "trechos": len(rv), "trechos_queda": 0}
+    v, b = np.array(rv), np.array(rb)
+    var = float(np.var(b))
+    beta = float(np.cov(v, b, bias=True)[0, 1] / var) if var > 0 else 0.0
+    quedas = v[b <= p["queda_btc"]]
+    return {"beta": round(beta, 3), "nas_quedas": round(float(quedas.mean()), 4) if len(quedas) else None,
+            "trechos": len(rv), "trechos_queda": int(len(quedas))}
+
+
+def independente(c: dict, p: dict) -> bool:
+    """Não acompanhou o BTC: beta baixa e, se houve quedas do BTC no histórico, sem perda média nelas."""
+    if c.get("beta") is None or abs(c["beta"]) > p["beta_maxima"]:
+        return False
+    return c.get("nas_quedas") is None or c["nas_quedas"] >= p["nas_quedas_minimo"]
 
 
 def candidatos(lista: list[dict], agora: int, p: dict) -> list[dict]:

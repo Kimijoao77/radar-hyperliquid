@@ -12,7 +12,7 @@ import requests
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 
-from lab.cofres import HLP, LISTA, PADRAO, candidatos, constante, indice, medir, reduzir  # noqa: E402
+from lab.cofres import DIA, HLP, LISTA, PADRAO, VERSAO, candidatos, constante, contra_btc, independente, indice, medir, reduzir  # noqa: E402
 from radar.api import Hyperliquid  # noqa: E402
 
 HORA = 3600 * 1000
@@ -36,6 +36,11 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
     for e in est.get("escolhidos", []):
         if not any(c["cofre"] == e for c in alvo):
             alvo.append(next((c for c in cands if c["cofre"] == e), {"cofre": e, "nome": "", "tvl": 0, "idade_dias": 0, "apr": 0}))
+    try:
+        velas = [[int(v["t"]), float(v["c"])] for v in api.velas("BTC", "1d", agora - 800 * DIA, agora)]
+    except Exception as ex:  # noqa: BLE001
+        print("cofres: sem velas do BTC", str(ex)[:80])
+        velas = []
     medidos = []
     for c in alvo:
         try:
@@ -47,18 +52,23 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
         ind_t, ind_m = indice(port, "allTime"), indice(port, "month")
         m = medir(ind_t)
         m30 = medir(ind_m) if len(ind_m) >= 5 else {}
+        cb = contra_btc(ind_t, velas, p) if velas else {"beta": None, "nas_quedas": None, "trechos": 0, "trechos_queda": 0}
         medidos.append({**c, "nome": d.get("name") or c["nome"], "comissao": d.get("leaderCommission"), "seguidores": len(d.get("followers") or []),
-                        "aceita_deposito": d.get("allowDeposits"), "medidas": m, "mes": m30.get("total"),
-                        "constante": constante(m), "hlp": c["cofre"] == HLP, "_ind": ind_t, "_ind_m": ind_m})
+                        "aceita_deposito": d.get("allowDeposits"), "medidas": m, "mes": m30.get("total"), **cb,
+                        "constante": constante(m), "independente": independente(cb, p), "hlp": c["cofre"] == HLP, "_ind": ind_t, "_ind_m": ind_m})
     medidos.sort(key=lambda x: (not x["constante"], -((x["medidas"] or {}).get("ao_ano") or -9) / max(0.05, (x["medidas"] or {}).get("pior_queda") or 1)))
+    # a carteira em curso (desde 03/11) continua: os cofres dela também passam no filtro novo (não seguem o BTC), e a
+    # perda de 03 a 09/11 foi dos próprios gestores. O filtro e os pesos valem quando uma carteira nova for montada.
     if not est.get("escolhidos"):
-        boas = [x["cofre"] for x in medidos if x["constante"] and not x["hlp"]][: p["carteira"]]
-        est = {"inicio": agora, "escolhidos": boas + [HLP],
-               "base": {x["cofre"]: x["_ind"][-1][1] for x in medidos if x["cofre"] in boas + [HLP] and x["_ind"]}}
-    # depósito simulado: partes iguais, 10 % do lucro para o dono
-    parte = p["capital"] / max(1, len(est["escolhidos"]))
+        boas = [x["cofre"] for x in medidos if x["constante"] and x["independente"] and not x["hlp"]][: p["carteira"]]
+        pesos = {b: (1 - p["peso_hlp"]) / len(boas) for b in boas} if boas else {}
+        pesos[HLP] = p["peso_hlp"] if boas else 1.0
+        est.update({"inicio": agora, "escolhidos": boas + [HLP], "pesos": pesos,
+                    "base": {x["cofre"]: x["_ind"][-1][1] for x in medidos if x["cofre"] in boas + [HLP] and x["_ind"]}})
+    # depósito simulado: HLP com 40 % e o resto dividido, 10 % do lucro para o dono
     carteira, total = [], 0.0
     for e in est["escolhidos"]:
+        parte = p["capital"] * (est.get("pesos") or {}).get(e, 1 / max(1, len(est["escolhidos"])))
         x = next((m for m in medidos if m["cofre"] == e), None)
         r = None
         if x and x["_ind"]:
@@ -80,13 +90,15 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
     rel = {"gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
            "parametros": p, "total_cofres": len(lista), "candidatos": len(cands), "cofres": medidos[:25],
            "hlp": next((x for x in medidos if x["hlp"]), None),
+           "versao": VERSAO,
            "carteira": {"inicio": est["inicio"], "capital": p["capital"], "saldo": round(total, 2), "lucro": round(total - p["capital"], 2), "itens": carteira, "curva": est["curva"]}}
     est["ultima"] = agora
     saida.parent.mkdir(exist_ok=True)
     saida.write_text(json.dumps(rel, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     arq.parent.mkdir(parents=True, exist_ok=True)
     arq.write_text(json.dumps(est, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(f"cofres: {len(lista)} na lista, {len(cands)} candidatos, {sum(1 for x in medidos if x['constante'])} constantes; carteira {total - p['capital']:+.2f} US$")
+    print(f"cofres: {len(lista)} na lista, {len(cands)} candidatos, {sum(1 for x in medidos if x['constante'])} constantes, "
+          f"{sum(1 for x in medidos if x['constante'] and x['independente'])} sem seguir o BTC; carteira {total - p['capital']:+.2f} US$")
     return 0
 
 

@@ -101,14 +101,19 @@ def test_rodar_ponta_a_ponta(tmp_path):
     import time as _t
     orig = _t.time
     _t.time = lambda: agora_h / 1000 + 600
+    # resultado da versão 2 gravado antes: vira "anterior" e o ao vivo recomeça
+    (tmp_path / "saida").mkdir()
+    (tmp_path / "saida" / "funding.json").write_text(json.dumps({"ao_vivo": {"capital": 1000.0, "saldo": 999.96, "inicio": 1, "fim": 2}}))
     try:
         assert R.main(tmp_path, Api()) == 0
         rel = json.loads((tmp_path / "saida" / "funding.json").read_text())
+        assert rel["versao"] == 3 and rel["anterior"][0]["retorno"] == pytest.approx(-0.00004)
         assert rel["passado"]["posicoes"][0]["moeda"] == "BTC"
         assert rel["passado"]["lucro"] > 0
         assert rel["ranking"][0]["moeda"] == "BTC" and rel["ranking"][0]["ao_ano_7d"] == pytest.approx(0.00003 * ANO_H, rel=1e-3)
         # segunda rodada: nada novo para coletar
         assert R.main(tmp_path, Api()) == 0
-        assert json.loads((tmp_path / "saida" / "funding.json").read_text())["coleta"]["horas_novas"] == 0
+        rel2 = json.loads((tmp_path / "saida" / "funding.json").read_text())
+        assert rel2["coleta"]["horas_novas"] == 0 and len(rel2["anterior"]) == 1
     finally:
         _t.time = orig

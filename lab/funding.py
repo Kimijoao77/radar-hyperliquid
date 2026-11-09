@@ -31,18 +31,22 @@ PADRAO = {
     "volume_minimo": 5_000_000,       # US$ negociados no dia (perpétuo)
     "abertas_minimo": 2_000_000,      # US$ em posições abertas
     "max_moedas": 60,
-    "entrar_ao_ano": 0.20,            # média de 72 h acima de 20 % ao ano
-    "sair_ao_ano": 0.05,              # média de 24 h abaixo de 5 % ao ano
+    "entrar_ao_ano": 0.10,            # média de 72 h acima de 10 % ao ano (versão 3; era 20 %)
+    "sair_ao_ano": 0.03,              # média de 24 h abaixo de 3 % ao ano (versão 3; era 5 %)
     "horas_negativas_para_sair": 6,
     "troca_vantagem_ao_ano": 0.15,    # troca uma posição só se a nova pagar 15 pontos a mais
-    "taxa_perp": 0.00045,             # Hyperliquid a mercado, por lado
-    "taxa_spot": 0.0010,              # compra/venda à vista numa corretora comum, por lado
-    "escorregamento": 0.0003,         # por lado, em cada ponta
+    "taxa_perp": 0.00015,             # Hyperliquid com ordem limitada (maker), por lado (versão 3; a mercado é 0,045 %)
+    "taxa_spot": 0.0004,              # à vista na Hyperliquid com ordem limitada, por lado (versão 3; era 0,1 %)
+    "escorregamento": 0.0001,         # por lado, em cada ponta: com ordem limitada quase não há (versão 3; era 0,03 %)
     "alavancagem_perp": 2,
     "dias_passado": 30,
     "so_com_spot": True,              # só moedas que dá para comprar à vista de verdade (lista abaixo)
 }
 
+# Versão 3 (09/11/2026, à tarde): a conta antiga supunha ordens a mercado, as mais caras, nas duas pontas. Com o
+# funding perto de 10 % ao ano, esse custo comia tudo (nos 30 dias antes, 20 % de entrada dava +0,02 %; 10 % dava −0,3 %).
+# Esta operação não tem pressa: entra e sai com ordem limitada (maker), que custa menos de um terço. Com isso dá para
+# entrar a partir de 10 % ao ano e usar o dinheiro todo. O ao vivo recomeça do zero; o da versão 2 fica em "anterior".
 # Versão 2 (09/11/2026): a operação precisa COMPRAR a moeda à vista. Na versão 1 o teste escolhia moedas pequenas
 # (USELESS, PONS, CASHCAT) que pagavam bem, mas que não têm mercado à vista fundo nas corretoras comuns: o teste
 # não dava para repetir de verdade. Agora só entram moedas grandes, com mercado à vista nas maiores corretoras

@@ -7,6 +7,11 @@ nas de faixa concentrada (Uniswap v3) a perda é maior.
 
 Looping (Aave): deposita um token de staking de ETH (wstETH, weETH...), pega ETH emprestado, troca pelo token e deposita
 de novo, L vezes. Rende L × (staking + depósito) − (L − 1) × juro do empréstimo. Se o token se descolar do ETH, liquida.
+
+Versão 2 da carteira (09/11/2026): "protegida". Na versão 1 os pares que oscilam e o looping seguiam o preço do ETH (e o
+looping nem contava esse preço). Agora cada um tem uma venda no perpétuo da Hyperliquid do tamanho da parte em moeda
+volátil, refeita a cada rodada: o preço some da conta e sobra a taxa das trocas (ou o rendimento do looping), mais o
+funding que a venda recebe, menos os custos. Pares só com um lado estável e o outro com perpétuo na Hyperliquid.
 """
 from __future__ import annotations
 
@@ -20,6 +25,97 @@ CADEIAS = {"Ethereum": "ethereum", "Arbitrum": "arbitrum", "Base": "base", "BSC"
 EMPRESTA = {"aave-v3", "spark", "compound-v3", "morpho-blue", "fluid-lending", "sparklend", "euler-v2"}
 LST = {"WSTETH": "STETH", "WEETH": "WEETH", "RETH": "RETH", "CBETH": "CBETH"}
 PADRAO = {"tvl_minimo": 5_000_000, "dias_minimos": 30, "quantos": 10}
+ESTAVEIS = {"USDC", "USDT", "DAI", "USDS", "USDE", "SUSDE", "FDUSD", "PYUSD", "USDC.E", "USDT0", "USD₮0", "GHO", "FRAX", "LUSD",
+            "CRVUSD", "USD0", "RLUSD", "USDBC", "USDBC", "SUSDS", "USDTB", "USDG"}
+VERSAO_CARTEIRA = 2
+MARGEM_PAR = 0.2          # par protegido: 80 % na pool, 20 % de margem para vender metade (a parte volátil) no perpétuo (2×)
+MARGEM_LOOP = 1 / 3       # looping protegido: 2/3 no looping, 1/3 de margem para vender o valor todo em ETH (2×)
+CUSTO_PROTECAO = 0.00015 + 0.0001   # ordem limitada na Hyperliquid + escorregamento, por lado, a cada ajuste
+
+
+def moeda_perp(simbolo: str, perps: set[str]) -> str | None:
+    """WETH → ETH, WBTC/cbBTC → BTC...: a moeda do perpétuo da Hyperliquid que protege o token, se houver."""
+    s = simbolo.upper().replace(".E", "")
+    if s in ("CBBTC", "TBTC", "WBTC", "BTCB"):
+        s = "BTC"
+    elif s in ("WSTETH", "WEETH", "STETH", "RETH", "CBETH", "WETH"):
+        s = "ETH"
+    elif s.startswith("W") and s[1:] in perps:
+        s = s[1:]
+    return s if s in perps else None
+
+
+def volateis_protegiveis(pools: list[dict], f: dict, perps: set[str]) -> list[dict]:
+    """Pares com um lado estável e o outro com perpétuo na Hyperliquid (dá para vender a parte volátil), sem repetir moeda."""
+    out, vistas = [], set()
+    ps = [p for p in pools if p.get("exposure") == "multi" and p.get("ilRisk") == "yes" and not p.get("stablecoin") and boa(p, f)
+          and len(p.get("underlyingTokens") or []) == 2 and p["chain"] in CADEIAS]
+    ps.sort(key=lambda p: -_firme(p))
+    for p in ps:
+        partes = [x.strip().upper() for x in (p.get("symbol") or "").split("-")]
+        if len(partes) != 2:
+            continue
+        est = [x for x in partes if x in ESTAVEIS]
+        vol = [x for x in partes if x not in ESTAVEIS]
+        if len(est) != 1 or len(vol) != 1:
+            continue
+        m = moeda_perp(vol[0], perps)
+        if not m or m in vistas:
+            continue
+        vistas.add(m)
+        out.append({**resumo(p), "moeda_perp": m, "volatil": partes.index(vol[0])})
+        if len(out) >= f["quantos"]:
+            break
+    return out
+
+
+def sem_repetir(lista: list[dict], n: int) -> list[dict]:
+    """Os n primeiros sem repetir o mesmo token no mesmo projeto (na v1 a mesma moeda da Pendle entrou duas vezes)."""
+    out, vistos = [], set()
+    for v in lista:
+        k = (v["par"], v["projeto"])
+        if k in vistos:
+            continue
+        vistos.add(k)
+        out.append(v)
+        if len(out) >= n:
+            break
+    return out
+
+
+def valor_protegido(fotos: list[dict], item: dict, parte: float, ano_ms: float) -> dict:
+    """Refaz o item protegido foto a foto: pool (ou looping) + venda no perpétuo ajustada a cada rodada + funding − custos.
+    Cada foto guarda [rendimento ao ano, preço do token volátil] e o funding somado desde a foto anterior."""
+    margem = parte * (MARGEM_PAR if item["tipo"] == "volatil" else MARGEM_LOOP)
+    lado = 0.5 if item["tipo"] == "volatil" else 1.0       # quanto do valor está na moeda volátil
+    v0 = parte - margem
+    prim = ult = None
+    rend = 1.0
+    venda = pnl = fund = custos = 0.0
+    valor_pos = v0
+    for ft in fotos:
+        x = ft["v"].get(item["id"])
+        if not x or x[1] is None:
+            continue
+        px = x[1]
+        if prim is None:
+            prim, ult = (ft["t"], x), (ft["t"], x)
+            venda = v0 * lado
+            custos += venda * CUSTO_PROTECAO
+            continue
+        if ult[1][0] is not None:
+            rend *= 1 + ult[1][0] * (ft["t"] - ult[0]) / ano_ms
+        r = px / prim[1][1]
+        valor_pos = v0 * (math.sqrt(r) if item["tipo"] == "volatil" else r) * rend
+        pnl += -venda * (px / ult[1][1] - 1)
+        fund += venda * (ft.get("f") or {}).get(item["moeda_perp"], 0.0)
+        nova = valor_pos * lado
+        custos += abs(nova - venda) * CUSTO_PROTECAO
+        venda = nova
+        ult = (ft["t"], x)
+    total = valor_pos + margem + pnl + fund - custos
+    return {"valor": round(total, 2), "taxas": round((v0 * (rend - 1)), 2), "moedas": round(valor_pos - v0 * rend, 2),
+            "protecao": round(pnl, 2), "funding": round(fund, 2), "custos": round(custos, 2)}
 
 
 def boa(p: dict, f: dict) -> bool:

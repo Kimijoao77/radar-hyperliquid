@@ -131,6 +131,12 @@ moedas novas da pump.fun. Duas estratégias com o mesmo caixa: a mais disputada 
 dobrou na 1ª hora. 1 % do patrimônio por compra, 3 % de custo em cada lado, metade a 2×, o resto a 5×, parada em −50 %
 e prazo de 24 h, com as velas de 5 min (o pior caso quando a parada e o alvo caem na mesma vela). → `saida/memecoins.json`
 
+**8. Pools concentradas (`lab/concentradas.py`, desde 09/11)** — de hora em hora, API da Meteora (DLMM, Solana) e velas
+de 5 min do GeckoTerminal: as pools com a maior taxa sobre a liquidez em 24 h (US$ 50 mil+ de liquidez, US$ 500 mil+ de
+volume, par com SOL ou USDC). Três faixas (±5 %, ±15 %, ±30 %), US$ 1.000 cada, até 3 pools por faixa; recebe a taxa da
+última hora só enquanto o preço está na faixa (vezes o quanto a faixa concentra, em relação a ±30 %), sai quando uma
+vela fecha fora ou em 24 h, com o valor pela conta do Uniswap v3 e custo de troca na entrada e na saída. → `saida/concentradas.json`
+
 ## Arquivos
 
 - `config.json`: todos os números do filtro e da classificação. Mudou aqui, a próxima rodada já usa.

@@ -10,6 +10,7 @@ from lab import (rodar_apostas, rodar_cofres, rodar_concentradas, rodar_copia, r
 
 falhas = 0
 LABS = (("copia", rodar_copia), ("funding", rodar_funding), ("grade", rodar_grade), ("cofres", rodar_cofres), ("pools", rodar_pools),
+        ("opcoes", rodar_opcoes), ("apostas", rodar_apostas),
         # ("memecoins", rodar_memecoins),  # 10/11: desligado a pedido do João (−5 % em 2 dias)
         ("concentradas", rodar_concentradas))
 for nome, mod in LABS:

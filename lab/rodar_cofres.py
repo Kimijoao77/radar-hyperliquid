@@ -12,7 +12,8 @@ import requests
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 
-from lab.cofres import DIA, HLP, LISTA, PADRAO, VERSAO, candidatos, constante, contra_btc, independente, indice, medir, reduzir  # noqa: E402
+from lab.cofres import (DIA, HLP, LISTA, PADRAO, RISCO, VERSAO, candidatos, constante, contra_btc, de_risco, depositar, independente, indice,  # noqa: E402
+                        medir, nota_risco, reduzir)
 from radar.api import Hyperliquid  # noqa: E402
 
 HORA = 3600 * 1000
@@ -32,7 +33,7 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
         except (OSError, ValueError):
             pass
         est = {"versao": VERSAO, "anterior": anterior}
-    if est.get("versao") == VERSAO and not est.get("escolhidos"):
+    if est.get("versao") == VERSAO and (not est.get("escolhidos") or "risco" not in est):
         pass
     elif saida.exists() and agora - est.get("ultima", 0) < 6 * HORA - 10 * 60 * 1000:
         print("cofres: rodou há menos de 6 h")
@@ -44,7 +45,9 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
     alvo = cands[: p["detalhar"]]
     if not any(c["cofre"] == HLP for c in alvo):
         alvo.append(next((c for c in cands if c["cofre"] == HLP), {"cofre": HLP, "nome": "HLP", "tvl": 0, "idade_dias": 0, "apr": 0}))
-    for e in est.get("escolhidos", []):
+    vistos = {c["cofre"] for c in alvo}
+    alvo += sorted([c for c in cands if c["cofre"] not in vistos], key=lambda c: -c["apr"])[: RISCO["extras_por_apr"]]
+    for e in est.get("escolhidos", []) + (est.get("risco") or {}).get("escolhidos", []):
         if not any(c["cofre"] == e for c in alvo):
             alvo.append(next((c for c in cands if c["cofre"] == e), {"cofre": e, "nome": "", "tvl": 0, "idade_dias": 0, "apr": 0}))
     try:
@@ -76,34 +79,31 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
         pesos[HLP] = p["peso_hlp"] if boas else 1.0
         est.update({"inicio": agora, "escolhidos": boas + [HLP], "pesos": pesos,
                     "base": {x["cofre"]: x["_ind"][-1][1] for x in medidos if x["cofre"] in boas + [HLP] and x["_ind"]}})
-    # depósito simulado: HLP com 40 % e o resto dividido, 10 % do lucro para o dono
-    carteira, total = [], 0.0
-    for e in est["escolhidos"]:
-        parte = p["capital"] * (est.get("pesos") or {}).get(e, 1 / max(1, len(est["escolhidos"])))
-        x = next((m for m in medidos if m["cofre"] == e), None)
-        r = None
-        if x and x["_ind"]:
-            b = est.get("base", {}).get(e)
-            if b is None:                                    # entrou depois: começa a contar agora
-                est.setdefault("base", {})[e] = b = x["_ind"][-1][1]
-            r = x["_ind"][-1][1] / b - 1
-        ganho = 0.0 if r is None else parte * r
-        if ganho > 0:
-            ganho *= 1 - p["comissao"]
-        total += parte + ganho
-        carteira.append({"cofre": e, "nome": x["nome"] if x else "", "hlp": e == HLP, "parte": parte, "rendeu": None if r is None else round(r, 5), "ganho": round(ganho, 2)})
+    # carteira de risco: escolhida uma vez (quando alguma passa na regra) e depois fica fixa, como a do HLP
+    if not (est.get("risco") or {}).get("escolhidos"):
+        boas = sorted([x for x in medidos if de_risco(x)], key=lambda x: -nota_risco(x))[: RISCO["carteira"]]
+        est["risco"] = {"inicio": agora, "tentou": agora, "escolhidos": [x["cofre"] for x in boas],
+                        "pesos": {x["cofre"]: 1 / len(boas) for x in boas},
+                        "base": {x["cofre"]: x["_ind"][-1][1] for x in boas if x["_ind"]}}
+    # depósito simulado: o do HLP (versão 3) e o da carteira de risco, com a comissão de cada cofre
+    carteira, total = depositar(est, medidos, p, agora)
+    risco = None
+    if est["risco"]["escolhidos"]:
+        itens_r, total_r = depositar(est["risco"], medidos, p, agora)
+        risco = {"inicio": est["risco"]["inicio"], "capital": p["capital"], "saldo": round(total_r, 2), "lucro": round(total_r - p["capital"], 2),
+                 "itens": itens_r, "curva": est["risco"]["curva"]}
     for x in medidos:
         x["curva"] = reduzir(x.pop("_ind"))
         x.pop("_ind_m")
-    # guarda um ponto por rodada (resultado da carteira) para o app desenhar a linha; acumula o teste inteiro
-    est.setdefault("curva", []).append([agora, round(total, 2)])
-    est["curva"] = est["curva"][-1500:]
     rel = {"gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-           "parametros": p, "total_cofres": len(lista), "candidatos": len(cands), "cofres": medidos[:25],
+           "parametros": p, "total_cofres": len(lista), "candidatos": len(cands),
+           "cofres": medidos[:25] + [x for x in medidos[25:] if x["cofre"] in (est["risco"].get("escolhidos") or [])],
+           "parametros_risco": RISCO, "risco": risco,
            "hlp": next((x for x in medidos if x["hlp"]), None),
            "versao": VERSAO,
            "carteira": {"inicio": est["inicio"], "capital": p["capital"], "saldo": round(total, 2), "lucro": round(total - p["capital"], 2), "itens": carteira, "curva": est["curva"]}}
     est["ultima"] = agora
+    est["versao"] = VERSAO                               # (sem isto, num estado novo a 2ª rodada achava que a versão mudou e recomeçava)
     saida.parent.mkdir(exist_ok=True)
     saida.write_text(json.dumps(rel, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     arq.parent.mkdir(parents=True, exist_ok=True)

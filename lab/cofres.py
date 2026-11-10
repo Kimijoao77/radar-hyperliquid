@@ -27,6 +27,13 @@ PADRAO = {"tvl_minimo": 100_000, "idade_minima_dias": 60, "detalhar": 40, "carte
           "peso_hlp": 1.0, "beta_maxima": 0.30, "queda_btc": -0.05, "nas_quedas_minimo": -0.01}
 VERSAO = 3
 
+# Carteira de risco (10/11, pedido do João: "teste coisas arriscadas, quero o máximo de lucro"): além do teste só-HLP, uma
+# segunda carteira com os cofres de maior retorno que abrem depósito. Entram os que rendem acima da régua de 45 % ao ano
+# tanto no histórico inteiro quanto na taxa de agora, estão no azul no último mês, não parecem sorte (p ≤ 0,10) e cuja pior
+# queda cabe no risco aceito (até 55 %). Não exige beta baixo: um cofre que ganha quando o BTC cai também serve. Ranking pelo
+# MENOR entre o rendimento do histórico e o de agora (quem só brilhou num dos dois fica para trás); partes iguais.
+RISCO = {"carteira": 4, "ao_ano_minimo": 0.45, "apr_minimo": 0.45, "queda_maxima": 0.55, "p_maximo": 0.10, "extras_por_apr": 30}
+
 
 def preco_em(velas: list[list[float]], t: int) -> float | None:
     """Fechamento do BTC no último dia até t."""
@@ -67,6 +74,48 @@ def independente(c: dict, p: dict) -> bool:
     if c.get("beta") is None or abs(c["beta"]) > p["beta_maxima"]:
         return False
     return c.get("nas_quedas") is None or c["nas_quedas"] >= p["nas_quedas_minimo"]
+
+
+def de_risco(c: dict, r: dict = RISCO) -> bool:
+    """Cofre que entra na carteira de risco (ver RISCO). O HLP fica de fora: ele já tem o teste dele."""
+    m = c.get("medidas") or {}
+    if not m or c.get("hlp") or not c.get("aceita_deposito"):
+        return False
+    return ((m.get("ao_ano") or 0) >= r["ao_ano_minimo"] and (c.get("apr") or 0) >= r["apr_minimo"] and (c.get("mes") or 0) > 0
+            and m.get("pior_queda", 1) <= r["queda_maxima"] and m.get("p", 1) <= r["p_maximo"])
+
+
+def nota_risco(c: dict) -> float:
+    """O menor entre o rendimento ao ano do histórico inteiro e o da taxa de agora."""
+    return min((c.get("medidas") or {}).get("ao_ano") or 0, c.get("apr") or 0)
+
+
+def depositar(est_x: dict, medidos: list[dict], p: dict, agora: int) -> tuple[list[dict], float]:
+    """Depósito simulado (US$ p["capital"]) nos cofres de est_x["escolhidos"], com os pesos de est_x["pesos"] (ou partes iguais).
+    Cada cofre rende o que o índice dele andou desde que o teste começou (est_x["base"]); do lucro sai a comissão do dono
+    (a do próprio cofre quando se sabe: o HLP não cobra; senão p["comissao"]). Guarda um ponto da curva por rodada."""
+    itens, total = [], 0.0
+    for e in est_x["escolhidos"]:
+        parte = p["capital"] * (est_x.get("pesos") or {}).get(e, 1 / max(1, len(est_x["escolhidos"])))
+        x = next((m for m in medidos if m["cofre"] == e), None)
+        r = None
+        if x and x["_ind"]:
+            b = est_x.get("base", {}).get(e)
+            if b is None:                                    # entrou depois: começa a contar agora
+                est_x.setdefault("base", {})[e] = b = x["_ind"][-1][1]
+            r = x["_ind"][-1][1] / b - 1
+        ganho = 0.0 if r is None else parte * r
+        if ganho > 0:
+            com = x.get("comissao") if x and x.get("comissao") is not None else p["comissao"]
+            ganho *= 1 - com
+        total += parte + ganho
+        itens.append({"cofre": e, "nome": x["nome"] if x else "", "hlp": bool(x and x.get("hlp")), "parte": parte,
+                      "rendeu": None if r is None else round(r, 5), "ganho": round(ganho, 2),
+                      "apr": x.get("apr") if x else None, "mes": x.get("mes") if x else None,
+                      "ao_ano": ((x.get("medidas") or {}).get("ao_ano") if x else None), "queda": ((x.get("medidas") or {}).get("pior_queda") if x else None)})
+    est_x.setdefault("curva", []).append([agora, round(total, 2)])
+    est_x["curva"] = est_x["curva"][-1500:]
+    return itens, total
 
 
 def candidatos(lista: list[dict], agora: int, p: dict) -> list[dict]:

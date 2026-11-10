@@ -3,7 +3,7 @@ import math
 
 import pytest
 
-from lab.grade import CONFIGS, dca, grade, nome
+from lab.grade import CONFIGS, TENDENCIA, TODAS, dca, escolher, grade, nome, tendencia
 
 H = 3600 * 1000
 
@@ -84,3 +84,99 @@ def test_nota_lucro():
     a = {"retorno": 0.10, "dias": 100, "liquidada": False}
     b = {"retorno": 0.02, "dias": 50, "liquidada": False}
     assert 0 < nota_lucro(a, b) < 0.2 and nota_lucro(a, {**b, "liquidada": True}) == -9
+
+
+# ---------- versão 4: funding e tendência ----------
+def velas_lisas(precos):
+    """Sem pavio: a máxima e a mínima são a abertura e o fechamento (para o rompimento ser claro)."""
+    return velas(precos, 0.0)
+
+
+def test_funding_cobra_de_quem_esta_comprado():
+    precos = [100 + 8 * math.sin(i / 6) for i in range(24 * 30)]
+    fund = {i * H: 0.0001 for i in range(1, 800)}                  # 0,01 % por hora
+    sem = grade(velas(precos), 0.10, 10)
+    com = grade(velas(precos), 0.10, 10, funding=fund)
+    assert sem["funding_pago"] == 0 and com["funding_pago"] > 5 and com["retorno"] < sem["retorno"]
+    # taxa negativa: quem está comprado recebe
+    neg = grade(velas(precos), 0.10, 10, funding={i * H: -0.0001 for i in range(1, 800)})
+    assert neg["funding_pago"] < 0 and neg["retorno"] > sem["retorno"]
+
+
+def test_funding_no_dca_so_conta_com_posicao_aberta():
+    precos = [100 * (1 - 0.003 * i) for i in range(200)]            # cai sem parar: o DCA fica preso
+    fund = {i * H: 0.0001 for i in range(1, 300)}
+    a, b = dca(velas(precos), 0.02, 0.015), dca(velas(precos), 0.02, 0.015, funding=fund)
+    assert b["funding_pago"] > 0 and b["retorno"] < a["retorno"]
+    parado = dca(velas([100.0] * 100), 0.02, 0.015, funding=fund)    # sem queda: abre, vende no alvo? não sobe; fica aberto
+    assert parado["funding_pago"] >= 0
+
+
+def test_tendencia_acompanha_a_alta_e_a_queda():
+    alta = velas_lisas([100 * (1 + 0.0008 * i) for i in range(600)])
+    r = tendencia(alta, "medias", 12, 48)
+    assert r["retorno"] > 0.3 and r["horas_comprado"] == 1.0 and not r["liquidada"]
+    queda = velas_lisas([200 * (1 - 0.0006 * i) for i in range(600)])
+    q = tendencia(queda, "medias", 12, 48)
+    assert q["retorno"] > 0.25 and q["horas_comprado"] == 0.0        # ganhou ficando vendido
+    rp = tendencia(alta, "rompe", 48)
+    assert rp["retorno"] > 0.3 and rp["ciclos"] == 1
+
+
+def test_tendencia_funding_comprado_paga_e_vendido_recebe():
+    fund = {i * H: 0.0001 for i in range(1, 700)}
+    alta = velas_lisas([100 * (1 + 0.0008 * i) for i in range(600)])
+    assert tendencia(alta, "medias", 12, 48, funding=fund)["retorno"] < tendencia(alta, "medias", 12, 48)["retorno"]
+    queda = velas_lisas([200 * (1 - 0.0006 * i) for i in range(600)])
+    com = tendencia(queda, "medias", 12, 48, funding=fund)
+    assert com["funding_pago"] < 0 and com["retorno"] > tendencia(queda, "medias", 12, 48)["retorno"]
+
+
+def test_tendencia_liquida_no_buraco_de_preco():
+    # alta firme (fica comprado 3× desde ~120) e depois o preço cai 60 % numa vela só, para bem abaixo do preço de entrada
+    precos = [100 * (1 + 0.004 * i) for i in range(200)]
+    precos += [precos[-1] * 0.4] * 5
+    r = tendencia(velas_lisas(precos), "medias", 12, 48, alav=3)
+    assert r["liquidada"] and r["retorno"] == -1.0
+
+
+def test_tendencia_sem_olhar_o_futuro():
+    # o sinal sai no fechamento de uma vela e a ordem vale na abertura da seguinte: a primeira ordem nunca é na vela 0
+    ops: list = []
+    tendencia(velas_lisas([100 * (1 + 0.001 * i) for i in range(300)]), "medias", 12, 48, ops=ops)
+    assert ops and ops[0]["t"] >= 48 * H and ops[0]["tipo"] == "compra"
+
+
+def test_tendencia_usa_as_velas_de_antes():
+    # com as velas de antes a tendência já vale desde a primeira hora; sem elas, espera as médias esquentarem
+    todas = velas_lisas([100 * (1 + 0.001 * i) for i in range(400)])
+    sem = tendencia(todas[200:], "medias", 12, 48)
+    com = tendencia(todas[200:], "medias", 12, 48, antes=todas[:200])
+    assert com["horas_com_posicao"] > sem["horas_com_posicao"] and com["retorno"] > sem["retorno"]
+
+
+def test_janela_e_ema():
+    from lab.grade import _ema, _janela
+    assert _janela([1, 3, 2, 5, 4, 1], 2, True) == [None, None, 3, 3, 5, 5]
+    assert _janela([1, 3, 2, 5, 4, 1], 2, False) == [None, None, 1, 2, 2, 4]
+    e = _ema([10, 10, 10, 20], 3)
+    assert e[:3] == [10, 10, 10] and 10 < e[3] < 20
+
+
+def test_configs_de_tendencia_e_nomes():
+    assert len(TENDENCIA) == 21 and len(TODAS) == 53 and {c["alav"] for c in TENDENCIA} == {1, 2, 3}
+    assert nome(TENDENCIA[0]) == "Tendência: médias de 12 h e 48 h"
+    assert nome({"tipo": "tendencia", "modo": "rompe", "a": 120, "alav": 2}) == "Tendência: rompimento de 5 dias, 2×"
+
+
+def test_escolher_tres_de_cada_familia_ate_duas_por_moeda():
+    def r(moeda, tipo, nota, liq=False):
+        return {"moeda": moeda, "config": {"tipo": tipo}, "nota": nota, "liquidada": liq}
+    passado = [r("BTC", "dca", 2.0), r("BTC", "grade", 1.9), r("BTC", "dca", 1.8), r("ETH", "dca", 1.7), r("SOL", "dca", 1.6),
+               r("HYPE", "tendencia", 0.5), r("HYPE", "tendencia", 0.4), r("HYPE", "tendencia", 0.3), r("BTC", "tendencia", -0.2),
+               r("ETH", "tendencia", -0.3), r("SOL", "grade", -0.1), r("ETH", "grade", 9, liq=True)]
+    esc = escolher(passado)
+    rev = [(x["moeda"], x["nota"]) for x in esc if x["config"]["tipo"] != "tendencia"]
+    tend = [(x["moeda"], x["nota"]) for x in esc if x["config"]["tipo"] == "tendencia"]
+    assert rev == [("BTC", 2.0), ("BTC", 1.9), ("ETH", 1.7)]            # até 2 por moeda; nunca a liquidada nem a de nota negativa
+    assert tend == [("HYPE", 0.5), ("HYPE", 0.4), ("BTC", -0.2)]        # a tendência entra mesmo no vermelho

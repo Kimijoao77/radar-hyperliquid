@@ -2,52 +2,38 @@
  "status": 200,
  "url": "https://yields.llama.fi/lendBorrow",
  "corpo": {
-  "_tamanho": 2519,
+  "_tamanho": 2530,
   "_amostra": [
    {
-    "pool": "3fdb0a90-f40e-438e-896a-c0b25ee8d1ed",
-    "apyBaseBorrow": 0,
-    "apyRewardBorrow": null,
-    "totalSupplyUsd": 941003,
-    "totalBorrowUsd": 0,
+    "pool": "de8928ad-d03a-423d-92d7-3c4648e3ffd2",
+    "apyBaseBorrow": 1.10809,
+    "apyRewardBorrow": 0,
+    "totalSupplyUsd": 47141238,
+    "totalBorrowUsd": 17364371,
     "debtCeilingUsd": null,
-    "ltv": 0,
-    "borrowable": false,
-    "mintedCoin": null,
-    "rewardTokens": null,
-    "underlyingTokens": {
-     "_tamanho": 1,
-     "_amostra": [
-      "0x2416092f143378750bb29b79eD961ab195CcEea5"
-     ]
-    },
-    "borrowFactor": null
-   },
-   {
-    "pool": "78c4b5eb-6e36-4c3a-94b5-779e37dbf9a4",
-    "apyBaseBorrow": 0.74527,
-    "apyRewardBorrow": null,
-    "totalSupplyUsd": 112711,
-    "totalBorrowUsd": 18901,
-    "debtCeilingUsd": null,
-    "ltv": 0,
+    "ltv": 0.8,
     "borrowable": true,
     "mintedCoin": null,
-    "rewardTokens": null,
+    "rewardTokens": {
+     "_tamanho": 1,
+     "_amostra": [
+      "0xcf6bb5389c92bdda8a3747ddb454cb7a64626c63"
+     ]
+    },
     "underlyingTokens": {
      "_tamanho": 1,
      "_amostra": [
-      "0xcebA9300f2b948710d2653dD7B07f33A8B32118C"
+      "0x2170Ed0880ac9A755fd29B2688956BD959F933F8"
      ]
     },
     "borrowFactor": null
    },
    {
-    "pool": "0a1131e6-a59d-537c-b18f-826b9583f01f",
-    "apyBaseBorrow": 4.97381,
-    "apyRewardBorrow": null,
-    "totalSupplyUsd": 132477408,
-    "totalBorrowUsd": 121246008,
+    "pool": "15cbd370-c6dd-4258-89a4-4623e17c2865",
+    "apyBaseBorrow": 2.27113,
+    "apyRewardBorrow": 0,
+    "totalSupplyUsd": 2334644,
+    "totalBorrowUsd": 49019,
     "debtCeilingUsd": null,
     "ltv": 0,
     "borrowable": true,
@@ -55,13 +41,37 @@
     "rewardTokens": {
      "_tamanho": 1,
      "_amostra": [
-      "0x561Ad6156D0106E7a59EE788759dF7B7Ec679BD0"
+      "0xcf6bb5389c92bdda8a3747ddb454cb7a64626c63"
      ]
     },
     "underlyingTokens": {
      "_tamanho": 1,
      "_amostra": [
-      "0x754704Bc059F8C67012fEd69BC8A327a5aafb603"
+      "0x4338665CBB7B2485A8855A139b75D5e34AB0DB94"
+     ]
+    },
+    "borrowFactor": null
+   },
+   {
+    "pool": "b8872d86-c39e-423c-83dd-8b32f7eea91d",
+    "apyBaseBorrow": 0.35217,
+    "apyRewardBorrow": 0,
+    "totalSupplyUsd": 23377521,
+    "totalBorrowUsd": 824093,
+    "debtCeilingUsd": null,
+    "ltv": 0.8,
+    "borrowable": true,
+    "mintedCoin": null,
+    "rewardTokens": {
+     "_tamanho": 1,
+     "_amostra": [
+      "0xcf6bb5389c92bdda8a3747ddb454cb7a64626c63"
+     ]
+    },
+    "underlyingTokens": {
+     "_tamanho": 1,
+     "_amostra": [
+      "0xa2E3356610840701BDf5611a53974510Ae27E2e1"
      ]
     },
     "borrowFactor": null

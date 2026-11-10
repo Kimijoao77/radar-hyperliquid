@@ -1,0 +1,291 @@
+{
+ "status": 200,
+ "url": "https://dlmm.datapi.meteora.ag/pools",
+ "corpo": {
+  "total": 153,
+  "pages": 51,
+  "current_page": 1,
+  "page_size": 3,
+  "data": {
+   "_tamanho": 3,
+   "_amostra": [
+    {
+     "address": "38hkfLZhhtjhn9t49LhCkconQ297ad5fnoZ3Mj7w5wEk",
+     "name": "X-SOL",
+     "token_x": {
+      "address": "9VZerdNL1x6EjetDqRnh5bYcdmk1y8sLAGs1ybzGpump",
+      "name": "apeonx",
+      "symbol": "X",
+      "decimals": 6,
+      "is_verified": false,
+      "holders": 3293,
+      "freeze_authority_disabled": true,
+      "total_supply": 973028585.906304,
+      "price": 0.00024579569528366006,
+      "market_cap": 239166.23780371653
+     },
+     "token_y": {
+      "address": "So11111111111111111111111111111111111111112",
+      "name": "Wrapped SOL",
+      "symbol": "SOL",
+      "decimals": 9,
+      "is_verified": true,
+      "holders": 3820662,
+      "freeze_authority_disabled": true,
+      "total_supply": 636639246.9984534,
+      "price": 82.60228463624003,
+      "market_cap": 48734000946.42177
+     },
+     "reserve_x": "6eBuEFSraxNWdjE6asapVaCzdhMiuiK6nPhr9YS867Aq",
+     "reserve_y": "9FnmR4tNxAzHPNoFnXoyTnTyRWVE17uxtXwH4LEMZsJ7",
+     "token_x_amount": 30526387.352271,
+     "token_y_amount": 106.980609133,
+     "created_at": 1794301885000,
+     "reward_mint_x": "11111111111111111111111111111111",
+     "reward_mint_y": "11111111111111111111111111111111",
+     "pool_config": {
+      "bin_step": 80,
+      "base_fee_pct": 1.0,
+      "max_fee_pct": 0.0,
+      "protocol_fee_pct": 10.0,
+      "collect_fee_mode": 0
+     },
+     "dynamic_fee_pct": 1.08,
+     "tvl": 16463.449881972905,
+     "current_price": 3.049250869918e-06,
+     "apr": 80.94697333726131,
+     "apy": 1.8446744073709552e+19,
+     "has_farm": false,
+     "farm_apr": 0.0,
+     "farm_apy": 0.0,
+     "volume": {
+      "30m": 4579.5028090658125,
+      "1h": 12539.29748942312,
+      "2h": 29261.21224505926,
+      "4h": 121524.47827799778,
+      "12h": 716549.8318427757,
+      "24h": 716549.8318427757
+     },
+     "fees": {
+      "30m": 82.59022461238428,
+      "1h": 214.93614730204683,
+      "2h": 454.92406536873386,
+      "4h": 2183.9945009796947,
+      "12h": 13326.664386353988,
+      "24h": 13326.664386353988
+     },
+     "protocol_fees": {
+      "30m": 9.033142218139728,
+      "1h": 23.60772835899366,
+      "2h": 49.88662988464802,
+      "4h": 239.89217170023403,
+      "12h": 1462.1161970142432,
+      "24h": 1462.1161970142432
+     },
+     "fee_tvl_ratio": {
+      "30m": 0.5016580680506013,
+      "1h": 1.3055352847849766,
+      "2h": 2.7632365550969067,
+      "4h": 13.265715974700528,
+      "12h": 80.94697333726133,
+      "24h": 80.94697333726133
+     },
+     "cumulative_metrics": {
+      "volume": 716549.8318427745,
+      "fees": 13326.664386353978
+     },
+     "is_blacklisted": false,
+     "launchpad": "pump.fun",
+     "tags": {
+      "_tamanho": 0,
+      "_amostra": []
+     }
+    },
+    {
+     "address": "HcyYBrZVFDDVBLtLxL5C1HDJND1p86BoNA6m7MjBKE3p",
+     "name": "PUSSY-SOL",
+     "token_x": {
+      "address": "FZxHLUGiGchY5uvvoeqh1EKiXTrGdN67WUBhUc1fLoat",
+      "name": "Pussycoin",
+      "symbol": "PUSSY",
+      "decimals": 6,
+      "is_verified": false,
+      "holders": 9107,
+      "freeze_authority_disabled": true,
+      "total_supply": 999985475.350245,
+      "price": 0.0006318204042351378,
+      "market_cap": 631811.2272650582
+     },
+     "token_y": {
+      "address": "So11111111111111111111111111111111111111112",
+      "name": "Wrapped SOL",
+      "symbol": "SOL",
+      "decimals": 9,
+      "is_verified": true,
+      "holders": 3820662,
+      "freeze_authority_disabled": true,
+      "total_supply": 636639246.9984534,
+      "price": 82.60228463624003,
+      "market_cap": 48734000946.42177
+     },
+     "reserve_x": "GDzAw5HoL1728cnxnz5sMTNgDZbWF6TGofrbpRHRD3Yx",
+     "reserve_y": "2nUgtaVsGSC59X36tWJVjb7oCjXRsLRPYHc5XziTT4ee",
+     "token_x_amount": 11732722.600922,
+     "token_y_amount": 224.162014358,
+     "created_at": 1794169879000,
+     "reward_mint_x": "11111111111111111111111111111111",
+     "reward_mint_y": "11111111111111111111111111111111",
+     "pool_config": {
+      "bin_step": 100,
+      "base_fee_pct": 2.0,
+      "max_fee_pct": 0.0,
+      "protocol_fee_pct": 10.0,
+      "collect_fee_mode": 0
+     },
+     "dynamic_fee_pct": 0.046875,
+     "tvl": 25836.33010407396,
+     "current_price": 7.554495602367e-06,
+     "apr": 46.83469527780294,
+     "apy": 1.8446744073709552e+19,
+     "has_farm": false,
+     "farm_apr": 0.0,
+     "farm_apy": 0.0,
+     "volume": {
+      "30m": 2536.226154603398,
+      "1h": 3156.1868343304823,
+      "2h": 15827.645406466696,
+      "4h": 63596.70978015721,
+      "12h": 143587.91629265994,
+      "24h": 522445.5638996642
+     },
+     "fees": {
+      "30m": 46.54126044150181,
+      "1h": 57.76361596788612,
+      "2h": 318.565292363549,
+      "4h": 1386.8376954578885,
+      "12h": 3254.574174634042,
+      "24h": 12100.366475210309
+     },
+     "protocol_fees": {
+      "30m": 5.1711750099749265,
+      "1h": 6.418102930562611,
+      "2h": 35.3704785905846,
+      "4h": 153.81205869602454,
+      "12h": 361.1886780250797,
+      "24h": 1339.568332740463
+     },
+     "fee_tvl_ratio": {
+      "30m": 0.18013882100911469,
+      "1h": 0.22357515845014592,
+      "2h": 1.2330129359715702,
+      "4h": 5.367781298162029,
+      "12h": 12.59689035371494,
+      "24h": 46.83469527780295
+     },
+     "cumulative_metrics": {
+      "volume": 2679914.0578053575,
+      "fees": 76837.8419801956
+     },
+     "is_blacklisted": false,
+     "launchpad": "raydium-launchlab",
+     "tags": {
+      "_tamanho": 0,
+      "_amostra": []
+     }
+    },
+    {
+     "address": "2uA94Y3X9dwDduojoj2NRcyZQaYtcoSsHZ4y1UX5P8Rs",
+     "name": "Pepetide-SOL",
+     "token_x": {
+      "address": "22JKmY9YZfnQfb3pGYb6hctL5Jyvv3zhL3nQ8oyNuoYp",
+      "name": "Pepetide",
+      "symbol": "Pepetide",
+      "decimals": 6,
+      "is_verified": false,
+      "holders": 3046,
+      "freeze_authority_disabled": true,
+      "total_supply": 999961631.827829,
+      "price": 0.0002141352065418486,
+      "market_cap": 214126.99056537612
+     },
+     "token_y": {
+      "address": "So11111111111111111111111111111111111111112",
+      "name": "Wrapped SOL",
+      "symbol": "SOL",
+      "decimals": 9,
+      "is_verified": true,
+      "holders": 3820662,
+      "freeze_authority_disabled": true,
+      "total_supply": 636639246.9984534,
+      "price": 82.60228463624003,
+      "market_cap": 48734000946.42177
+     },
+     "reserve_x": "7HfeC8B1Mo6kQeqRqycTHb29h5x78HJUbUNgDUQ7EVYQ",
+     "reserve_y": "8GpTdbZ68MKrkRJf6YwLdmM9DeRZ8K3oCTt5KYb64vTE",
+     "token_x_amount": 51522724.691258006,
+     "token_y_amount": 90.582922149,
+     "created_at": 1794096836000,
+     "reward_mint_x": "11111111111111111111111111111111",
+     "reward_mint_y": "11111111111111111111111111111111",
+     "pool_config": {
+      "bin_step": 100,
+      "base_fee_pct": 2.0,
+      "max_fee_pct": 0.0,
+      "protocol_fee_pct": 10.0,
+      "collect_fee_mode": 0
+     },
+     "dynamic_fee_pct": 0.1315137,
+     "tvl": 18797.082029140925,
+     "current_price": 2.657426280005e-06,
+     "apr": 18.26818169185385,
+     "apy": 1.8446744073709552e+19,
+     "has_farm": false,
+     "farm_apr": 0.0,
+     "farm_apy": 0.0,
+     "volume": {
+      "30m": 1428.4127329055166,
+      "1h": 1775.3734454622363,
+      "2h": 7986.238977947962,
+      "4h": 30800.221738494893,
+      "12h": 67598.7982808146,
+      "24h": 155924.81941101153
+     },
+     "fees": {
+      "30m": 26.299877673034903,
+      "1h": 32.54803977686664,
+      "2h": 176.95222378195436,
+      "4h": 730.1106289304748,
+      "12h": 1502.5454059347858,
+      "24h": 3433.8850978502733
+     },
+     "protocol_fees": {
+      "30m": 2.922208461881981,
+      "1h": 3.6164486019952022,
+      "2h": 19.661357217326067,
+      "4h": 81.02231611651476,
+      "12h": 166.69117897321522,
+      "24h": 380.82066274823353
+     },
+     "fee_tvl_ratio": {
+      "30m": 0.13991468267395157,
+      "1h": 0.17315474671232345,
+      "2h": 0.9413813458260548,
+      "4h": 3.8841700419171,
+      "12h": 7.993503478919785,
+      "24h": 18.26818169185385
+     },
+     "cumulative_metrics": {
+      "volume": 731543.0027828863,
+      "fees": 21278.598600076613
+     },
+     "is_blacklisted": false,
+     "launchpad": "raydium-launchlab",
+     "tags": {
+      "_tamanho": 0,
+      "_amostra": []
+     }
+    }
+   ]
+  }
+ }
+}

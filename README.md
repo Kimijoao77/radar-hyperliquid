@@ -8,9 +8,9 @@ Tudo usa a API pública e gratuita da Hyperliquid (sem conta e sem chave). **Nad
 
 
 > **10/11/2026: foco no máximo de lucro (pedido do João).** Só ficam os testes que podem bater o ping pong (45 % ao
-> ano): cópia, grade/DCA (versão 3: com 2× e 3×, os 4 de maior lucro ao ano no pior dos dois pedaços do passado),
-> cofres (versão 3: só o HLP), apostas e pools concentradas (versão 4: mais a faixa agressiva, até −4 %). Saíram
-> memecoins, funding, pools estáveis e opções (o código continua no repositório).
+> ano): cópia, grade/DCA e tendência (versão 4: com 1×, 2× e 3×, o funding real descontado e, ao vivo, 3 de grade/DCA
+> e 3 de tendência), cofres (só o HLP e, ao lado, uma carteira de risco), apostas e pools concentradas (versão 4: mais a
+> faixa agressiva, até −4 %). Saíram memecoins, funding, pools estáveis e opções (o código continua no repositório).
 
 ## Fases
 
@@ -113,10 +113,22 @@ Versão 2 (09/11): **só 1×** (na versão 1 as escolhidas eram 3× e, na semana
 ganhou a **pausa na queda** (só abre ciclo novo com o preço acima da média de 7 dias); e a escolha das 2 grades e dos 2 DCA
 que vão ao vivo usa a **pior nota** entre os primeiros 2/3 do passado e o último 1/3, que a escolha não vê (para não
 escolher a dedo a regra que só deu certo no passado). O resultado da versão 1 fica em `anterior`.
+Versão 3 (10/11): volta o 2× e o 3× (máximo de lucro). Versão 4 (10/11): (a) **funding** — quem está comprado paga, de hora em
+hora, a taxa de financiamento do perpétuo (BTC ~11 % ao ano sobre a posição; com 3× é o triplo sobre o dinheiro) e quem está
+vendido recebe; a conta usa o `fundingHistory` real, guardado em `lab/dados/grade_funding.json`; (b) **tendência** (21
+configurações por moeda: cruzamento de médias de 12/48, 24/96, 48/168 e 72/336 h, e rompimento de 2, 5 e 10 dias, cada um
+em 1×, 2× e 3×): fica comprado na alta e vendido na queda, sempre a mercado (0,045 % + 0,02 % de derrapagem), a decisão sai no
+fechamento de uma vela e vale na abertura da próxima (sem olhar o futuro), liquidada se no pior ponto da vela sobrar menos de
+5 % do capital; (c) ao vivo entram 3 de grade/DCA (só com nota > 0) e 3 de tendência (mesmo no vermelho, porque o teste serve
+para saber se ela funciona), até 2 por moeda em cada família. O resultado das versões anteriores fica em `anterior`.
 
 **3. Cofres (`lab/cofres.py`)** — a cada 6 h: lista pública de cofres; os 40 maiores (abertos, US$ 100 mil+, 60 dias+)
 com histórico; índice de rendimento que ignora depósitos e saques; constante = p ≤ 0,05, pior queda ≤ 20 %,
-60 % das semanas no azul. Depósito simulado de US$ 1.000 nos 5 mais constantes + HLP, menos 10 % do lucro para o dono. → `saida/cofres.json`
+60 % das semanas no azul. Versão 3 (10/11): o depósito simulado de US$ 1.000 vai só para o HLP (os 3 cofres de gestor da versão
+2 estavam negativos). **Carteira de risco** (10/11, ao lado): até 4 cofres abertos para depósito que rendem 45 % ao ano ou mais
+no histórico inteiro e na taxa de agora, estão no azul no último mês, têm p ≤ 0,10 e pior queda de até 55 %, sem exigir beta
+baixo (um cofre que ganha quando o BTC cai também entra); partes iguais, escolhidos uma vez; a comissão é a de cada cofre
+(o HLP não cobra). → `saida/cofres.json` (`carteira` = só o HLP, `risco` = a carteira de risco)
 
 **4. Pools e looping (`lab/pools.py`)** — a cada 12 h, DefiLlama: pools de estáveis e de duas moedas voláteis
 (US$ 5 mi+, 30 dias de dados), só o rendimento de taxas (o de prêmio fica à parte), perda impermanente de 30 dias com

@@ -23,7 +23,18 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
     saida = raiz / "saida" / "cofres.json"
     arq = raiz / "lab" / "dados" / "cofres_estado.json"
     est = json.loads(arq.read_text(encoding="utf-8")) if arq.exists() else {}
-    if saida.exists() and agora - est.get("ultima", 0) < 6 * HORA - 10 * 60 * 1000:
+    if est and est.get("versao") != VERSAO:             # regras novas: guarda o resultado da versão anterior e recomeça
+        anterior = list(est.get("anterior") or [])
+        try:
+            velho = json.loads(saida.read_text(encoding="utf-8")).get("carteira") or {}
+            anterior.append({"nome": "Versão " + str(est.get("versao", 2)) + ": " + ", ".join(i.get("nome", "") for i in velho.get("itens", [])),
+                             "retorno": round(velho.get("saldo", 1000) / 1000 - 1, 5), "de": velho.get("inicio"), "ate": agora})
+        except (OSError, ValueError):
+            pass
+        est = {"versao": VERSAO, "anterior": anterior}
+    if est.get("versao") == VERSAO and not est.get("escolhidos"):
+        pass
+    elif saida.exists() and agora - est.get("ultima", 0) < 6 * HORA - 10 * 60 * 1000:
         print("cofres: rodou há menos de 6 h")
         return 0
     p = PADRAO

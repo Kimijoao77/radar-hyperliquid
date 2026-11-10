@@ -21,9 +21,11 @@ import numpy as np
 DIA = 86400000
 LISTA = "https://stats-data.hyperliquid.xyz/Mainnet/vaults"
 HLP = "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303"
-PADRAO = {"tvl_minimo": 100_000, "idade_minima_dias": 60, "detalhar": 40, "carteira": 4, "capital": 1000.0, "comissao": 0.10,
-          "peso_hlp": 0.40, "beta_maxima": 0.30, "queda_btc": -0.05, "nas_quedas_minimo": -0.01}
-VERSAO = 2
+# versão 3 (10/11, pedido do João: o máximo de lucro): só o HLP (55 % ao ano em 3,5 anos, pior queda 5,8 %); os outros 3
+# cofres da versão 2 estavam negativos. A lista dos demais continua medida e aparece no app.
+PADRAO = {"tvl_minimo": 100_000, "idade_minima_dias": 60, "detalhar": 40, "carteira": 0, "capital": 1000.0, "comissao": 0.10,
+          "peso_hlp": 1.0, "beta_maxima": 0.30, "queda_btc": -0.05, "nas_quedas_minimo": -0.01}
+VERSAO = 3
 
 
 def preco_em(velas: list[list[float]], t: int) -> float | None:

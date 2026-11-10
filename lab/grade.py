@@ -173,8 +173,9 @@ MEDIA_H = 168                                             # pausa do DCA: média
 # Versão 2 (09/11/2026): só 1×. Na versão 1 as escolhidas eram todas 3× e, numa semana de queda, a grade de HYPE
 # perdeu 36 %. O DCA ganhou a pausa na tendência de queda (com e sem, para comparar).
 CONFIGS = (
-    [{"tipo": "grade", "faixa": f, "niveis": n, "alav": 1} for f in (0.10, 0.20) for n in (10, 20)]
-    + [{"tipo": "dca", "passo": s, "alvo": g, "alav": 1, "pausa": pz} for s in (0.02, 0.03) for g in (0.015, 0.03) for pz in (False, True)]
+    [{"tipo": "grade", "faixa": f, "niveis": n, "alav": a} for f in (0.10, 0.20) for n in (10, 20) for a in (1, 2)]
+    + [{"tipo": "dca", "passo": s, "alvo": g, "alav": a, "pausa": pz} for s in (0.02, 0.03) for g in (0.015, 0.03) for pz in (False, True)
+       for a in (1, 2, 3)]
 )
 
 
@@ -198,6 +199,20 @@ def nota(r: dict) -> float:
     if r.get("liquidada"):
         return -9
     return r["retorno"] / max(0.05, r["pior_queda"])
+
+
+def ao_ano(r: dict) -> float:
+    if r.get("liquidada"):
+        return -1.0
+    return (1 + r["retorno"]) ** (365 / max(1.0, r["dias"])) - 1
+
+
+def nota_lucro(dentro: dict, fora: dict) -> float:
+    """Versão 3 (10/11, pedido do João: o máximo de lucro, risco aceito): o pior retorno ao ano entre os 2/3 do passado
+    onde a regra foi escolhida e o 1/3 que ela não viu; liquidada em qualquer um dos dois = fora."""
+    if dentro.get("liquidada") or fora.get("liquidada"):
+        return -9
+    return min(ao_ano(dentro), ao_ano(fora))
 
 
 def nota_honesta(dentro: dict, fora: dict) -> float:

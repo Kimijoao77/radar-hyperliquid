@@ -9,10 +9,11 @@ from lab import (rodar_apostas, rodar_cofres, rodar_concentradas, rodar_copia, r
                  rodar_opcoes, rodar_pools)
 
 falhas = 0
-LABS = (("copia", rodar_copia), ("funding", rodar_funding), ("grade", rodar_grade), ("cofres", rodar_cofres), ("pools", rodar_pools),
-        ("opcoes", rodar_opcoes), ("apostas", rodar_apostas),
-        # ("memecoins", rodar_memecoins),  # 10/11: desligado a pedido do João (−5 % em 2 dias)
+# 10/11 (pedido do João: só o que pode bater o ping pong, 45 % ao ano): saíram memecoins (−5 % em 2 dias), funding
+# (a melhor moeda paga ~11 % ao ano), pools estáveis (~5 a 15 % ao ano) e opções (~20 a 30 % ao ano). O código fica.
+LABS = (("copia", rodar_copia), ("grade", rodar_grade), ("cofres", rodar_cofres), ("apostas", rodar_apostas),
         ("concentradas", rodar_concentradas))
+_DESLIGADOS = (rodar_funding, rodar_pools, rodar_opcoes, rodar_memecoins)
 for nome, mod in LABS:
     try:
         mod.main()

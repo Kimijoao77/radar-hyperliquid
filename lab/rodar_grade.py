@@ -10,11 +10,12 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 
-from lab.grade import CONFIGS, HORA, MEDIA_H, nome, nota_honesta, rodar  # noqa: E402
+from lab.grade import CONFIGS, HORA, MEDIA_H, nome, nota_honesta, nota_lucro, rodar  # noqa: E402
 from radar.api import Hyperliquid  # noqa: E402
 
 MOEDAS = ["BTC", "ETH", "SOL", "HYPE"]
-VERSAO = 2          # 2 (09/11/2026): só 1×, DCA com pausa na queda, escolha pela pior nota dentro/fora da amostra
+VERSAO = 3          # 3 (10/11/2026): o máximo de lucro (pedido do João), com 2× e 3×; escolhe os 4 de maior lucro ao ano no pior dos dois pedaços do passado
+                    # 2 (09/11/2026): só 1×, DCA com pausa na queda, escolha pela pior nota dentro/fora da amostra
 REF_INICIO = 1793674800000   # 03/11/2026 00:00 em Brasília: o começo dos testes
 
 
@@ -43,7 +44,8 @@ def main(raiz: Path = RAIZ, api=None) -> int:
             r = rodar(c, velas[m])
             dentro = rodar(c, dentro_v)
             fora = rodar(c, fora_v, historico=_fechamentos(dentro_v)[-MEDIA_H:])
-            passado.append({"moeda": m, "config": c, "nome": nome(c), **r, "nota": round(nota_honesta(dentro, fora), 3),
+            passado.append({"moeda": m, "config": c, "nome": nome(c), **r, "nota": round(nota_lucro(dentro, fora), 3),
+                            "nota_risco": round(nota_honesta(dentro, fora), 3),
                             "dentro": {"retorno": dentro["retorno"], "pior_queda": dentro["pior_queda"], "dias": dentro["dias"]},
                             "fora": {"retorno": fora["retorno"], "pior_queda": fora["pior_queda"], "dias": fora["dias"],
                                      "segurar_moeda": fora["segurar_moeda"]}})
@@ -60,14 +62,16 @@ def main(raiz: Path = RAIZ, api=None) -> int:
             pass
         est = {"versao": VERSAO, "anterior": anterior}
     if not est.get("escolhidas") and passado:
-        def duas(tipo):   # as 2 melhores, em moedas diferentes
-            out = []
-            for r in passado:
-                if r["config"]["tipo"] == tipo and not r["liquidada"] and r["moeda"] not in {x["moeda"] for x in out}:
-                    out.append(r)
-            return out[:2]
-        g, d = duas("grade"), duas("dca")
-        est.update(inicio=agora // HORA * HORA, escolhidas=[{"moeda": r["moeda"], "config": r["config"]} for r in g + d])
+        # versão 3: os 4 de maior lucro ao ano (no pior dos dois pedaços do passado), sem liquidação; até 3 na mesma moeda
+        out, por_moeda = [], {}
+        for r in passado:
+            if r["liquidada"] or r["nota"] <= 0 or por_moeda.get(r["moeda"], 0) >= 3:
+                continue
+            out.append(r)
+            por_moeda[r["moeda"]] = por_moeda.get(r["moeda"], 0) + 1
+            if len(out) == 4:
+                break
+        est.update(inicio=agora // HORA * HORA, escolhidas=[{"moeda": r["moeda"], "config": r["config"]} for r in out])
     ao_vivo = []
     for e in est.get("escolhidas", []):
         todas = velas.get(e["moeda"], [])

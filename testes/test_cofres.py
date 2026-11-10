@@ -50,9 +50,9 @@ def test_rodar(tmp_path):
     assert R.main(tmp_path, Api(), lambda: lista) == 0
     rel = json.loads((tmp_path / "saida" / "cofres.json").read_text())
     assert rel["cofres"][0]["constante"] and rel["carteira"]["capital"] == 1000
-    assert rel["versao"] == 2
+    assert rel["versao"] == 3
     bom = next(c for c in rel["cofres"] if c["cofre"] == "0x0")
     assert bom["independente"] and abs(bom["beta"]) < 0.3 and bom["trechos_queda"] > 0
     est = json.loads((tmp_path / "lab" / "dados" / "cofres_estado.json").read_text())
     assert "0x2" not in est["escolhidos"] and est["escolhidos"][-1].startswith("0xdfc24b")
-    assert abs(est["pesos"][est["escolhidos"][-1]] - 0.4) < 1e-9 and abs(sum(est["pesos"].values()) - 1) < 1e-9
+    assert est["escolhidos"] == [est["escolhidos"][-1]] and est["pesos"][est["escolhidos"][-1]] == 1.0   # versão 3: só o HLP

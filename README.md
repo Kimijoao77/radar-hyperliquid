@@ -6,6 +6,12 @@ Inspirado no vídeo do Craft Gold sobre copytrading (17 mil carteiras → poucas
 
 Tudo usa a API pública e gratuita da Hyperliquid (sem conta e sem chave). **Nada aqui compra ou vende.**
 
+
+> **10/11/2026: foco no máximo de lucro (pedido do João).** Só ficam os testes que podem bater o ping pong (45 % ao
+> ano): cópia, grade/DCA (versão 3: com 2× e 3×, os 4 de maior lucro ao ano no pior dos dois pedaços do passado),
+> cofres (versão 3: só o HLP), apostas e pools concentradas (versão 4: mais a faixa agressiva, até −4 %). Saíram
+> memecoins, funding, pools estáveis e opções (o código continua no repositório).
+
 ## Fases
 
 | Fase | O que faz | Situação |

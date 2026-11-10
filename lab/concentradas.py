@@ -12,7 +12,9 @@ ruim do período. Agora:
 No estudo, essa regra ficou em −0,06 % na metade ruim e +1,3 % (faixa de 10 %) na boa, por posição de até 24 h.
 O teste ao vivo é que confirma: o estudo usou velas de 1 h e o dinheiro da pool de agora.
 
-Três faixas abaixo do preço da entrada, US$ 1.000 cada, até 3 pools por faixa:
+Versão 4 (10/11, pedido do João: o máximo de lucro, risco aceito): mais uma faixa, a agressiva (até −4 %), que leva a
+maior fatia da taxa e vira moeda mais depressa quando o preço desce.
+Faixas abaixo do preço da entrada, US$ 1.000 cada, até 3 pools por faixa (agressiva até −4 %):
   estreita (preço até −10 %), média (até −30 %), larga (até −60 %).
 Taxa: a taxa da pool sobre o dinheiro dela na última hora (fee_tvl_ratio 1h), vezes o quanto a faixa concentra o
 dinheiro (Uniswap v3, em relação a ±30 %), só nas velas de 5 min em que o preço ficou dentro da faixa.
@@ -25,12 +27,12 @@ from __future__ import annotations
 
 import math
 
-VERSAO = 3
+VERSAO = 4
 CAPITAL = 1000.0
 HORA = 3600 * 1000
 API = "https://dlmm.datapi.meteora.ag"
-FAIXAS = {"estreita": 0.05, "media": 0.15, "larga": 0.30}   # largura da faixa abaixo do preço = 2 × r
-NOMES = {"estreita": "Faixa estreita (até −10%)", "media": "Faixa média (até −30%)", "larga": "Faixa larga (até −60%)"}
+FAIXAS = {"agressiva": 0.02, "estreita": 0.05, "media": 0.15, "larga": 0.30}   # largura da faixa abaixo do preço = 2 × r
+NOMES = {"agressiva": "Faixa agressiva (até −4%)", "estreita": "Faixa estreita (até −10%)", "media": "Faixa média (até −30%)", "larga": "Faixa larga (até −60%)"}
 POR_FAIXA = 3
 PRAZO_H = 24
 ESCORREGA = 0.002

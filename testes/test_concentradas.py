@@ -70,7 +70,7 @@ def test_rodar(tmp_path):
     met = lambda caminho, **k: lista if caminho == "/pools" else None  # noqa: E731
     assert rodar_concentradas.main(tmp_path, meteora=met, gecko=G(), agora=T0) == 0
     s = json.loads((tmp_path / "saida" / "concentradas.json").read_text())
-    assert [len(f["abertas"]) for f in s["faixas"].values()] == [3, 3, 3]
+    assert [len(f["abertas"]) for f in s["faixas"].values()] == [3, 3, 3, 3]
     assert all(p["pool"] != "d" for f in s["faixas"].values() for p in f["abertas"])     # a que balança fica de fora
     assert [p["nome"] for p in s["faixas"]["larga"]["abertas"]] == ["MEME-SOL"] * 3
     rodar_concentradas.main(tmp_path, meteora=met, gecko=G(), agora=T0 + 2 * 3600 * 1000)

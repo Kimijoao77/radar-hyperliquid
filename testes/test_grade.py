@@ -48,8 +48,9 @@ def test_dca_alavancado_quebra_numa_queda_sem_volta():
 
 
 def test_nomes():
-    assert len(CONFIGS) == 12 and nome(CONFIGS[0]).startswith("Grade ±10 %")
-    assert all(c["alav"] == 1 for c in CONFIGS)                  # versão 2: sem alavancagem
+    assert len(CONFIGS) == 32 and nome(CONFIGS[0]).startswith("Grade ±10 %")
+    assert {c["alav"] for c in CONFIGS} == {1, 2, 3}              # versão 3: com 2× e 3× (o máximo de lucro)
+    assert nome({"tipo": "dca", "passo": 0.02, "alvo": 0.03, "alav": 3, "pausa": True}).find("3×") > 0
     assert nome({"tipo": "dca", "passo": 0.02, "alvo": 0.015, "alav": 1, "pausa": True}).endswith("pausa na queda")
 
 
@@ -76,3 +77,10 @@ def test_escolha_honesta_usa_a_pior_nota():
     boa = {"retorno": 0.2, "pior_queda": 0.1}
     ruim = {"retorno": -0.05, "pior_queda": 0.2}
     assert nota_honesta(boa, ruim) < 0 < nota_honesta(boa, boa)
+
+
+def test_nota_lucro():
+    from lab.grade import nota_lucro
+    a = {"retorno": 0.10, "dias": 100, "liquidada": False}
+    b = {"retorno": 0.02, "dias": 50, "liquidada": False}
+    assert 0 < nota_lucro(a, b) < 0.2 and nota_lucro(a, {**b, "liquidada": True}) == -9

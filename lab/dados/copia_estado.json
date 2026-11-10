@@ -1,5 +1,5 @@
 {
- "ate": 1794337800000,
+ "ate": 1794341400000,
  "inicio": 1793674800000,
  "variantes": {
   "seletiva": {
@@ -899,6 +899,14 @@
     [
      1794337800000,
      0.01664
+    ],
+    [
+     1794340800000,
+     0.0174
+    ],
+    [
+     1794341400000,
+     0.01683
     ]
    ],
    "fora": {
@@ -909,59 +917,9 @@
     "0x4276dcb71aa01041cecdac9eca20d621825927f1": "segura as posições 4.0 min (mediana): curto demais para copiar com atraso",
     "0x45ac5eda8bf2527f09067fd16c530be6f86e8404": "98 % das ordens em mercados de terceiros (xyz:…), que têm saldo separado: não dá para copiar na proporção certa",
     "0xa4db748d91c6618c77a6f4598bf6b849d5b95f49": "99 % das ordens em mercados de terceiros (xyz:…), que têm saldo separado: não dá para copiar na proporção certa",
-    "0xc3d101ae37bba62baf199c6d5e5d8f0eecfd200e": "segura as posições 20.8 min (mediana): curto demais para copiar com atraso"
+    "0xc3d101ae37bba62baf199c6d5e5d8f0eecfd200e": "segura as posições 20.9 min (mediana): curto demais para copiar com atraso"
    },
    "log": [
-    {
-     "lado": "compra",
-     "moeda": "AAVE",
-     "px": 126.317808,
-     "realizado": 1.78,
-     "resultado": 1.73,
-     "t": 1794181645872,
-     "valor": 101.62,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
-    {
-     "lado": "venda",
-     "moeda": "BTC",
-     "px": 74724.462209,
-     "realizado": -6.77,
-     "resultado": -7.26,
-     "t": 1794179082780,
-     "valor": 1105.74,
-     "w": "0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356"
-    },
-    {
-     "lado": "venda",
-     "moeda": "BTC",
-     "px": 74733.277496,
-     "realizado": -2.69,
-     "resultado": -2.89,
-     "t": 1794179275953,
-     "valor": 448.58,
-     "w": "0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356"
-    },
-    {
-     "lado": "venda",
-     "moeda": "BTC",
-     "px": 74745.888048,
-     "realizado": -0.0,
-     "resultado": -0.0,
-     "t": 1794179296781,
-     "valor": 0.01,
-     "w": "0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356"
-    },
-    {
-     "lado": "compra",
-     "moeda": "BTC",
-     "px": 74630.844433,
-     "realizado": 0.0,
-     "resultado": -0.19,
-     "t": 1794182276198,
-     "valor": 428.58,
-     "w": "0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356"
-    },
     {
      "lado": "venda",
      "moeda": "AVAX",
@@ -3918,6 +3876,56 @@
      "t": 1794337611113,
      "valor": 132.9,
      "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
+    },
+    {
+     "lado": "venda",
+     "moeda": "ZEC",
+     "px": 1029.715832,
+     "realizado": -16.38,
+     "resultado": -16.44,
+     "t": 1794337953759,
+     "valor": 140.49,
+     "w": "0x988c56fe019f5573cd9cfcdebb5ef357b33118fc"
+    },
+    {
+     "lado": "compra",
+     "moeda": "ZEC",
+     "px": 1029.340375,
+     "realizado": 0.0,
+     "resultado": -0.1,
+     "t": 1794338030552,
+     "valor": 211.76,
+     "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
+    },
+    {
+     "lado": "compra",
+     "moeda": "ZEC",
+     "px": 1029.512774,
+     "realizado": 0.0,
+     "resultado": -0.05,
+     "t": 1794338138762,
+     "valor": 119.66,
+     "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
+    },
+    {
+     "lado": "compra",
+     "moeda": "ZEC",
+     "px": 1027.342372,
+     "realizado": 0.0,
+     "resultado": -0.05,
+     "t": 1794338537134,
+     "valor": 118.38,
+     "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
+    },
+    {
+     "lado": "compra",
+     "moeda": "ZEC",
+     "px": 1023.582725,
+     "realizado": 0.0,
+     "resultado": -0.11,
+     "t": 1794339453973,
+     "valor": 234.7,
+     "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
     }
    ],
    "pulos": {
@@ -3933,7 +3941,7 @@
      "ordens": 8,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 820.86,
+     "patrimonio": 824.96,
      "pico": 1051.4336280950083,
      "pos": {
       "HYPE": [
@@ -3955,7 +3963,7 @@
      "ordens": 100,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1051.47,
+     "patrimonio": 1047.79,
      "pico": 1092.9339470572115,
      "pos": {
       "BTC": [
@@ -4057,7 +4065,7 @@
      "ordens": 1,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1061.05,
+     "patrimonio": 1063.21,
      "pico": 1085.0849364782034,
      "pos": {
       "BTC": [
@@ -4106,14 +4114,14 @@
     },
     "0x988c56fe019f5573cd9cfcdebb5ef357b33118fc": {
      "capital": 1000.0,
-     "colateral": 993.741184538055,
+     "colateral": 977.2963632484827,
      "expo_max": 3.0004746974983445,
      "fator": 0.20986358866736624,
      "inicio": 1794193200000,
-     "ordens": 17,
+     "ordens": 18,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 874.89,
+     "patrimonio": 870.89,
      "pico": 1013.551190378508,
      "pos": {
       "BTC": [
@@ -4133,12 +4141,12 @@
        582.8690807328815
       ],
       "ZEC": [
-       0.48637361488880415,
+       0.3499404986631875,
        1149.7864013760989
       ]
      },
-     "taxas": 2.2182636602011305,
-     "ult": 1794334931473,
+     "taxas": 2.281482963087232,
+     "ult": 1794337893759,
      "vivo": true,
      "w": "0x988c56fe019f5573cd9cfcdebb5ef357b33118fc"
     },
@@ -4151,7 +4159,7 @@
      "ordens": 25,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1002.21,
+     "patrimonio": 1005.31,
      "pico": 1043.348580779124,
      "pos": {
       "ETH": [
@@ -4224,7 +4232,7 @@
      "ordens": 509,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 909.23,
+     "patrimonio": 909.17,
      "pico": 1053.8742268860728,
      "pos": {
       "HYPE": [
@@ -4251,23 +4259,23 @@
     },
     "0xfcacebb9332e531c86db39659366c349794cbabb": {
      "capital": 1000.0,
-     "colateral": 1186.9219181031888,
+     "colateral": 1186.6138965614189,
      "expo_max": 3.008576473739277,
      "fator": 0.1998001998001998,
      "inicio": 1793674800000,
-     "ordens": 48,
+     "ordens": 52,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1187.03,
+     "patrimonio": 1188.58,
      "pico": 1192.9130459553112,
      "pos": {
       "ZEC": [
-       0.25695020625043047,
-       1035.0649040585788
+       0.92341848021655,
+       1029.2759739895232
       ]
      },
-     "taxas": 31.341884814277066,
-     "ult": 1794337551113,
+     "taxas": 31.649906356047037,
+     "ult": 1794339393973,
      "vivo": true,
      "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
     }

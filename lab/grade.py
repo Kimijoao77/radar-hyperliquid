@@ -446,6 +446,11 @@ FAMILIAS = {"reverter": ("grade", "dca"), "tendencia": ("tendencia",), "reversao
 SO_NO_AZUL = ("reverter", "reversao")                     # famílias que só vão ao vivo com nota > 0 (a tendência entra mesmo no vermelho)
 
 
+def familia(config: dict) -> str | None:
+    """A família de um robô (reverter = grade e DCA, tendencia, reversao)."""
+    return next((f for f, tipos in FAMILIAS.items() if config.get("tipo") in tipos), None)
+
+
 def _sinal(r: dict) -> tuple:
     """A mesma estratégia na mesma moeda com outra alavancagem é o mesmo robô: só conta uma vez (o de maior nota)."""
     return (r["moeda"], tuple(sorted((k, v) for k, v in r["config"].items() if k != "alav")))

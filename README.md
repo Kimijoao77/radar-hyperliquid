@@ -130,6 +130,10 @@ Versão 6 (10/11 à noite): **8 moedas** (mais XRP, AVAX, kPEPE e NEAR, entre as
 **reversão** (36 configurações por moeda): depois de uma queda forte em 24 h (5, 8 ou 12 %) compra; com "ambos", depois de
 uma alta forte também vende; sai no repique (alvo de 2 ou 4 %, ordem limitada), na parada (mais um gatilho contra) ou em
 48 h; 1×, 2× e 3×; um movimento dá uma entrada só. Ao vivo entram 3 de reversão, só com nota > 0 (como a grade/DCA).
+Versão 7 (10/11 à noite, pedido do João: "os robôs voltaram para o zero"): versão nova **não zera** os robôs ao vivo. Cada
+robô guarda o próprio começo (`inicio` em `escolhidas` e em `ao_vivo`) e a conta dele sai das velas desde esse começo, então
+quem continua fica como se nunca tivesse parado; a versão nova só escolhe robôs para as famílias vazias. Uma vez só, os 6
+robôs da versão 5 (desde 10/11 às 12h UTC), zerados na troca para a 6, voltaram do começo deles; da 6 ficou a reversão.
 
 **3. Cofres (`lab/cofres.py`)** — a cada 6 h: lista pública de cofres; os 40 maiores (abertos, US$ 100 mil+, 60 dias+)
 com histórico; índice de rendimento que ignora depósitos e saques; constante = p ≤ 0,05, pior queda ≤ 20 %,

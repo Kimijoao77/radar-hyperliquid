@@ -12,19 +12,19 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 
-from lab.grade import HORA, MEDIA_H, TODAS, escolher, nome, nota_honesta, nota_lucro, rodar  # noqa: E402
+from lab.grade import FAMILIAS, HORA, MEDIA_H, TODAS, escolher, familia, nome, nota_honesta, nota_lucro, rodar  # noqa: E402
 from radar.api import Hyperliquid  # noqa: E402
 
 # 10/11 (versão 6): mais 4 moedas entre as mais negociadas da Hyperliquid (kPEPE é memecoin: mais movimento e mais risco)
 MOEDAS = ["BTC", "ETH", "SOL", "HYPE", "XRP", "AVAX", "kPEPE", "NEAR"]
-VERSAO = 6          # 6 (10/11/2026): mais 4 moedas e a família reversão (3 ao vivo, só com nota > 0)
+VERSAO = 7          # 7 (10/11/2026): versão nova não zera mais os robôs ao vivo (cada um tem o próprio começo); os da versão 5 voltam
+                    # 6 (10/11/2026): mais 4 moedas e a família reversão (3 ao vivo, só com nota > 0)
                     # 5 (10/11/2026): ao vivo não repete a mesma estratégia na mesma moeda com outra alavancagem (a versão 4 pôs HYPE 3× e 2× do mesmo sinal)
                     # 4 (10/11/2026): funding real nas contas e robôs de tendência (comprado e vendido); ao vivo 3 de grade/DCA + 3 de tendência
                     # 3 (10/11/2026): o máximo de lucro (pedido do João), com 2× e 3×; escolhe os 4 de maior lucro ao ano no pior dos dois pedaços do passado
                     # 2 (09/11/2026): só 1×, DCA com pausa na queda, escolha pela pior nota dentro/fora da amostra
 REF_INICIO = 1793674800000   # 03/11/2026 00:00 em Brasília: o começo dos testes
 ANTES = 700                  # velas de antes do começo de um pedaço, para as médias e os canais da tendência já valerem
-MIN_VIVO_H = 6               # com menos horas ao vivo o resultado ainda não diz nada: não entra no histórico das versões anteriores
 
 
 def baixar_funding(api, moeda: str, desde: int, agora: int) -> dict[int, float]:
@@ -58,6 +58,30 @@ def gravar_funding(arq: Path, fund: dict[str, dict[int, float]]) -> None:
             bruto[m] = {"h0": h0, "r": [None if d.get(h0 + i * HORA) is None else round(d[h0 + i * HORA], 9) for i in range((h1 - h0) // HORA + 1)]}
     arq.parent.mkdir(parents=True, exist_ok=True)
     arq.write_text(json.dumps(bruto, separators=(",", ":")), encoding="utf-8")
+
+
+def continuar(est: dict, versao: int) -> dict:
+    """Versão nova não zera os robôs ao vivo (pedido do João em 10/11: "os robôs voltaram para o zero"): cada robô guarda
+    o próprio começo e continua contando dele; a versão nova só escolhe robôs para as famílias que estiverem vazias.
+    As contas do ao vivo saem das velas desde o começo de cada robô, então quem continua fica como se nunca tivesse parado.
+
+    Uma vez só, vindo da versão 6: a troca da 5 para a 6 (10/11 às 19 h) zerou os robôs e guardou o resultado deles em
+    "anterior". Esses robôs voltam do começo deles; das escolhas da versão 6 fica só a família que não estava ao vivo (a
+    reversão)."""
+    for e in est.get("escolhidas", []):
+        e.setdefault("inicio", est.get("inicio"))
+    if est.get("versao") == 6:
+        ant = list(est.get("anterior") or [])
+        de = max((a.get("de") or 0) for a in ant) if ant else 0
+        lote = [a for a in ant if de and a.get("de") == de]
+        por_nome = {(m, nome(c)): c for m in MOEDAS for c in TODAS}
+        voltam = [{"moeda": a["moeda"], "config": por_nome[(a["moeda"], a["nome"])], "inicio": de} for a in lote if (a["moeda"], a["nome"]) in por_nome]
+        if voltam:
+            fams = {familia(v["config"]) for v in voltam}
+            est["escolhidas"] = voltam + [e for e in est.get("escolhidas", []) if familia(e["config"]) not in fams]
+            est["anterior"] = [a for a in ant if a not in lote]
+    est["versao"] = versao
+    return est
 
 
 def _fechamentos(vs: list[dict]) -> list[float]:
@@ -107,33 +131,28 @@ def main(raiz: Path = RAIZ, api=None) -> int:
                             "fora": {"retorno": fora["retorno"], "pior_queda": fora["pior_queda"], "dias": fora["dias"],
                                      "segurar_moeda": fora["segurar_moeda"]}})
     passado.sort(key=lambda r: -r["nota"])
-    if est.get("versao") != VERSAO:                     # regras novas: guarda o resultado da versão anterior (e das de antes) e recomeça
-        anterior = list(est.get("anterior") or [])
-        try:
-            velho = json.loads((raiz / "saida" / "grade.json").read_text(encoding="utf-8"))
-            vivo = (velho.get("gerado") or 0) - (velho.get("inicio_ao_vivo") or 0)
-            for a in velho.get("ao_vivo", []) if vivo >= MIN_VIVO_H * HORA else []:
-                r = a.get("resultado") or {}
-                anterior.append({"moeda": a["moeda"], "nome": a["nome"], "retorno": r.get("retorno"), "pior_queda": r.get("pior_queda"),
-                                 "segurar_moeda": r.get("segurar_moeda"), "de": velho.get("inicio_ao_vivo"), "ate": velho.get("gerado")})
-        except (OSError, ValueError):
-            pass
-        est = {"versao": VERSAO, "anterior": anterior[-16:]}
-    if not est.get("escolhidas") and passado:
-        # versão 6: 3 de grade/DCA (maior lucro ao ano no pior dos dois pedaços, nota > 0), 3 de tendência e 3 de reversão (nota > 0);
-        # até 2 por moeda em cada família e sem repetir a mesma estratégia na mesma moeda com outra alavancagem
-        est.update(inicio=agora // HORA * HORA, escolhidas=[{"moeda": r["moeda"], "config": r["config"]} for r in escolher(passado)])
+    if est.get("versao") != VERSAO:                     # regras novas: os robôs ao vivo continuam (versão 7)
+        est = continuar(est, VERSAO) if est.get("escolhidas") else {"versao": VERSAO, "anterior": list(est.get("anterior") or [])}
+    tem = {familia(e["config"]) for e in est.get("escolhidas", [])}
+    if passado and len(tem) < len(FAMILIAS):
+        # família sem robô ao vivo: escolhe agora (até 3 de cada: grade/DCA e reversão só com nota > 0, a tendência mesmo no
+        # vermelho; até 2 por moeda; sem repetir a mesma estratégia na mesma moeda com outra alavancagem); começa nesta hora
+        novos = [{"moeda": r["moeda"], "config": r["config"], "inicio": agora // HORA * HORA} for r in escolher(passado)
+                 if familia(r["config"]) not in tem]
+        est["escolhidas"] = list(est.get("escolhidas") or []) + novos
+    est["inicio"] = min((e["inicio"] for e in est.get("escolhidas", []) if e.get("inicio")), default=None)
     ao_vivo = []
     for e in est.get("escolhidas", []):
+        ini = e.get("inicio") or est["inicio"]
         todas = velas.get(e["moeda"], [])
-        vs = [v for v in todas if int(v["t"]) >= est["inicio"]]
-        velas_antes = [v for v in todas if int(v["t"]) < est["inicio"]][-ANTES:]
+        vs = [v for v in todas if int(v["t"]) >= ini]
+        velas_antes = [v for v in todas if int(v["t"]) < ini][-ANTES:]
         antes = _fechamentos(velas_antes)[-MEDIA_H:]
         ops: list = []
         r = rodar(e["config"], vs, ops, historico=antes, antes=velas_antes, funding=fund.get(e["moeda"]) or None) if len(vs) >= 2 else None
         if r is not None:
             r["ops"] = ops[-150:]
-        ao_vivo.append({"moeda": e["moeda"], "config": e["config"], "nome": nome(e["config"]), "resultado": r})
+        ao_vivo.append({"moeda": e["moeda"], "config": e["config"], "nome": nome(e["config"]), "inicio": ini, "resultado": r})
     for r in passado:   # o app só precisa da curva das melhores
         if r is not passado[0] and r not in passado[:6]:
             r.pop("curva", None)

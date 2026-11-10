@@ -14,10 +14,17 @@ O teste ao vivo é que confirma: o estudo usou velas de 1 h e o dinheiro da pool
 
 Versão 4 (10/11, pedido do João: o máximo de lucro, risco aceito): mais uma faixa, a agressiva (até −4 %), que leva a
 maior fatia da taxa e vira moeda mais depressa quando o preço desce.
+
+Versão 5 (10/11 à noite): a conta da taxa estava otimista. Ela comparava a nossa faixa com uma posição de ±30 % (a
+agressiva levava 14 vezes a taxa média da pool), mas na Meteora quase todo mundo também concentra perto do preço, e o
+nosso próprio dinheiro divide a taxa com os outros (numa pool de US$ 20 mil, US$ 333 já pesam). Agora o fator compara a
+nossa faixa com a faixa típica das posições da pool (69 degraus, o padrão da Meteora: 34 para cada lado, do tamanho do
+bin step da pool) e desconta a fatia que o nosso depósito tira da taxa de todos. Calculado na entrada de cada posição.
 Faixas abaixo do preço da entrada, US$ 1.000 cada, até 3 pools por faixa (agressiva até −4 %):
   estreita (preço até −10 %), média (até −30 %), larga (até −60 %).
-Taxa: a taxa da pool sobre o dinheiro dela na última hora (fee_tvl_ratio 1h), vezes o quanto a faixa concentra o
-dinheiro (Uniswap v3, em relação a ±30 %), só nas velas de 5 min em que o preço ficou dentro da faixa.
+Taxa: a taxa da pool sobre o dinheiro dela na última hora (fee_tvl_ratio 1h), vezes o fator da posição (versão 5: a
+concentração da faixa contra a das outras posições da pool, já dividida com o nosso dinheiro), só nas velas de 5 min em
+que o preço ficou dentro da faixa.
 Saída: quando uma vela de 5 min fecha abaixo da faixa, quando o preço fica 3 h acima dela (versão 3; antes saía
 na hora e pagava entrada e saída toda hora) ou depois de 24 h. Versão 3: o valor é medido em SOL/USDC no preço do SOL
 da entrada (o teste mede a pool; a variação do SOL é outra coisa) e a rede custa 0,02 % por ponta. Custo de saída: a taxa da pool + 0,2 % só
@@ -27,7 +34,7 @@ from __future__ import annotations
 
 import math
 
-VERSAO = 4
+VERSAO = 5
 CAPITAL = 1000.0
 HORA = 3600 * 1000
 API = "https://dlmm.datapi.meteora.ag"
@@ -48,7 +55,26 @@ def eficiencia(r: float) -> float:
     return 1 / (1 - ((1 - r) / (1 + r)) ** 0.25)
 
 
-FATOR = {k: eficiencia(r) / eficiencia(0.30) for k, r in FAIXAS.items()}
+FATOR = {k: eficiencia(r) / eficiencia(0.30) for k, r in FAIXAS.items()}   # o fator antigo (até a versão 4), otimista
+DEGRAUS_LADO = 34      # posição padrão da Meteora: 69 degraus, 34 de cada lado do preço
+
+
+def faixa_tipica(bin_step: float | None) -> float:
+    """Meia-largura da posição típica numa pool DLMM: 34 degraus de bin_step (em pontos-base) para cada lado.
+    Sem o bin step, ±5 %."""
+    b = num(bin_step)
+    if b <= 0:
+        return 0.05
+    return min(0.6, (1 + b / 10000) ** DEGRAUS_LADO - 1)
+
+
+def fator(pool: dict, faixa: str, dolares: float) -> float:
+    """Quantas vezes a taxa média da pool (sobre o dinheiro dela) a posição recebe com o preço dentro da faixa: a
+    concentração da nossa faixa contra a das outras posições, dividindo a taxa com o nosso próprio dinheiro."""
+    e_nossa = eficiencia(FAIXAS[faixa])
+    e_pool = eficiencia(faixa_tipica((pool.get("pool_config") or {}).get("bin_step") or pool.get("bin_step")))
+    tvl = max(1.0, num(pool.get("tvl")))
+    return e_nossa / e_pool / (1 + dolares * e_nossa / (tvl * e_pool))
 
 
 def num(x) -> float:
@@ -120,7 +146,8 @@ def abrir(pool: dict, faixa: str, dolares: float, agora: int) -> dict:
     return {"pool": pool["address"], "nome": pool.get("name", ""), "token_x": pool["token_x"]["address"], "faixa": faixa,
             "entrou": agora, "ult_t": agora, "p0": p0, "a": a, "b": b, "L": liquidez(liquido / py, p0, a, b), "py": py,
             "p": p0, "taxas": 0.0, "custo_entrada": round(dolares * custo, 4), "dolares": dolares, "taxa_pct": taxa + ESCORREGA,
-            "fora_min": 0, "dentro_min": 0}
+            "fora_min": 0, "dentro_min": 0, "fator": round(fator(pool, faixa, dolares), 4),
+            "bin_step": num((pool.get("pool_config") or {}).get("bin_step")), "tvl": round(num(pool.get("tvl")))}
 
 
 def valor_usd(pos: dict, p: float | None = None, py: float | None = None) -> float:
@@ -133,7 +160,7 @@ def andar(pos: dict, velas: list, ftvl_1h_pct: float, py: float, agora: int) -> 
     Devolve o motivo da saída ("saiu da faixa" ou "24 horas") ou None se continua."""
     # versão 3: o valor fica em SOL/USDC no preço do SOL da entrada (o teste mede a pool, não a variação do SOL)
     vs = sorted(([int(v[0] * 1000) if v[0] < 1e12 else int(v[0]), float(v[4])] for v in velas), key=lambda v: v[0])
-    taxa_5min = max(0.0, ftvl_1h_pct) / 100 / 12 * FATOR[pos["faixa"]]
+    taxa_5min = max(0.0, ftvl_1h_pct) / 100 / 12 * pos.get("fator", FATOR[pos["faixa"]])
     for t, c in vs:
         if t < pos["ult_t"] or t + 5 * 60 * 1000 > agora:
             continue

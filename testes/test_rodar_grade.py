@@ -35,21 +35,21 @@ def test_rodar_grade_com_funding_e_tendencia(tmp_path):
     api = Api()
     assert R.main(tmp_path, api) == 0
     rel = json.loads((tmp_path / "saida" / "grade.json").read_text())
-    assert rel["versao"] == R.VERSAO and rel["testados"] == 4 * 53
-    assert set(rel["funding"]) == {"BTC", "ETH", "SOL", "HYPE"} and abs(rel["funding"]["BTC"]["ao_ano"] - 0.1095) < 0.001
+    assert rel["versao"] == R.VERSAO and rel["testados"] == len(R.MOEDAS) * (53 + 36) and len(R.MOEDAS) == 8
+    assert set(rel["funding"]) == set(R.MOEDAS) and abs(rel["funding"]["BTC"]["ao_ano"] - 0.1095) < 0.001
     tipos = [a["config"]["tipo"] for a in rel["ao_vivo"]]
-    assert tipos.count("tendencia") == 3 and len(tipos) - tipos.count("tendencia") == 3
+    assert tipos.count("tendencia") == 3 and sum(t in ("grade", "dca") for t in tipos) == 3 and tipos.count("reversao") <= 3
     assert all(a["moeda"] in R.MOEDAS for a in rel["ao_vivo"])
-    # o arquivo do app não leva as 212 linhas do ranking: só as melhores
-    assert len(rel["passado"]) <= 40 and any(r["config"]["tipo"] == "tendencia" for r in rel["passado"])
+    # o arquivo do app não leva as 712 linhas do ranking: só as melhores
+    assert len(rel["passado"]) <= 50 and any(r["config"]["tipo"] == "tendencia" for r in rel["passado"])
     cache = json.loads((tmp_path / "lab" / "dados" / "grade_funding.json").read_text())
-    assert set(cache) == {"BTC", "ETH", "SOL", "HYPE"} and len(cache["BTC"]["r"]) > 800
+    assert set(cache) == set(R.MOEDAS) and len(cache["BTC"]["r"]) > 800
     # 2ª rodada: o funding só acrescenta o que falta e as escolhidas continuam as mesmas
     api2 = Api()
     escolhidas = json.loads((tmp_path / "lab" / "dados" / "grade_estado.json").read_text())["escolhidas"]
     assert R.main(tmp_path, api2) == 0
     assert json.loads((tmp_path / "lab" / "dados" / "grade_estado.json").read_text())["escolhidas"] == escolhidas
-    assert len(api2.chamadas) <= 4
+    assert len(api2.chamadas) <= len(R.MOEDAS)
 
 
 def test_rodar_grade_sem_funding_nao_quebra(tmp_path):

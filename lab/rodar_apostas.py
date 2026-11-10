@@ -13,8 +13,10 @@ RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 
 from lab.apostas import (APOSTA, CAPITAL, COMISSAO, CONFIGS, JOGOS, JOGOS_EXTRAS, LIGAS, NOME_LIGA, RESULTADOS_EXTRAS,  # noqa: E402
-                         TEMPORADA, VERSAO, achar_resultado, avaliar, chave, clv, descrever, escolher, jogos_da_lista, ler_csv,
-                         nome, resultado, temporada, medir)
+                         TEMPORADA, VERSAO, achar_resultado, avaliar, chave, clv, descrever, desfecho, escolher, jogos_da_lista,
+                         ler_csv, nome, resultado, temporada, medir, venceu)
+
+MINIMO_CONFERIR = 30          # com menos apostas nesta temporada, ainda não dá para dizer que o ajuste perdeu
 
 HORA = 3600 * 1000
 DIA = 24 * HORA
@@ -38,12 +40,14 @@ def rotulo(t: str) -> str:
 
 
 def no_passado(baixar, agora: int) -> dict:
-    """Escolhe o ajuste na temporada de 2 anos atrás e confere na passada e na de agora (até hoje)."""
+    """Versão 2: escolhe o ajuste na última temporada completa (maior lucro por aposta), exigindo lucro também na
+    anterior, e confere nesta (que a escolha não viu). Sem ajuste que passe, ou com o escolhido perdendo nesta
+    temporada, o teste desliga."""
     atual = temporada(agora)
     a = int(atual[:2])
-    escolha, seguintes = f"{a - 2:02d}{a - 1:02d}", [f"{a - 1:02d}{a:02d}", atual]
+    escolha, exigida = f"{a - 1:02d}{a:02d}", f"{a - 2:02d}{a - 1:02d}"
     dados = {}
-    for t in [escolha, *seguintes]:
+    for t in (exigida, escolha, atual):
         linhas = []
         for liga in LIGAS:
             try:
@@ -52,17 +56,22 @@ def no_passado(baixar, agora: int) -> dict:
                 print("apostas: sem", t, liga, str(ex)[:80])
         dados[t] = linhas
     medidas = {t: [medir(dados[t], c) for c in CONFIGS] for t in dados}
-    i = escolher(medidas[escolha])
-    if i is None:                                    # sem dados da temporada da escolha: o ajuste do meio
-        i = next(j for j, c in enumerate(CONFIGS) if c == {"limiar": 0.04, "odd_min": 1.3, "odd_max": 4.0, "empate": True})
+    i = escolher(medidas[escolha], medidas[exigida])
     sem = lambda m: {k: v for k, v in m.items() if k != "por_liga"}  # noqa: E731
-    ordem = sorted(range(len(CONFIGS)), key=lambda j: -medidas[escolha][j]["roi"] if medidas[escolha][j]["apostas"] >= 150 else 9)
-    return {"versao": VERSAO, "feito": agora, "regra": CONFIGS[i], "nome": nome(CONFIGS[i]),
-            "temporadas": [{"temporada": rotulo(t), "papel": "escolha" if t == escolha else ("até hoje" if t == atual else "conferência"),
-                            "jogos": len(dados[t]), **sem(medidas[t][i])} for t in dados],
-            "ranking": [{"nome": nome(CONFIGS[j]), **sem(medidas[escolha][j]), "depois": {rotulo(t): medidas[t][j]["roi"] for t in seguintes}}
-                        for j in ordem[:8]],
-            "por_liga": {NOME_LIGA.get(k, k): v for k, v in medidas[seguintes[0]][i]["por_liga"].items()}}
+    ordem = sorted((j for j in range(len(CONFIGS)) if medidas[escolha][j]["apostas"] >= 150), key=lambda j: -medidas[escolha][j]["roi"])
+    papel = {exigida: "exigida", escolha: "escolha", atual: "até hoje"}
+    out = {"versao": VERSAO, "feito": agora, "regra": CONFIGS[i] if i is not None else None, "nome": nome(CONFIGS[i]) if i is not None else "",
+           "temporadas": [{"temporada": rotulo(t), "papel": papel[t], "jogos": len(dados[t]), **sem(medidas[t][i])} for t in dados] if i is not None else [],
+           "ranking": [{"nome": nome(CONFIGS[j]), **sem(medidas[escolha][j]),
+                        "depois": {rotulo(exigida): medidas[exigida][j]["roi"], rotulo(atual): medidas[atual][j]["roi"]}} for j in ordem[:8]],
+           "por_liga": {NOME_LIGA.get(k, k): v for k, v in medidas[escolha][i]["por_liga"].items()} if i is not None else {},
+           "desligado": False, "motivo": ""}
+    if i is None:
+        out.update(desligado=True, motivo=f"nenhum ajuste deu lucro em {rotulo(escolha)} e em {rotulo(exigida)} ao mesmo tempo")
+    elif medidas[atual][i]["apostas"] >= MINIMO_CONFERIR and medidas[atual][i]["roi"] <= 0:
+        out.update(desligado=True, motivo=f"o ajuste escolhido ({nome(CONFIGS[i])}) perdeu nesta temporada: "
+                                         f"{medidas[atual][i]['roi']:+.1%} por aposta em {medidas[atual][i]['apostas']} apostas")
+    return out
 
 
 def _fechar(est: dict, a: dict, estado: str, lucro: float, agora: int, **extra) -> None:
@@ -83,6 +92,7 @@ def main(raiz: Path = RAIZ, baixar=_texto, agora: int | None = None) -> int:
     if not est.get("passado") or agora - est["passado"].get("feito", 0) > 7 * DIA:
         est["passado"] = no_passado(baixar, agora)
     cfg = est["passado"]["regra"]
+    desligado = bool(est["passado"].get("desligado"))
     est.setdefault("inicio", agora)
     est.setdefault("abertas", [])
     est.setdefault("fechadas", [])
@@ -101,8 +111,9 @@ def main(raiz: Path = RAIZ, baixar=_texto, agora: int | None = None) -> int:
             continue
         for a in lista:
             r = achar_resultado(a, linhas)
-            if r:
-                g = resultado(a, r["res"], a["valor"])
+            ok = venceu(a, desfecho(r["linha"])) if r else None
+            if r and ok is not None:
+                g = resultado(a, ok, a["valor"])
                 c = clv(a, r["linha"])
                 _fechar(est, a, "ganhou" if g > 0 else "perdeu", g, agora, placar=r["placar"], clv=None if c is None else round(c, 4))
             elif agora > a["inicio"] + 10 * DIA:
@@ -114,7 +125,7 @@ def main(raiz: Path = RAIZ, baixar=_texto, agora: int | None = None) -> int:
     saldo = CAPITAL + sum(f["lucro"] for f in est["fechadas"])
     preso = sum(a["valor"] for a in est["abertas"])
     novas = 0
-    for j in sorted(jogos, key=lambda j: j["inicio"]):
+    for j in sorted(jogos, key=lambda j: j["inicio"]) if not desligado else []:
         if j["inicio"] <= agora + 10 * 60 * 1000 or chave(j) in feitas:
             continue
         a = avaliar(j, cfg)
@@ -136,7 +147,8 @@ def main(raiz: Path = RAIZ, baixar=_texto, agora: int | None = None) -> int:
     cs = [f["clv"] for f in feitas_ok if f.get("clv") is not None]
     leg = lambda a: {**{k: a[k] for k in a if k not in ("chave",)}, "nome_liga": NOME_LIGA.get(a["liga"], a["liga"]), "escolha": descrever(a)}  # noqa: E731
     rel = {"gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-           "versao": VERSAO, "capital": CAPITAL, "aposta": APOSTA, "comissao": COMISSAO, "regra": {**cfg, "nome": est["passado"]["nome"]},
+           "versao": VERSAO, "capital": CAPITAL, "aposta": APOSTA, "comissao": COMISSAO, "regra": {**(cfg or {}), "nome": est["passado"]["nome"]},
+           "desligado": desligado, "motivo": est["passado"].get("motivo", ""),
            "passado": est["passado"], "jogos_na_lista": len(jogos),
            "ao_vivo": {"inicio": est["inicio"], "saldo": round(saldo, 2), "curva": est["curva"], "apostas": len(feitas_ok),
                        "acertos": sum(f["lucro"] > 0 for f in feitas_ok), "lucro": round(sum(f["lucro"] for f in feitas_ok), 2),
@@ -149,7 +161,8 @@ def main(raiz: Path = RAIZ, baixar=_texto, agora: int | None = None) -> int:
     arq.parent.mkdir(parents=True, exist_ok=True)
     arq.write_text(json.dumps(est, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     p = est["passado"]
-    print(f"apostas: regra '{p['nome']}'; no passado " + "; ".join(f"{t['temporada']} {t['apostas']} apostas ROI {t['roi']:+.1%}" for t in p["temporadas"])
+    print(f"apostas: {'DESLIGADO (' + p['motivo'] + ')' if desligado else 'regra ' + repr(p['nome'])}; no passado "
+          + "; ".join(f"{t['temporada']} {t['apostas']} apostas ROI {t['roi']:+.1%}" for t in p["temporadas"])
           + f"; ao vivo {novas} novas, {len(est['abertas'])} abertas, saldo {saldo - CAPITAL:+.2f} US$")
     return 0
 

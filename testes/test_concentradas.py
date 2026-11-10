@@ -77,3 +77,16 @@ def test_rodar(tmp_path):
     s = json.loads((tmp_path / "saida" / "concentradas.json").read_text())
     e, l = s["faixas"]["estreita"]["abertas"][0], s["faixas"]["larga"]["abertas"][0]
     assert e["taxas"] > l["taxas"] > 0 and e["horas_dentro"] == 1.0
+
+
+def test_fator_da_versao_5_compara_com_a_pool_e_divide_com_o_nosso_dinheiro():
+    from lab.concentradas import FATOR, faixa_tipica, fator
+    assert faixa_tipica(20) == pytest.approx(1.002 ** 34 - 1) and faixa_tipica(None) == 0.05 and faixa_tipica(500) == 0.6
+    p = {**pool(tvl=20_000), "pool_config": {"bin_step": 20}}
+    f = fator(p, "agressiva", 333)
+    assert 2 < f < 4 and f < FATOR["agressiva"] / 4          # bem abaixo das 14 vezes da conta antiga
+    assert fator(p, "agressiva", 5000) < f / 1.5                 # mais dinheiro na mesma pool = fatia menor de cada dólar
+    assert fator({**p, "tvl": 10_000_000}, "agressiva", 333) == pytest.approx(f * 1.058, rel=0.01)   # pool grande: sem os 5,5 % de diluição
+    assert fator(p, "larga", 333) < 1                            # faixa mais larga que a das outras posições: menos que a média
+    pos = abrir(p, "estreita", 333, T0)
+    assert pos["fator"] == pytest.approx(fator(p, "estreita", 333), rel=1e-3) and pos["bin_step"] == 20

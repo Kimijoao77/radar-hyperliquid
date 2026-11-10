@@ -164,7 +164,7 @@ def test_janela_e_ema():
 
 
 def test_configs_de_tendencia_e_nomes():
-    assert len(TENDENCIA) == 21 and len(TODAS) == 53 and {c["alav"] for c in TENDENCIA} == {1, 2, 3}
+    assert len(TENDENCIA) == 21 and len(TODAS) == 53 + 36 and {c["alav"] for c in TENDENCIA} == {1, 2, 3}
     assert nome(TENDENCIA[0]) == "Tendência: médias de 12 h e 48 h"
     assert nome({"tipo": "tendencia", "modo": "rompe", "a": 120, "alav": 2}) == "Tendência: rompimento de 5 dias, 2×"
 
@@ -192,3 +192,73 @@ def test_escolher_nao_repete_o_mesmo_robo_com_outra_alavancagem():
     assert [(x["moeda"], x["config"]["a"], x["config"]["alav"]) for x in esc] == [("HYPE", 48, 3), ("SOL", 48, 3), ("HYPE", 24, 3)]
     # o mesmo sinal em OUTRA moeda é outro robô
     assert [x["moeda"] for x in escolher([r("HYPE", 5.0, 3), r("SOL", 4.0, 3), r("ETH", 3.0, 3)])] == ["HYPE", "SOL", "ETH"]
+
+
+# ---------- reversão (versão 6) ----------
+from lab.grade import REVERSAO, reversao  # noqa: E402
+
+
+def _plano(n, p=100.0):
+    return [p] * n
+
+
+def test_reversao_compra_a_queda_e_sai_no_repique():
+    # 30 h parado, cai 9 % em 3 h, depois sobe: compra na abertura seguinte ao fechamento que marcou −9 % e vende no alvo de +2 %
+    precos = _plano(30) + [97, 94, 91] + [91.5, 92, 93, 94] + _plano(60, 94)
+    ops = []
+    r = reversao(velas(precos), 0.08, 0.02, "compra", 1, ops=ops)
+    compras = [o for o in ops if o["tipo"] == "compra"]
+    vendas = [o for o in ops if o["tipo"] == "venda"]
+    assert len(compras) == 1 and len(vendas) == 1
+    assert compras[0]["px"] == pytest.approx(91)                     # o fechamento em 91 (−9 % em 24 h) decide; entra na abertura da próxima (91)
+    assert compras[0]["t"] == 33 * H                                  # a vela seguinte à do sinal: sem olhar o futuro
+    assert vendas[0]["obs"].startswith("alvo") and vendas[0]["px"] == pytest.approx(91 * 1.02)
+    assert r["ciclos"] == 1 and r["acertos"] == 1 and r["retorno"] > 0.015
+
+
+def test_reversao_para_quando_a_queda_continua():
+    precos = _plano(30) + [97, 94, 91, 88, 85, 82, 80] + _plano(60, 80)
+    ops = []
+    r = reversao(velas(precos), 0.08, 0.02, "compra", 2, ops=ops)
+    venda = [o for o in ops if o["tipo"] == "venda"][0]
+    assert venda["obs"].startswith("parada") and venda["px"] == pytest.approx(91 * 0.92)
+    assert r["retorno"] == pytest.approx(-0.16 - 2 * 0.00065 * 2, abs=0.003)   # 8 % contra com 2× = −16 %, mais as taxas
+    assert r["ciclos"] == 1                                            # a mesma queda não dá outra entrada (ainda está −20 % em 24 h)
+
+
+def test_reversao_vende_a_alta_so_com_ambos():
+    precos = _plano(30) + [103, 106, 109] + [108, 107, 106, 105] + _plano(60, 105)
+    so_compra = reversao(velas(precos), 0.08, 0.02, "compra", 1)
+    ambos = reversao(velas(precos), 0.08, 0.02, "ambos", 1)
+    assert so_compra["ciclos"] == 0 and so_compra["retorno"] == 0
+    assert ambos["ciclos"] == 1 and ambos["acertos"] == 1 and ambos["retorno"] > 0.015
+
+
+def test_reversao_sai_no_prazo_de_48_horas():
+    precos = _plano(30) + [97, 94, 91] + _plano(80, 90.5)
+    ops = []
+    reversao(velas(precos), 0.08, 0.02, "compra", 1, ops=ops)
+    venda = [o for o in ops if o["tipo"] == "venda"][0]
+    compra = [o for o in ops if o["tipo"] == "compra"][0]
+    assert venda["obs"] == "prazo de 48 h" and venda["t"] - compra["t"] == 47 * H
+
+
+def test_reversao_funding_comprado_paga():
+    precos = _plano(30) + [97, 94, 91] + _plano(60, 90.5)
+    fund = {i * H + H: 0.0001 for i in range(200)}
+    sem = reversao(velas(precos), 0.08, 0.02, "compra", 1)
+    com = reversao(velas(precos), 0.08, 0.02, "compra", 1, funding=fund)
+    assert com["funding_pago"] > 0 and com["final"] < sem["final"]
+
+
+def test_configs_de_reversao_e_nomes():
+    assert len(REVERSAO) == 36 and len(TODAS) == 53 + 36
+    assert nome({"tipo": "reversao", "gatilho": 0.08, "alvo": 0.02, "lados": "compra", "alav": 1}) == "Reversão: compra na queda de 8 % em 24 h, alvo 2 %"
+    assert nome({"tipo": "reversao", "gatilho": 0.12, "alvo": 0.04, "lados": "ambos", "alav": 3}).endswith("vende na alta de 12 % em 24 h, alvo 4 %, 3×")
+
+
+def test_escolher_reversao_so_no_azul():
+    def r(moeda, tipo, nota):
+        return {"moeda": moeda, "config": {"tipo": tipo, "n": nota}, "nota": nota, "liquidada": False}
+    esc = escolher([r("BTC", "reversao", 1.0), r("ETH", "reversao", 0.5), r("SOL", "reversao", -0.2), r("HYPE", "tendencia", -0.3)])
+    assert [(x["moeda"], x["config"]["tipo"]) for x in esc] == [("HYPE", "tendencia"), ("BTC", "reversao"), ("ETH", "reversao")]

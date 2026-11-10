@@ -5,14 +5,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from lab import (rodar_apostas, rodar_cofres, rodar_concentradas, rodar_copia, rodar_funding, rodar_grade, rodar_memecoins,  # noqa: E402
-                 rodar_opcoes, rodar_pools)
+from lab import (rodar_apostas, rodar_cofres, rodar_concentradas, rodar_copia, rodar_funding, rodar_grade, rodar_listagens,  # noqa: E402
+                 rodar_memecoins, rodar_opcoes, rodar_pools)
 
 falhas = 0
 # 10/11 (pedido do João: só o que pode bater o ping pong, 45 % ao ano): saíram memecoins (−5 % em 2 dias), funding
 # (a melhor moeda paga ~11 % ao ano), pools estáveis (~5 a 15 % ao ano) e opções (~20 a 30 % ao ano). O código fica.
+# 10/11 (à noite): entrou "listagens" (vender moeda recém-listada na Hyperliquid)
 LABS = (("copia", rodar_copia), ("grade", rodar_grade), ("cofres", rodar_cofres), ("apostas", rodar_apostas),
-        ("concentradas", rodar_concentradas))
+        ("concentradas", rodar_concentradas), ("listagens", rodar_listagens))
 _DESLIGADOS = (rodar_funding, rodar_pools, rodar_opcoes, rodar_memecoins)
 for nome, mod in LABS:
     try:

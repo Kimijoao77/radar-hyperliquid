@@ -11,6 +11,9 @@ Tudo usa a API pública e gratuita da Hyperliquid (sem conta e sem chave). **Nad
 > ano): cópia, grade/DCA e tendência (versão 5: com 1×, 2× e 3×, o funding real descontado e, ao vivo, 3 de grade/DCA
 > e 3 de tendência, sem repetir o mesmo robô em outra alavancagem), cofres (só o HLP e, ao lado, uma carteira de risco), apostas e pools concentradas (versão 4: mais a
 > faixa agressiva, até −4 %). Saíram memecoins, funding, pools estáveis e opções (o código continua no repositório).
+> **10/11 à noite:** grade/tendência ganhou mais 4 moedas (XRP, AVAX, kPEPE, NEAR) e a família **reversão** (versão 6);
+> entrou o teste de **vender moeda recém-listada** (`lab/listagens.py`); as pools concentradas (versão 5) pararam de
+> superestimar a fatia da taxa; as apostas (versão 2) refizeram o ajuste e desligam sozinhas se a regra não se confirmar.
 
 ## Fases
 
@@ -123,6 +126,10 @@ fechamento de uma vela e vale na abertura da próxima (sem olhar o futuro), liqu
 para saber se ela funciona), até 2 por moeda em cada família. Versão 5 (10/11): ao vivo, a mesma estratégia na mesma moeda
 entra uma vez só, sem repetir em 2× e 3× (a versão 4 pôs HYPE com o mesmo cruzamento de médias nas duas alavancagens, o mesmo
 palpite duas vezes). O resultado das versões anteriores fica em `anterior` (só as que ficaram 6 h ou mais ao vivo).
+Versão 6 (10/11 à noite): **8 moedas** (mais XRP, AVAX, kPEPE e NEAR, entre as mais negociadas da Hyperliquid) e a família
+**reversão** (36 configurações por moeda): depois de uma queda forte em 24 h (5, 8 ou 12 %) compra; com "ambos", depois de
+uma alta forte também vende; sai no repique (alvo de 2 ou 4 %, ordem limitada), na parada (mais um gatilho contra) ou em
+48 h; 1×, 2× e 3×; um movimento dá uma entrada só. Ao vivo entram 3 de reversão, só com nota > 0 (como a grade/DCA).
 
 **3. Cofres (`lab/cofres.py`)** — a cada 6 h: lista pública de cofres; os 40 maiores (abertos, US$ 100 mil+, 60 dias+)
 com histórico; índice de rendimento que ignora depósitos e saques; constante = p ≤ 0,05, pior queda ≤ 20 %,
@@ -147,6 +154,11 @@ coberta ~10 % acima, em BTC e ETH, US$ 1.000 cada; vende pelo bid, paga a taxa e
 a odd, já sem a comissão de 5 %, paga acima da justa (média das casas sem a margem, método da potência). O ajuste (limiar,
 faixa de odds, com ou sem empate) é escolhido na temporada de 2 anos atrás e conferido nas seguintes; cada aposta é
 comparada com a odd de fechamento da bolsa (CLV). A Pinnacle saiu dos dados em 2025. → `saida/apostas.json`
+Versão 2 (10/11 à noite): a regra da versão 1 perdia 8,4 % por aposta nesta temporada. Agora concorrem dois jeitos
+("bolsa", o de antes; e "casa": a bolsa dá a chance justa e a aposta é na Bet365, sem comissão) e dois mercados (resultado
+e gols, mais ou menos de 2,5). Escolha: maior lucro por aposta em 2025/26 com lucro também em 2024/25; esta temporada
+confere. Sem ajuste que passe, ou com o escolhido perdendo nesta temporada (30 apostas ou mais), `desligado: true` e o
+app tira o teste do Placar.
 
 **7. Memecoins (`lab/memecoins.py`, desde 09/11)** — de hora em hora, GeckoTerminal (grátis, poucas chamadas por minuto):
 moedas novas da pump.fun. Duas estratégias com o mesmo caixa: a mais disputada no lançamento e a que sobreviveu e
@@ -164,6 +176,17 @@ paga a venda só da parte que virou moeda. No estudo: −0,06 % por posição na
 (faixa estreita); a versão 1 (troca de metade na entrada, só a maior taxa) perdeu ~2 % na metade ruim. Versão 3: quando o
 preço sobe acima da faixa a posição (toda em SOL) espera 3 h antes de reabrir, em vez de sair e pagar entrada toda hora;
 o valor é medido em SOL/USDC no preço do SOL da entrada (a variação do SOL não entra); rede a 0,02 % por ponta. → `saida/concentradas.json`
+Versão 5 (10/11 à noite): a fatia da taxa era otimista (comparava a faixa com uma posição de ±30 %: a agressiva levava 14
+vezes a taxa média). Agora compara com a posição típica da pool (69 degraus da Meteora, 34 de cada lado do tamanho do bin
+step) e divide a taxa com o nosso próprio depósito; o fator de cada posição sai na entrada (`fator` em `abertas`).
+
+**9. Vender moeda recém-listada (`lab/listagens.py`, desde 10/11)** — de hora em hora, a lista de moedas da Hyperliquid
+(as 90 do fim, onde entram as novas). A estreia de cada moeda é a hora do primeiro funding. Regra fixa: vende (short) 24 h
+depois da estreia, na abertura da vela, com 10 % do patrimônio de margem por moeda, em 1× e em 2× (dois testes); sai se o
+preço subir 30 % ou em 14 dias; até 10 moedas ao mesmo tempo; taxa de 0,045 % + 0,1 % de derrapagem por ponta e o funding
+real de cada hora; salto de preço acima do ponto de liquidação perde a margem daquela moeda. Passado: as moedas que
+estrearam nos últimos ~15 meses (velas de 1 h até ~200 dias atrás, de 4 h antes disso), refeitas uma vez por moeda. Ao
+vivo: as que estrearem depois do começo do teste. → `saida/listagens.json`, estado em `lab/dados/listagens_estado.json`
 
 ## Arquivos
 

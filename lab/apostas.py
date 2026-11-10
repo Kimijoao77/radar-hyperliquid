@@ -14,6 +14,18 @@ Medidas: o resultado (lucro sobre o valor apostado, o ROI) e se a odd pega bateu
 
 Escolha honesta: os ajustes (limiar, faixa de odds, com ou sem empate) são escolhidos numa temporada (2024/25) e
 conferidos nas seguintes, que a escolha não viu.
+
+Versão 2 (10/11/2026, à noite): a regra da versão 1 deu +10 % por aposta em 2024/25, onde foi escolhida, +2,7 % em
+2025/26 e −8,4 % nesta temporada (114 apostas), pegando odd melhor que a final em menos da metade das vezes: a vantagem
+era aparente. O ajuste foi refeito com dois jeitos e dois mercados:
+  - "bolsa": o de antes (aposta na Betfair Exchange quando ela paga acima da média das casas sem a margem);
+  - "casa": o contrário, que é o jeito conhecido de achar valor: a bolsa (o preço mais afiado que sobrou nos dados) dá a
+    chance justa, e aposta na Bet365 (que tem licença no Brasil) quando a odd dela paga acima. Sem comissão; o risco é a
+    casa limitar quem ganha;
+  - mercados: resultado (vitória, empate, derrota) e gols (mais ou menos de 2,5).
+A escolha usa as duas temporadas completas: maior lucro por aposta em 2025/26, com lucro também em 2024/25. Esta
+temporada, que a escolha não viu, confere. Se nenhum ajuste der lucro nas duas, ou se o escolhido perder nesta temporada
+(com 30 apostas ou mais), o teste desliga e sai do Placar.
 """
 from __future__ import annotations
 
@@ -22,11 +34,12 @@ import io
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
-VERSAO = 1
+VERSAO = 2
 CAPITAL = 1000.0
 APOSTA = 10.0                 # 1 % do capital inicial por aposta
 COMISSAO = 0.05               # da bolsa, sobre o ganho de cada mercado
 RES = ("H", "D", "A")
+MERCADOS = {"1x2": RES, "gols": (">2.5", "<2.5")}   # as colunas do football-data são o prefixo + a chave (AvgH, BFE>2.5, B365<2.5...)
 LONDRES = ZoneInfo("Europe/London")
 
 LIGAS = {"E0": "Inglaterra 1", "E1": "Inglaterra 2", "E2": "Inglaterra 3", "E3": "Inglaterra 4", "EC": "Inglaterra 5",
@@ -47,8 +60,10 @@ TEMPORADA = SITE + "/mmz4281/{t}/{liga}.csv"
 RESULTADOS_EXTRAS = SITE + "/new/{cod}.csv"
 
 # ajustes testados no passado (escolha numa temporada, conferência nas seguintes)
-CONFIGS = [{"limiar": l, "odd_min": a, "odd_max": b, "empate": e}
-           for l in (0.0, 0.02, 0.04, 0.06, 0.08) for (a, b) in ((1.3, 4.0), (1.3, 8.0), (2.0, 8.0)) for e in (True, False)]
+CONFIGS = ([{"onde": o, "mercado": "1x2", "limiar": l, "odd_min": a, "odd_max": b, "empate": e}
+            for o in ("bolsa", "casa") for l in (0.0, 0.02, 0.04, 0.06) for (a, b) in ((1.3, 4.0), (1.3, 8.0)) for e in (True, False)]
+           + [{"onde": o, "mercado": "gols", "limiar": l, "odd_min": 1.3, "odd_max": 4.0, "empate": False}
+              for o in ("bolsa", "casa") for l in (0.0, 0.02, 0.04, 0.06)])
 MINIMO_APOSTAS = 150          # um ajuste só concorre se apostou pelo menos isso na temporada da escolha
 
 
@@ -93,27 +108,61 @@ def efetiva(odd: float, comissao: float = COMISSAO) -> float:
 
 
 def avaliar(jogo: dict, cfg: dict) -> dict | None:
-    """A aposta da regra num jogo (ou None): o resultado de maior vantagem que passa no limiar e na faixa de odds."""
-    p = justas([num(jogo.get(f"Avg{r}")) for r in RES])
-    bolsa = [num(jogo.get(f"BFE{r}")) for r in RES]
-    if p is None or any(b is None or b <= 1 for b in bolsa):
+    """A aposta da regra num jogo (ou None): o resultado de maior vantagem que passa no limiar e na faixa de odds.
+    onde "bolsa": a chance justa vem da média das casas e a aposta é na bolsa (com a comissão);
+    onde "casa": a chance justa vem da bolsa e a aposta é na Bet365 (sem comissão)."""
+    onde, mercado = cfg.get("onde", "bolsa"), cfg.get("mercado", "1x2")
+    chaves = MERCADOS[mercado]
+    ref, onde_aposta, com = ("Avg", "BFE", COMISSAO) if onde == "bolsa" else ("BFE", "B365", 0.0)
+    p = justas([num(jogo.get(f"{ref}{k}")) for k in chaves])
+    odds = [num(jogo.get(f"{onde_aposta}{k}")) for k in chaves]
+    if p is None or any(o is None or o <= 1 for o in odds):
         return None
     melhor = None
-    for i, r in enumerate(RES):
-        if r == "D" and not cfg.get("empate", True):
+    for i, k in enumerate(chaves):
+        if k == "D" and not cfg.get("empate", True):
             continue
-        o = bolsa[i]
+        o = odds[i]
         if not cfg["odd_min"] <= o <= cfg["odd_max"]:
             continue
-        v = p[i] * efetiva(o) - 1
+        v = p[i] * efetiva(o, com) - 1
         if v >= cfg["limiar"] and (melhor is None or v > melhor["vantagem"]):
-            melhor = {"aposta": r, "odd": o, "justa": round(1 / p[i], 3), "vantagem": round(v, 4)}
+            melhor = {"aposta": k, "odd": o, "justa": round(1 / p[i], 3), "vantagem": round(v, 4), "onde": onde, "mercado": mercado}
     return melhor
 
 
-def resultado(aposta: dict, res: str, valor: float = APOSTA, comissao: float = COMISSAO) -> float:
-    """Ganho (ou perda) de uma aposta a favor: ganhou leva (odd − 1) × valor menos a comissão; perdeu, perde o valor."""
-    return valor * (aposta["odd"] - 1) * (1 - comissao) if res == aposta["aposta"] else -valor
+def desfecho(linha: dict) -> dict | None:
+    """O resultado de um jogo terminado (arquivo de resultados): {res: H/D/A, gols: total}."""
+    res = (linha.get("FTR") or linha.get("Res") or "").strip()
+    if res not in RES:
+        return None
+    try:
+        gols = int(float(linha.get("FTHG") if linha.get("FTHG") not in (None, "") else linha.get("HG"))) + \
+               int(float(linha.get("FTAG") if linha.get("FTAG") not in (None, "") else linha.get("AG")))
+    except (TypeError, ValueError):
+        gols = None
+    return {"res": res, "gols": gols}
+
+
+def venceu(aposta: dict, d: dict | None) -> bool | None:
+    """Se a aposta ganhou (None: sem como saber)."""
+    if not d:
+        return None
+    k = aposta["aposta"]
+    if k in RES:
+        return d["res"] == k
+    if d.get("gols") is None:
+        return None
+    return d["gols"] > 2.5 if k == ">2.5" else d["gols"] < 2.5
+
+
+def resultado(aposta: dict, res, valor: float = APOSTA, comissao: float | None = None) -> float:
+    """Ganho (ou perda) de uma aposta a favor: ganhou leva (odd − 1) × valor (na bolsa, menos a comissão); perdeu, perde o
+    valor. `res`: True/False (ganhou?) ou o resultado do jogo (H, D, A)."""
+    ganhou = res if isinstance(res, bool) else res == aposta["aposta"]
+    if comissao is None:
+        comissao = COMISSAO if aposta.get("onde", "bolsa") == "bolsa" else 0.0
+    return valor * (aposta["odd"] - 1) * (1 - comissao) if ganhou else -valor
 
 
 def clv(aposta: dict, jogo: dict) -> float | None:
@@ -128,13 +177,16 @@ def medir(jogos: list[dict], cfg: dict, valor: float = APOSTA) -> dict:
     lucro = 0.0
     cs, bateu, por_liga = [], 0, {}
     for j in jogos:
-        res = (j.get("FTR") or j.get("Res") or "").strip()
-        if res not in RES:
+        d = desfecho(j)
+        if not d:
             continue
         a = avaliar(j, cfg)
         if not a:
             continue
-        g = resultado(a, res, valor)
+        ok = venceu(a, d)
+        if ok is None:
+            continue
+        g = resultado(a, ok, valor)
         n += 1
         lucro += g
         acertos += g > 0
@@ -152,12 +204,17 @@ def medir(jogos: list[dict], cfg: dict, valor: float = APOSTA) -> dict:
 
 def nome(c: dict) -> str:
     v = "qualquer vantagem" if c["limiar"] <= 0 else f"vantagem de {c['limiar']:.0%} ou mais"
-    return (f"{v}, odds de {c['odd_min']:g} a {c['odd_max']:g}" + ("" if c["empate"] else ", sem empate")).replace(".", ",")
+    onde = "na bolsa, contra a média das casas" if c.get("onde", "bolsa") == "bolsa" else "na Bet365, contra a bolsa"
+    if c.get("mercado", "1x2") == "gols":
+        return f"Gols (mais ou menos de 2.5) {onde}: {v}".replace(".", ",")
+    return (f"Resultado {onde}: {v}, odds de {c['odd_min']:g} a {c['odd_max']:g}" + ("" if c["empate"] else ", sem empate")).replace(".", ",")
 
 
-def escolher(medidas: list[dict], minimo: int = MINIMO_APOSTAS) -> int | None:
-    """Índice do ajuste com o maior ROI na temporada da escolha (com apostas suficientes)."""
-    ok = [i for i, m in enumerate(medidas) if m["apostas"] >= minimo]
+def escolher(medidas: list[dict], exigida: list[dict] | None = None, minimo: int = MINIMO_APOSTAS) -> int | None:
+    """Índice do ajuste com o maior ROI na temporada da escolha (com apostas suficientes). Versão 2: com `exigida`, só
+    concorre quem também deu lucro nela (com pelo menos metade do mínimo de apostas)."""
+    ok = [i for i, m in enumerate(medidas) if m["apostas"] >= minimo
+          and (exigida is None or (exigida[i]["apostas"] >= minimo // 2 and exigida[i]["roi"] > 0))]
     return max(ok, key=lambda i: (medidas[i]["roi"], medidas[i]["apostas"])) if ok else None
 
 
@@ -184,12 +241,12 @@ def jogos_da_lista(principal: list[dict], extras: list[dict]) -> list[dict]:
     out = []
     for j in principal:
         if j.get("Div") in LIGAS:
-            out.append({**{k: j.get(k) for k in j if k[:3] in ("Avg", "BFE")}, "liga": j["Div"], "casa": j.get("HomeTeam", "").strip(),
+            out.append({**{k: j.get(k) for k in j if k[:3] in ("Avg", "BFE", "B36")}, "liga": j["Div"], "casa": j.get("HomeTeam", "").strip(),
                         "fora": j.get("AwayTeam", "").strip(), "data": j.get("Date", ""), "inicio": inicio_jogo(j.get("Date", ""), j.get("Time", ""))})
     for j in extras:
         cod = EXTRAS.get((j.get("Country") or "").strip())
         if cod:
-            out.append({**{k: j.get(k) for k in j if k[:3] in ("Avg", "BFE")}, "liga": cod[0], "casa": j.get("Home", "").strip(),
+            out.append({**{k: j.get(k) for k in j if k[:3] in ("Avg", "BFE", "B36")}, "liga": cod[0], "casa": j.get("Home", "").strip(),
                         "fora": j.get("Away", "").strip(), "data": j.get("Date", ""), "inicio": inicio_jogo(j.get("Date", ""), j.get("Time", ""))})
     return [j for j in out if j["casa"] and j["fora"] and j["inicio"]]
 
@@ -215,4 +272,6 @@ def achar_resultado(aposta: dict, linhas: list[dict]) -> dict | None:
 
 
 def descrever(aposta: dict) -> str:
-    return {"H": f"{aposta['casa']} vence", "D": "Empate", "A": f"{aposta['fora']} vence"}[aposta["aposta"]]
+    txt = {"H": f"{aposta['casa']} vence", "D": "Empate", "A": f"{aposta['fora']} vence", ">2.5": "Mais de 2,5 gols",
+           "<2.5": "Menos de 2,5 gols"}[aposta["aposta"]]
+    return txt + (" (Bet365)" if aposta.get("onde") == "casa" else "")

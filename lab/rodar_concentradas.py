@@ -123,12 +123,13 @@ def main(raiz: Path = RAIZ, meteora=_meteora, gecko=None, agora: int | None = No
         out[k] = {"nome": NOMES[k], "faixa": FAIXAS[k], "patrimonio": round(pat, 2), "caixa": round(f["caixa"], 2), "curva": f["curva"],
                   "abertas": [{"nome": p["nome"], "pool": p["pool"], "entrou": p["entrou"], "r": round(fechar(p) / p["dolares"] - 1, 4),
                                "taxas": round(p["taxas"] / p["dolares"], 4), "dentro": p["a"] <= p["p"] <= p["b"],
-                               "horas_dentro": round(p["dentro_min"] / 60, 1)} for p in f["abertas"]],
+                               "horas_dentro": round(p["dentro_min"] / 60, 1), "fator": p.get("fator")} for p in f["abertas"]],
                   "fechadas": f["fechadas"][-40:]}
     est["ultima"] = agora
     rel = {"gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"), "versao": VERSAO,
            "capital": CAPITAL, "inicio": est["inicio"], "faixas": out,
-           "regra": "só SOL/USDC numa faixa abaixo do preço; pools com balanço < 2 %/h nas últimas 24 h; maior taxa entre elas",
+           "regra": "só SOL/USDC numa faixa abaixo do preço; pools com balanço < 2 %/h nas últimas 24 h; maior taxa entre elas; "
+                    "a fatia da taxa compara a faixa com as posições típicas da pool e divide com o nosso dinheiro",
            "topo": [{"nome": p.get("name"), "endereco": p.get("address"), "par": (p.get("token_y") or {}).get("symbol"), "tvl": round(num(p.get("tvl"))), "volume_24h": round(num((p.get("volume") or {}).get("24h"))),
                      "taxa_24h": num((p.get("fee_tvl_ratio") or {}).get("24h")), "apr": num(p.get("apr")),
                      "balanco_1h": (est["balanco"].get(p["address"]) or [0, None])[1]} for p in calmas[:10]]}

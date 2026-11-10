@@ -46,7 +46,7 @@ def test_medir_e_escolher():
     medidas = [{"apostas": 200, "roi": 0.01}, {"apostas": 90, "roi": 0.5}, {"apostas": 300, "roi": 0.03}]
     assert escolher(medidas) == 2 and escolher([{"apostas": 3, "roi": 1}]) is None
     assert "sem empate" in nome({"limiar": 0.04, "odd_min": 1.3, "odd_max": 4.0, "empate": False})
-    assert len(CONFIGS) == 30
+    assert len(CONFIGS) == 40 and {c['onde'] for c in CONFIGS} == {'bolsa', 'casa'} and {c['mercado'] for c in CONFIGS} == {'1x2', 'gols'}
 
 
 def test_datas_de_londres_e_temporada():
@@ -97,7 +97,7 @@ def test_rodar_aposta_e_depois_liquida(tmp_path, monkeypatch):
     assert rodar_apostas.main(tmp_path, baixar=baixar, agora=agora) == 0
     s = json.loads((tmp_path / "saida" / "apostas.json").read_text())
     p = s["passado"]
-    assert [t["papel"] for t in p["temporadas"]] == ["escolha", "conferência", "até hoje"]
+    assert [t["papel"] for t in p["temporadas"]] == ["exigida", "escolha", "até hoje"] and not s["desligado"]
     assert p["temporadas"][0]["apostas"] == 200 and p["temporadas"][0]["roi"] > 0
     ab = s["ao_vivo"]["abertas"]
     assert {a["casa"] for a in ab} == {"Arsenal", "Flamengo"}               # Leeds sem vantagem; Fulham já começou
@@ -115,3 +115,47 @@ def test_rodar_aposta_e_depois_liquida(tmp_path, monkeypatch):
     rodar_apostas.main(tmp_path, baixar=baixar, agora=agora + 13 * 86400 * 1000)
     v = json.loads((tmp_path / "saida" / "apostas.json").read_text())["ao_vivo"]
     assert not v["abertas"] and v["fechadas"][-1]["estado"] == "anulada" and v["apostas"] == 1
+
+
+def test_casa_contra_a_bolsa_e_gols():
+    from lab.apostas import desfecho, descrever, venceu
+    j = {"BFEH": "2.0", "BFED": "3.6", "BFEA": "4.2", "B365H": "2.25", "B365D": "3.4", "B365A": "3.9",
+         "BFE>2.5": "1.9", "BFE<2.5": "2.05", "B365>2.5": "2.1", "B365<2.5": "1.75", "Avg>2.5": "1.85", "Avg<2.5": "1.95"}
+    a = avaliar(j, {"onde": "casa", "mercado": "1x2", "limiar": 0.02, "odd_min": 1.3, "odd_max": 4.0, "empate": False})
+    assert a["aposta"] == "H" and a["odd"] == 2.25 and a["onde"] == "casa"           # a Bet365 paga 2,25 numa chance justa de ~2,04
+    assert resultado(a, True) == pytest.approx(APOSTA * 1.25)                         # na casa não tem comissão
+    g = avaliar(j, {"onde": "casa", "mercado": "gols", "limiar": 0.02, "odd_min": 1.3, "odd_max": 4.0, "empate": False})
+    assert g["aposta"] == ">2.5" and g["odd"] == 2.1
+    d = desfecho({"FTR": "H", "FTHG": "2", "FTAG": "1"})
+    assert venceu(g, d) is True and venceu({**g, "aposta": "<2.5"}, d) is False and venceu(a, d) is True
+    assert venceu(g, {"res": "H", "gols": None}) is None
+    assert clv(g, {"BFEC>2.5": "1.75"}) == pytest.approx(2.1 / 1.75 - 1)
+    assert descrever({**g, "casa": "A", "fora": "B"}) == "Mais de 2,5 gols (Bet365)"
+    assert "Gols (mais ou menos de 2,5) na Bet365" in nome({"onde": "casa", "mercado": "gols", "limiar": 0.0, "odd_min": 1.3, "odd_max": 4.0, "empate": False})
+
+
+def test_escolha_exige_lucro_nas_duas_temporadas():
+    escolha = [{"apostas": 300, "roi": 0.05}, {"apostas": 300, "roi": 0.03}, {"apostas": 300, "roi": 0.01}]
+    exigida = [{"apostas": 200, "roi": -0.02}, {"apostas": 200, "roi": 0.01}, {"apostas": 40, "roi": 0.2}]
+    assert escolher(escolha, exigida) == 1                     # a melhor perdeu na outra temporada; a 3ª apostou pouco lá
+    assert escolher(escolha, [{"apostas": 300, "roi": -0.01}] * 3) is None
+
+
+def test_desliga_se_o_escolhido_perde_nesta_temporada(tmp_path):
+    passado = "\n".join([CAB_R] + [f"E0,10/0{1 + i % 9}/2025,15:00,T{i},U{i},2,0,H,2.0,3.4,3.9,2.3,3.5,4.0,2.2,3.5,4.0" for i in range(200)])
+    atual = "\n".join([CAB_R] + [f"E0,1{i % 9}/09/2026,15:00,V{i},X{i},0,1,A,2.0,3.4,3.9,2.3,3.5,4.0,2.2,3.5,4.0" for i in range(40)])
+
+    def baixar(url):
+        if "/2627/E0.csv" in url:
+            return atual
+        if "/2425/E0.csv" in url or "/2526/E0.csv" in url:
+            return passado
+        if url.endswith("fixtures.csv"):
+            return CAB + "\nE0,14/11/2026,15:00,Arsenal,Chelsea,2.0,3.4,3.9,2.3,3.5,4.0"
+        return ""
+
+    (tmp_path / "lab" / "dados").mkdir(parents=True)
+    assert rodar_apostas.main(tmp_path, baixar=baixar, agora=ms(2026, 11, 13, 18)) == 0
+    s = json.loads((tmp_path / "saida" / "apostas.json").read_text())
+    assert s["desligado"] and "perdeu nesta temporada" in s["motivo"]
+    assert s["ao_vivo"]["abertas"] == []                        # desligado: não aposta mais

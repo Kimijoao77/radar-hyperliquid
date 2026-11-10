@@ -1,5 +1,5 @@
-"""Roda o laboratório de grade, DCA e tendência: teste no passado (~200 dias de velas de 1 h) e ao vivo das escolhidas.
-Desde a versão 4 as contas descontam o funding real da Hyperliquid (guardado em lab/dados/grade_funding.json)."""
+"""Roda o laboratório de grade, DCA, tendência e reversão: teste no passado (~200 dias de velas de 1 h) e ao vivo das
+escolhidas. Desde a versão 4 as contas descontam o funding real da Hyperliquid (guardado em lab/dados/grade_funding.json)."""
 from __future__ import annotations
 
 import json
@@ -15,8 +15,10 @@ sys.path.insert(0, str(RAIZ))
 from lab.grade import HORA, MEDIA_H, TODAS, escolher, nome, nota_honesta, nota_lucro, rodar  # noqa: E402
 from radar.api import Hyperliquid  # noqa: E402
 
-MOEDAS = ["BTC", "ETH", "SOL", "HYPE"]
-VERSAO = 5          # 5 (10/11/2026): ao vivo não repete a mesma estratégia na mesma moeda com outra alavancagem (a versão 4 pôs HYPE 3× e 2× do mesmo sinal)
+# 10/11 (versão 6): mais 4 moedas entre as mais negociadas da Hyperliquid (kPEPE é memecoin: mais movimento e mais risco)
+MOEDAS = ["BTC", "ETH", "SOL", "HYPE", "XRP", "AVAX", "kPEPE", "NEAR"]
+VERSAO = 6          # 6 (10/11/2026): mais 4 moedas e a família reversão (3 ao vivo, só com nota > 0)
+                    # 5 (10/11/2026): ao vivo não repete a mesma estratégia na mesma moeda com outra alavancagem (a versão 4 pôs HYPE 3× e 2× do mesmo sinal)
                     # 4 (10/11/2026): funding real nas contas e robôs de tendência (comprado e vendido); ao vivo 3 de grade/DCA + 3 de tendência
                     # 3 (10/11/2026): o máximo de lucro (pedido do João), com 2× e 3×; escolhe os 4 de maior lucro ao ano no pior dos dois pedaços do passado
                     # 2 (09/11/2026): só 1×, DCA com pausa na queda, escolha pela pior nota dentro/fora da amostra
@@ -73,6 +75,8 @@ def main(raiz: Path = RAIZ, api=None) -> int:
         velas[m] = [v for v in vs if int(v["T"] if "T" in v else v["t"]) <= agora]   # só velas fechadas
         if velas[m] and int(velas[m][-1].get("T", velas[m][-1]["t"] + HORA)) > agora:
             velas[m] = velas[m][:-1]
+        # números de uma vez (a API manda texto): as ~2.000 simulações por rodada não convertem o mesmo preço de novo
+        velas[m] = [{"t": int(v["t"]), "o": float(v["o"]), "h": float(v["h"]), "l": float(v["l"]), "c": float(v["c"])} for v in velas[m]]
     arq_f = raiz / "lab" / "dados" / "grade_funding.json"      # funding por hora de cada moeda (só acrescenta o que falta)
     fund = ler_funding(arq_f)
     try:
@@ -116,8 +120,8 @@ def main(raiz: Path = RAIZ, api=None) -> int:
             pass
         est = {"versao": VERSAO, "anterior": anterior[-16:]}
     if not est.get("escolhidas") and passado:
-        # versão 5: 3 de grade/DCA (maior lucro ao ano no pior dos dois pedaços, nota > 0) e 3 de tendência; até 2 por moeda em cada
-        # família e sem repetir a mesma estratégia na mesma moeda com outra alavancagem
+        # versão 6: 3 de grade/DCA (maior lucro ao ano no pior dos dois pedaços, nota > 0), 3 de tendência e 3 de reversão (nota > 0);
+        # até 2 por moeda em cada família e sem repetir a mesma estratégia na mesma moeda com outra alavancagem
         est.update(inicio=agora // HORA * HORA, escolhidas=[{"moeda": r["moeda"], "config": r["config"]} for r in escolher(passado)])
     ao_vivo = []
     for e in est.get("escolhidas", []):
@@ -133,8 +137,9 @@ def main(raiz: Path = RAIZ, api=None) -> int:
     for r in passado:   # o app só precisa da curva das melhores
         if r is not passado[0] and r not in passado[:6]:
             r.pop("curva", None)
-    # no arquivo ficam as 30 melhores e as 10 melhores de tendência (o app baixa este arquivo a cada vez; o resto pesaria à toa)
-    vistos = [r for r in passado[:30]] + [r for r in passado[30:] if r["config"]["tipo"] == "tendencia"][:10]
+    # no arquivo ficam as 30 melhores e as 10 melhores de tendência e de reversão (o app baixa este arquivo a cada vez)
+    vistos = ([r for r in passado[:30]] + [r for r in passado[30:] if r["config"]["tipo"] == "tendencia"][:10]
+              + [r for r in passado[30:] if r["config"]["tipo"] == "reversao"][:10])
     # "só segurar a moeda" desde o começo dos testes (03/11): o app compara cada teste com ela, desde o começo dele
     segurar, desde = {}, min(est.get("inicio") or REF_INICIO, REF_INICIO)
     for m in ("BTC", "ETH"):

@@ -279,6 +279,81 @@ def tendencia(velas: list[dict], modo: str, a: int, b: int | None = None, alav: 
                                                "funding_pago": round(pago, 2)})
 
 
+REV_N = 24                                                # reversão: o tamanho do movimento é medido nas últimas 24 h
+REV_PRAZO = 48                                            # reversão: no máximo 48 h na posição
+
+
+def reversao(velas: list[dict], gatilho: float, alvo: float, lados: str = "ambos", alav: float = 1.0, capital: float = 1000.0,
+             ops: list | None = None, antes: list[dict] | None = None, funding: dict | None = None) -> dict:
+    """Robô de reversão (versão 6, 10/11/2026): o contrário da tendência. Depois de uma queda forte (o fechamento
+    `gatilho` abaixo do de 24 h antes) compra; com lados="ambos", depois de uma alta forte, vende. Sai no repique
+    (`alvo` a favor, ordem limitada), na parada (o mesmo `gatilho` contra, a mercado) ou em 48 h (a mercado).
+    A decisão sai no fechamento de uma vela e vale na abertura da próxima. Um movimento só dá uma entrada: para entrar
+    de novo do mesmo lado, o movimento de 24 h precisa voltar para menos da metade do gatilho. Na vela em que a parada e
+    o alvo cabem juntos, conta a parada (o pior caso)."""
+    antes = list(antes or [])
+    todas = antes + list(velas)
+    n0 = len(antes)
+    fech = [float(v["c"]) for v in todas]
+    tx, pago = _taxas(velas, funding), 0.0
+    real, q, pe, pos, ent_t = capital, 0.0, 0.0, 0, 0       # q = unidades (negativo = vendido)
+    pendente, arm_c, arm_v = 0, True, True
+    ops_n, acertos, horas_pos, liquidada = 0, 0, 0, False
+    curva, ts = [], []
+
+    def sair(px: float, t: int, taxa: float, motivo: str) -> None:
+        nonlocal real, q, pos, ops_n, acertos
+        lucro = q * (px - pe) - abs(q) * px * taxa
+        real += lucro
+        ops_n += 1
+        acertos += lucro > 0
+        if ops is not None:
+            ops.append({"t": t, "tipo": "venda" if q > 0 else "compra", "px": px, "valor": round(abs(q) * px, 2), "lucro": round(lucro, 2),
+                        "obs": motivo})
+        q, pos = 0.0, 0
+
+    for k, v in enumerate(velas):
+        i = n0 + k
+        o, hi, lo, c, t = float(v["o"]), float(v["h"]), float(v["l"]), float(v["c"]), int(v["t"])
+        if pendente and not pos:                              # a decisão do fechamento anterior vale na abertura desta vela
+            q = pendente * real * alav / o
+            real -= abs(q) * o * (TAKER + SLIP)
+            pe, pos, ent_t = o, pendente, t
+            if ops is not None:
+                ops.append({"t": t, "tipo": "compra" if pos > 0 else "venda", "px": o, "valor": round(abs(q) * o, 2),
+                            "obs": "compra depois da queda forte" if pos > 0 else "vende depois da alta forte"})
+        pendente = 0
+        if pos:
+            if real + q * ((lo if pos > 0 else hi) - pe) <= capital * 0.05:   # a margem acabou no pior ponto da hora
+                liquidada = True
+                curva.append(0.0); ts.append(t)
+                break
+            parada, meta = (pe * (1 - gatilho), pe * (1 + alvo)) if pos > 0 else (pe * (1 + gatilho), pe * (1 - alvo))
+            if (lo <= parada) if pos > 0 else (hi >= parada):
+                sair(min(o, parada) if pos > 0 else max(o, parada), t, TAKER + SLIP, "parada: o movimento continuou")
+            elif (hi >= meta) if pos > 0 else (lo <= meta):
+                sair(meta, t, MAKER, "alvo: veio o repique")
+            elif t + HORA - ent_t >= REV_PRAZO * HORA:
+                sair(c, t, TAKER + SLIP, "prazo de 48 h")
+        if pos and tx is not None:                            # funding: comprado paga, vendido recebe (taxa positiva)
+            pg = q * c * tx[k]
+            real -= pg
+            pago += pg
+        curva.append(real + (q * (c - pe) if pos else 0.0)); ts.append(t)
+        horas_pos += bool(pos)
+        if i >= REV_N:
+            mov = c / fech[i - REV_N] - 1
+            arm_c = arm_c or mov > -gatilho / 2
+            arm_v = arm_v or mov < gatilho / 2
+            if not pos:
+                if mov <= -gatilho and arm_c:
+                    pendente, arm_c = 1, False
+                elif lados == "ambos" and mov >= gatilho and arm_v:
+                    pendente, arm_v = -1, False
+    return _resumo(velas, curva, ts, capital, {"ciclos": ops_n, "acertos": acertos, "horas_com_posicao": round(horas_pos / max(1, len(curva)), 3),
+                                               "liquidada": liquidada, "funding_pago": round(pago, 2)})
+
+
 def _resumo(velas, curva, ts, capital, extra) -> dict:
     final = curva[-1] if curva else capital
     horas = max(1, len(curva))
@@ -305,12 +380,20 @@ TENDENCIA = (
     [{"tipo": "tendencia", "modo": "medias", "a": a, "b": b, "alav": al} for a, b in ((12, 48), (24, 96), (48, 168), (72, 336)) for al in (1, 2, 3)]
     + [{"tipo": "tendencia", "modo": "rompe", "a": n, "alav": al} for n in (48, 120, 240) for al in (1, 2, 3)]
 )
-TODAS = CONFIGS + TENDENCIA
+# Versão 6 (10/11): reversão, o contrário da tendência (compra depois da queda forte e vende no repique; com "ambos",
+# também vende depois da alta forte). Gatilho = o tamanho do movimento em 24 h; a parada fica a mais um gatilho contra.
+REVERSAO = [{"tipo": "reversao", "gatilho": g, "alvo": a, "lados": ld, "alav": al}
+            for g in (0.05, 0.08, 0.12) for a in (0.02, 0.04) for ld in ("compra", "ambos") for al in (1, 2, 3)]
+TODAS = CONFIGS + TENDENCIA + REVERSAO
 
 
 def nome(c: dict) -> str:
     if c["tipo"] == "grade":
         return f"Grade ±{round(c['faixa'] * 100)} %, {c['niveis']} degraus{'' if c['alav'] == 1 else f', {c['alav']}×'}"
+    if c["tipo"] == "reversao":
+        lado = "compra na queda" if c["lados"] == "compra" else "compra na queda e vende na alta"
+        return (f"Reversão: {lado} de {round(c['gatilho'] * 100)} % em 24 h, alvo {c['alvo'] * 100:g} %"
+                + ("" if c["alav"] == 1 else f", {c['alav']}×"))
     if c["tipo"] == "tendencia":
         base = f"Tendência: médias de {c['a']} h e {c['b']} h" if c["modo"] == "medias" else f"Tendência: rompimento de {c['a'] // 24} dias"
         return base + ("" if c["alav"] == 1 else f", {c['alav']}×")
@@ -327,6 +410,8 @@ def rodar(c: dict, velas: list[dict], ops: list | None = None, historico: list[f
         return grade(velas, c["faixa"], c["niveis"], c["alav"], ops=ops, funding=funding)
     if c["tipo"] == "tendencia":
         return tendencia(velas, c["modo"], c["a"], c.get("b"), alav=c["alav"], ops=ops, antes=antes, funding=funding)
+    if c["tipo"] == "reversao":
+        return reversao(velas, c["gatilho"], c["alvo"], c["lados"], alav=c["alav"], ops=ops, antes=antes, funding=funding)
     return dca(velas, c["passo"], c["alvo"], alav=c["alav"], ops=ops, media_h=MEDIA_H if c.get("pausa") else 0, historico=historico, funding=funding)
 
 
@@ -357,7 +442,8 @@ def nota_honesta(dentro: dict, fora: dict) -> float:
     return min(nota(dentro), nota(fora))
 
 
-FAMILIAS = {"reverter": ("grade", "dca"), "tendencia": ("tendencia",)}
+FAMILIAS = {"reverter": ("grade", "dca"), "tendencia": ("tendencia",), "reversao": ("reversao",)}
+SO_NO_AZUL = ("reverter", "reversao")                     # famílias que só vão ao vivo com nota > 0 (a tendência entra mesmo no vermelho)
 
 
 def _sinal(r: dict) -> tuple:
@@ -366,15 +452,15 @@ def _sinal(r: dict) -> tuple:
 
 
 def escolher(passado: list[dict], por_familia: int = 3, por_moeda: int = 2) -> list[dict]:
-    """Quem vai para o ao vivo (versão 5): 3 de grade/DCA e 3 de tendência, já ordenados por nota (maior lucro ao ano no pior
-    dos dois pedaços do passado). Nunca liquidado (nem no passado inteiro nem em um dos pedaços); até 2 na mesma moeda em cada família; a mesma estratégia na mesma moeda
-    entra uma vez só (2× e 3× do mesmo sinal seriam o mesmo palpite). Grade/DCA só entra com nota > 0; a tendência entra
-    mesmo no vermelho, porque o teste serve justamente para saber se ela funciona."""
+    """Quem vai para o ao vivo (versão 6): 3 de grade/DCA, 3 de tendência e 3 de reversão, já ordenados por nota (maior lucro
+    ao ano no pior dos dois pedaços do passado). Nunca liquidado (nem no passado inteiro nem em um dos pedaços); até 2 na mesma moeda em cada família; a mesma estratégia na mesma moeda
+    entra uma vez só (2× e 3× do mesmo sinal seriam o mesmo palpite). Grade/DCA e reversão só entram com nota > 0; a tendência
+    entra mesmo no vermelho, porque o teste serve justamente para saber se ela funciona."""
     out = []
     for fam, tipos in FAMILIAS.items():
         n, cont, vistos = 0, {}, set()
         for r in passado:
-            if r["config"]["tipo"] not in tipos or r.get("liquidada") or r["nota"] <= -9 or (fam == "reverter" and r["nota"] <= 0):
+            if r["config"]["tipo"] not in tipos or r.get("liquidada") or r["nota"] <= -9 or (fam in SO_NO_AZUL and r["nota"] <= 0):
                 continue
             if cont.get(r["moeda"], 0) >= por_moeda or _sinal(r) in vistos:
                 continue

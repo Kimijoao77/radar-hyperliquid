@@ -1,5 +1,5 @@
 {
- "ate": 1794348600000,
+ "ate": 1794352200000,
  "inicio": 1793674800000,
  "variantes": {
   "seletiva": {
@@ -923,6 +923,14 @@
     [
      1794348600000,
      0.01874
+    ],
+    [
+     1794351600000,
+     0.0177
+    ],
+    [
+     1794352200000,
+     0.01754
     ]
    ],
    "fora": {
@@ -936,36 +944,6 @@
     "0xc3d101ae37bba62baf199c6d5e5d8f0eecfd200e": "segura as posições 20.9 min (mediana): curto demais para copiar com atraso"
    },
    "log": [
-    {
-     "lado": "compra",
-     "moeda": "ARB",
-     "px": 0.169258,
-     "realizado": -0.68,
-     "resultado": -0.73,
-     "t": 1794184065741,
-     "valor": 110.12,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
-    {
-     "lado": "venda",
-     "moeda": "ARB",
-     "px": 0.169385,
-     "realizado": 0.0,
-     "resultado": -0.03,
-     "t": 1794185000279,
-     "valor": 72.89,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
-    {
-     "lado": "venda",
-     "moeda": "ARB",
-     "px": 0.169362,
-     "realizado": 0.0,
-     "resultado": -0.03,
-     "t": 1794185240121,
-     "valor": 73.01,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
     {
      "lado": "compra",
      "moeda": "ARB",
@@ -3942,10 +3920,40 @@
      "t": 1794346410716,
      "valor": 2258.96,
      "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
+    },
+    {
+     "lado": "venda",
+     "moeda": "kPEPE",
+     "px": 0.005295,
+     "realizado": 0.0,
+     "resultado": -0.06,
+     "t": 1794351738840,
+     "valor": 137.88,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "venda",
+     "moeda": "kPEPE",
+     "px": 0.005286,
+     "realizado": 0.0,
+     "resultado": -0.06,
+     "t": 1794351837778,
+     "valor": 138.14,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "venda",
+     "moeda": "PUMP",
+     "px": 0.003466,
+     "realizado": 1.07,
+     "resultado": 1.01,
+     "t": 1794352062861,
+     "valor": 139.02,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
     }
    ],
    "pulos": {
-    "ordem pequena": 110
+    "ordem pequena": 112
    },
    "subs": {
     "0x0cdf0ab9ead733ecf321d09432b5208adae2902f": {
@@ -3957,7 +3965,7 @@
      "ordens": 8,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 848.85,
+     "patrimonio": 834.46,
      "pico": 1051.4336280950083,
      "pos": {
       "HYPE": [
@@ -3979,7 +3987,7 @@
      "ordens": 102,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1064.96,
+     "patrimonio": 1045.68,
      "pico": 1092.9339470572115,
      "pos": {
       "SOL": [
@@ -4073,7 +4081,7 @@
      "ordens": 1,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1040.73,
+     "patrimonio": 1055.01,
      "pico": 1085.0849364782034,
      "pos": {
       "BTC": [
@@ -4129,7 +4137,7 @@
      "ordens": 23,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 898.45,
+     "patrimonio": 880.21,
      "pico": 1013.551190378508,
      "pos": {
       "BTC": [
@@ -4228,14 +4236,14 @@
     },
     "0xf24504bb689f1461fbfd89712eb4872130ed4e47": {
      "capital": 1000.0,
-     "colateral": 1002.6797994701927,
+     "colateral": 1003.5648917496914,
      "expo_max": 3.0005394698810237,
      "fator": 0.3527336860670194,
      "inicio": 1793674800000,
-     "ordens": 509,
+     "ordens": 512,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 942.15,
+     "patrimonio": 921.07,
      "pico": 1053.8742268860728,
      "pos": {
       "HYPE": [
@@ -4243,7 +4251,7 @@
        73.52557711289207
       ],
       "PUMP": [
-       95965.55132270612,
+       55856.80663566451,
        0.0034393991132677985
       ],
       "XPL": [
@@ -4253,10 +4261,14 @@
       "ZEC": [
        0.2044054842541555,
        1072.6248226117282
+      ],
+      "kPEPE": [
+       -52173.94080282431,
+       0.005290375112977627
       ]
      },
-     "taxas": 19.338993321338453,
-     "ult": 1794330485588,
+     "taxas": 19.525762023276155,
+     "ult": 1794352090867,
      "vivo": true,
      "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
     },
@@ -4269,8 +4281,8 @@
      "ordens": 55,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1164.53,
-     "pico": 1192.9130459553112,
+     "patrimonio": 1204.11,
+     "pico": 1204.109911651943,
      "pos": {
       "NEAR": [
        -637.3510672910401,

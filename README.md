@@ -8,8 +8,8 @@ Tudo usa a API pública e gratuita da Hyperliquid (sem conta e sem chave). **Nad
 
 
 > **10/11/2026: foco no máximo de lucro (pedido do João).** Só ficam os testes que podem bater o ping pong (45 % ao
-> ano): cópia, grade/DCA e tendência (versão 4: com 1×, 2× e 3×, o funding real descontado e, ao vivo, 3 de grade/DCA
-> e 3 de tendência), cofres (só o HLP e, ao lado, uma carteira de risco), apostas e pools concentradas (versão 4: mais a
+> ano): cópia, grade/DCA e tendência (versão 5: com 1×, 2× e 3×, o funding real descontado e, ao vivo, 3 de grade/DCA
+> e 3 de tendência, sem repetir o mesmo robô em outra alavancagem), cofres (só o HLP e, ao lado, uma carteira de risco), apostas e pools concentradas (versão 4: mais a
 > faixa agressiva, até −4 %). Saíram memecoins, funding, pools estáveis e opções (o código continua no repositório).
 
 ## Fases
@@ -114,13 +114,15 @@ ganhou a **pausa na queda** (só abre ciclo novo com o preço acima da média de
 que vão ao vivo usa a **pior nota** entre os primeiros 2/3 do passado e o último 1/3, que a escolha não vê (para não
 escolher a dedo a regra que só deu certo no passado). O resultado da versão 1 fica em `anterior`.
 Versão 3 (10/11): volta o 2× e o 3× (máximo de lucro). Versão 4 (10/11): (a) **funding** — quem está comprado paga, de hora em
-hora, a taxa de financiamento do perpétuo (BTC ~11 % ao ano sobre a posição; com 3× é o triplo sobre o dinheiro) e quem está
+hora, a taxa de financiamento do perpétuo (nos ~208 dias medidos: BTC e ETH 7 % ao ano, SOL 5 %, HYPE 10 %, sobre a posição; com 3× é o triplo sobre o dinheiro) e quem está
 vendido recebe; a conta usa o `fundingHistory` real, guardado em `lab/dados/grade_funding.json`; (b) **tendência** (21
 configurações por moeda: cruzamento de médias de 12/48, 24/96, 48/168 e 72/336 h, e rompimento de 2, 5 e 10 dias, cada um
 em 1×, 2× e 3×): fica comprado na alta e vendido na queda, sempre a mercado (0,045 % + 0,02 % de derrapagem), a decisão sai no
 fechamento de uma vela e vale na abertura da próxima (sem olhar o futuro), liquidada se no pior ponto da vela sobrar menos de
 5 % do capital; (c) ao vivo entram 3 de grade/DCA (só com nota > 0) e 3 de tendência (mesmo no vermelho, porque o teste serve
-para saber se ela funciona), até 2 por moeda em cada família. O resultado das versões anteriores fica em `anterior`.
+para saber se ela funciona), até 2 por moeda em cada família. Versão 5 (10/11): ao vivo, a mesma estratégia na mesma moeda
+entra uma vez só, sem repetir em 2× e 3× (a versão 4 pôs HYPE com o mesmo cruzamento de médias nas duas alavancagens, o mesmo
+palpite duas vezes). O resultado das versões anteriores fica em `anterior` (só as que ficaram 6 h ou mais ao vivo).
 
 **3. Cofres (`lab/cofres.py`)** — a cada 6 h: lista pública de cofres; os 40 maiores (abertos, US$ 100 mil+, 60 dias+)
 com histórico; índice de rendimento que ignora depósitos e saques; constante = p ≤ 0,05, pior queda ≤ 20 %,

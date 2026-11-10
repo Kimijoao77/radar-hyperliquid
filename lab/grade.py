@@ -360,18 +360,25 @@ def nota_honesta(dentro: dict, fora: dict) -> float:
 FAMILIAS = {"reverter": ("grade", "dca"), "tendencia": ("tendencia",)}
 
 
+def _sinal(r: dict) -> tuple:
+    """A mesma estratégia na mesma moeda com outra alavancagem é o mesmo robô: só conta uma vez (o de maior nota)."""
+    return (r["moeda"], tuple(sorted((k, v) for k, v in r["config"].items() if k != "alav")))
+
+
 def escolher(passado: list[dict], por_familia: int = 3, por_moeda: int = 2) -> list[dict]:
-    """Quem vai para o ao vivo (versão 4): 3 de grade/DCA e 3 de tendência, já ordenados por nota (maior lucro ao ano no pior
-    dos dois pedaços do passado). Nunca liquidado; até 2 na mesma moeda em cada família. Grade/DCA só entra com nota > 0;
-    a tendência entra mesmo no vermelho, porque o teste serve justamente para saber se ela funciona."""
+    """Quem vai para o ao vivo (versão 5): 3 de grade/DCA e 3 de tendência, já ordenados por nota (maior lucro ao ano no pior
+    dos dois pedaços do passado). Nunca liquidado; até 2 na mesma moeda em cada família; a mesma estratégia na mesma moeda
+    entra uma vez só (2× e 3× do mesmo sinal seriam o mesmo palpite). Grade/DCA só entra com nota > 0; a tendência entra
+    mesmo no vermelho, porque o teste serve justamente para saber se ela funciona."""
     out = []
     for fam, tipos in FAMILIAS.items():
-        n, cont = 0, {}
+        n, cont, vistos = 0, {}, set()
         for r in passado:
             if r["config"]["tipo"] not in tipos or r.get("liquidada") or (fam == "reverter" and r["nota"] <= 0):
                 continue
-            if cont.get(r["moeda"], 0) >= por_moeda:
+            if cont.get(r["moeda"], 0) >= por_moeda or _sinal(r) in vistos:
                 continue
+            vistos.add(_sinal(r))
             out.append(r)
             cont[r["moeda"]] = cont.get(r["moeda"], 0) + 1
             n += 1

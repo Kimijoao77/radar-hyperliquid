@@ -16,11 +16,13 @@ from lab.grade import HORA, MEDIA_H, TODAS, escolher, nome, nota_honesta, nota_l
 from radar.api import Hyperliquid  # noqa: E402
 
 MOEDAS = ["BTC", "ETH", "SOL", "HYPE"]
-VERSAO = 4          # 4 (10/11/2026): funding real nas contas e robôs de tendência (comprado e vendido); ao vivo 3 de grade/DCA + 3 de tendência
+VERSAO = 5          # 5 (10/11/2026): ao vivo não repete a mesma estratégia na mesma moeda com outra alavancagem (a versão 4 pôs HYPE 3× e 2× do mesmo sinal)
+                    # 4 (10/11/2026): funding real nas contas e robôs de tendência (comprado e vendido); ao vivo 3 de grade/DCA + 3 de tendência
                     # 3 (10/11/2026): o máximo de lucro (pedido do João), com 2× e 3×; escolhe os 4 de maior lucro ao ano no pior dos dois pedaços do passado
                     # 2 (09/11/2026): só 1×, DCA com pausa na queda, escolha pela pior nota dentro/fora da amostra
 REF_INICIO = 1793674800000   # 03/11/2026 00:00 em Brasília: o começo dos testes
 ANTES = 700                  # velas de antes do começo de um pedaço, para as médias e os canais da tendência já valerem
+MIN_VIVO_H = 6               # com menos horas ao vivo o resultado ainda não diz nada: não entra no histórico das versões anteriores
 
 
 def baixar_funding(api, moeda: str, desde: int, agora: int) -> dict[int, float]:
@@ -105,7 +107,8 @@ def main(raiz: Path = RAIZ, api=None) -> int:
         anterior = list(est.get("anterior") or [])
         try:
             velho = json.loads((raiz / "saida" / "grade.json").read_text(encoding="utf-8"))
-            for a in velho.get("ao_vivo", []):
+            vivo = (velho.get("gerado") or 0) - (velho.get("inicio_ao_vivo") or 0)
+            for a in velho.get("ao_vivo", []) if vivo >= MIN_VIVO_H * HORA else []:
                 r = a.get("resultado") or {}
                 anterior.append({"moeda": a["moeda"], "nome": a["nome"], "retorno": r.get("retorno"), "pior_queda": r.get("pior_queda"),
                                  "segurar_moeda": r.get("segurar_moeda"), "de": velho.get("inicio_ao_vivo"), "ate": velho.get("gerado")})
@@ -113,7 +116,8 @@ def main(raiz: Path = RAIZ, api=None) -> int:
             pass
         est = {"versao": VERSAO, "anterior": anterior[-16:]}
     if not est.get("escolhidas") and passado:
-        # versão 4: 3 de grade/DCA (maior lucro ao ano no pior dos dois pedaços, nota > 0) e 3 de tendência; até 2 por moeda em cada família
+        # versão 5: 3 de grade/DCA (maior lucro ao ano no pior dos dois pedaços, nota > 0) e 3 de tendência; até 2 por moeda em cada
+        # família e sem repetir a mesma estratégia na mesma moeda com outra alavancagem
         est.update(inicio=agora // HORA * HORA, escolhidas=[{"moeda": r["moeda"], "config": r["config"]} for r in escolher(passado)])
     ao_vivo = []
     for e in est.get("escolhidas", []):

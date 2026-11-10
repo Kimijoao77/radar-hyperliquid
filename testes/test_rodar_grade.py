@@ -35,7 +35,7 @@ def test_rodar_grade_com_funding_e_tendencia(tmp_path):
     api = Api()
     assert R.main(tmp_path, api) == 0
     rel = json.loads((tmp_path / "saida" / "grade.json").read_text())
-    assert rel["versao"] == 4 and rel["testados"] == 4 * 53
+    assert rel["versao"] == R.VERSAO and rel["testados"] == 4 * 53
     assert set(rel["funding"]) == {"BTC", "ETH", "SOL", "HYPE"} and abs(rel["funding"]["BTC"]["ao_ano"] - 0.1095) < 0.001
     tipos = [a["config"]["tipo"] for a in rel["ao_vivo"]]
     assert tipos.count("tendencia") == 3 and len(tipos) - tipos.count("tendencia") == 3
@@ -55,16 +55,28 @@ def test_rodar_grade_com_funding_e_tendencia(tmp_path):
 def test_rodar_grade_sem_funding_nao_quebra(tmp_path):
     assert R.main(tmp_path, Api(funding=False)) == 0                # o funding falha: as contas seguem sem ele
     rel = json.loads((tmp_path / "saida" / "grade.json").read_text())
-    assert rel["versao"] == 4 and rel["funding"] == {} and rel["ao_vivo"]
+    assert rel["versao"] == R.VERSAO and rel["funding"] == {} and rel["ao_vivo"]
 
 
-def test_versao_nova_guarda_o_historico_das_anteriores(tmp_path):
+def _estado_antigo(tmp_path, horas_ao_vivo):
     (tmp_path / "lab" / "dados").mkdir(parents=True)
     (tmp_path / "saida").mkdir()
     (tmp_path / "lab" / "dados" / "grade_estado.json").write_text(json.dumps(
         {"versao": 2, "anterior": [{"moeda": "HYPE", "nome": "v1", "retorno": -0.36}], "escolhidas": [], "inicio": 1}))
     (tmp_path / "saida" / "grade.json").write_text(json.dumps(
-        {"inicio_ao_vivo": 5, "gerado": 9, "ao_vivo": [{"moeda": "BTC", "nome": "v2", "resultado": {"retorno": 0.01, "pior_queda": 0.02, "segurar_moeda": 0.0}}]}))
+        {"inicio_ao_vivo": 5 * HORA, "gerado": (5 + horas_ao_vivo) * HORA,
+         "ao_vivo": [{"moeda": "BTC", "nome": "v2", "resultado": {"retorno": 0.01, "pior_queda": 0.02, "segurar_moeda": 0.0}}]}))
+
+
+def test_versao_nova_guarda_o_historico_das_anteriores(tmp_path):
+    _estado_antigo(tmp_path, 30)
     assert R.main(tmp_path, Api()) == 0
     est = json.loads((tmp_path / "lab" / "dados" / "grade_estado.json").read_text())
-    assert [a["nome"] for a in est["anterior"]] == ["v1", "v2"] and est["versao"] == 4
+    assert [a["nome"] for a in est["anterior"]] == ["v1", "v2"] and est["versao"] == R.VERSAO
+
+
+def test_versao_nova_nao_guarda_quem_ficou_poucas_horas_ao_vivo(tmp_path):
+    _estado_antigo(tmp_path, 2)                         # 2 h ao vivo: ainda não diz nada
+    assert R.main(tmp_path, Api()) == 0
+    est = json.loads((tmp_path / "lab" / "dados" / "grade_estado.json").read_text())
+    assert [a["nome"] for a in est["anterior"]] == ["v1"] and est["versao"] == R.VERSAO

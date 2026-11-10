@@ -171,7 +171,7 @@ def test_configs_de_tendencia_e_nomes():
 
 def test_escolher_tres_de_cada_familia_ate_duas_por_moeda():
     def r(moeda, tipo, nota, liq=False):
-        return {"moeda": moeda, "config": {"tipo": tipo}, "nota": nota, "liquidada": liq}
+        return {"moeda": moeda, "config": {"tipo": tipo, "n": nota}, "nota": nota, "liquidada": liq}
     passado = [r("BTC", "dca", 2.0), r("BTC", "grade", 1.9), r("BTC", "dca", 1.8), r("ETH", "dca", 1.7), r("SOL", "dca", 1.6),
                r("HYPE", "tendencia", 0.5), r("HYPE", "tendencia", 0.4), r("HYPE", "tendencia", 0.3), r("BTC", "tendencia", -0.2),
                r("ETH", "tendencia", -0.3), r("SOL", "grade", -0.1), r("ETH", "grade", 9, liq=True)]
@@ -180,3 +180,14 @@ def test_escolher_tres_de_cada_familia_ate_duas_por_moeda():
     tend = [(x["moeda"], x["nota"]) for x in esc if x["config"]["tipo"] == "tendencia"]
     assert rev == [("BTC", 2.0), ("BTC", 1.9), ("ETH", 1.7)]            # até 2 por moeda; nunca a liquidada nem a de nota negativa
     assert tend == [("HYPE", 0.5), ("HYPE", 0.4), ("BTC", -0.2)]        # a tendência entra mesmo no vermelho
+
+
+def test_escolher_nao_repete_o_mesmo_robo_com_outra_alavancagem():
+    def r(moeda, nota, alav, a=48):
+        return {"moeda": moeda, "config": {"tipo": "tendencia", "modo": "medias", "a": a, "b": 168, "alav": alav}, "nota": nota, "liquidada": False}
+    passado = [r("HYPE", 5.0, 3), r("HYPE", 4.4, 2), r("HYPE", 4.0, 1), r("SOL", 2.0, 3), r("SOL", 1.0, 2), r("HYPE", 0.9, 3, a=24), r("ETH", 0.5, 2)]
+    esc = escolher(passado)
+    # o 2× e o 1× do mesmo sinal na mesma moeda ficam de fora (ficou o de maior nota); outro sinal na mesma moeda ainda entra
+    assert [(x["moeda"], x["config"]["a"], x["config"]["alav"]) for x in esc] == [("HYPE", 48, 3), ("SOL", 48, 3), ("HYPE", 24, 3)]
+    # o mesmo sinal em OUTRA moeda é outro robô
+    assert [x["moeda"] for x in escolher([r("HYPE", 5.0, 3), r("SOL", 4.0, 3), r("ETH", 3.0, 3)])] == ["HYPE", "SOL", "ETH"]

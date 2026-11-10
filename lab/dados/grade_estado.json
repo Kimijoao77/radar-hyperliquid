@@ -1,5 +1,5 @@
 {
- "versao": 4,
+ "versao": 5,
  "anterior": [
   {
    "moeda": "HYPE",
@@ -74,7 +74,7 @@
    "ate": 1794305482578
   }
  ],
- "inicio": 1794308400000,
+ "inicio": 1794312000000,
  "escolhidas": [
   {
    "moeda": "HYPE",
@@ -117,16 +117,6 @@
    }
   },
   {
-   "moeda": "HYPE",
-   "config": {
-    "tipo": "tendencia",
-    "modo": "medias",
-    "a": 48,
-    "b": 168,
-    "alav": 2
-   }
-  },
-  {
    "moeda": "SOL",
    "config": {
     "tipo": "tendencia",
@@ -134,6 +124,15 @@
     "a": 48,
     "b": 168,
     "alav": 3
+   }
+  },
+  {
+   "moeda": "SOL",
+   "config": {
+    "tipo": "tendencia",
+    "modo": "rompe",
+    "a": 240,
+    "alav": 2
    }
   }
  ]

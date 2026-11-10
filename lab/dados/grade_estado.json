@@ -1,5 +1,5 @@
 {
- "versao": 5,
+ "versao": 6,
  "anterior": [
   {
    "moeda": "HYPE",
@@ -72,10 +72,74 @@
    "segurar_moeda": -0.0021,
    "de": 1794218400000,
    "ate": 1794305482578
+  },
+  {
+   "moeda": "HYPE",
+   "nome": "DCA a cada −2 %, alvo +3 %, 3×, pausa na queda",
+   "retorno": 0.0,
+   "pior_queda": 0.0,
+   "segurar_moeda": -0.0281,
+   "de": 1794312000000,
+   "ate": 1794337986024
+  },
+  {
+   "moeda": "HYPE",
+   "nome": "DCA a cada −2 %, alvo +1.5 %, 3×, pausa na queda",
+   "retorno": 0.0,
+   "pior_queda": 0.0,
+   "segurar_moeda": -0.0281,
+   "de": 1794312000000,
+   "ate": 1794337986024
+  },
+  {
+   "moeda": "ETH",
+   "nome": "DCA a cada −3 %, alvo +1.5 %, 3×",
+   "retorno": 0.0037,
+   "pior_queda": 0.0045,
+   "segurar_moeda": -0.0239,
+   "de": 1794312000000,
+   "ate": 1794337986024
+  },
+  {
+   "moeda": "HYPE",
+   "nome": "Tendência: médias de 48 h e 168 h, 3×",
+   "retorno": 0.0805,
+   "pior_queda": 0.0293,
+   "segurar_moeda": -0.0281,
+   "de": 1794312000000,
+   "ate": 1794337986024
+  },
+  {
+   "moeda": "SOL",
+   "nome": "Tendência: médias de 48 h e 168 h, 3×",
+   "retorno": 0.0685,
+   "pior_queda": 0.0323,
+   "segurar_moeda": -0.0207,
+   "de": 1794312000000,
+   "ate": 1794337986024
+  },
+  {
+   "moeda": "SOL",
+   "nome": "Tendência: rompimento de 10 dias, 2×",
+   "retorno": 0.026,
+   "pior_queda": 0.0229,
+   "segurar_moeda": -0.0207,
+   "de": 1794312000000,
+   "ate": 1794337986024
   }
  ],
- "inicio": 1794312000000,
+ "inicio": 1794337200000,
  "escolhidas": [
+  {
+   "moeda": "NEAR",
+   "config": {
+    "tipo": "dca",
+    "passo": 0.02,
+    "alvo": 0.015,
+    "alav": 3,
+    "pausa": false
+   }
+  },
   {
    "moeda": "HYPE",
    "config": {
@@ -87,7 +151,7 @@
    }
   },
   {
-   "moeda": "HYPE",
+   "moeda": "kPEPE",
    "config": {
     "tipo": "dca",
     "passo": 0.02,
@@ -97,17 +161,7 @@
    }
   },
   {
-   "moeda": "ETH",
-   "config": {
-    "tipo": "dca",
-    "passo": 0.03,
-    "alvo": 0.015,
-    "alav": 3,
-    "pausa": false
-   }
-  },
-  {
-   "moeda": "HYPE",
+   "moeda": "SOL",
    "config": {
     "tipo": "tendencia",
     "modo": "medias",
@@ -117,7 +171,7 @@
    }
   },
   {
-   "moeda": "SOL",
+   "moeda": "HYPE",
    "config": {
     "tipo": "tendencia",
     "modo": "medias",
@@ -131,8 +185,38 @@
    "config": {
     "tipo": "tendencia",
     "modo": "rompe",
-    "a": 240,
+    "a": 120,
     "alav": 2
+   }
+  },
+  {
+   "moeda": "kPEPE",
+   "config": {
+    "tipo": "reversao",
+    "gatilho": 0.08,
+    "alvo": 0.02,
+    "lados": "ambos",
+    "alav": 3
+   }
+  },
+  {
+   "moeda": "AVAX",
+   "config": {
+    "tipo": "reversao",
+    "gatilho": 0.05,
+    "alvo": 0.04,
+    "lados": "ambos",
+    "alav": 3
+   }
+  },
+  {
+   "moeda": "kPEPE",
+   "config": {
+    "tipo": "reversao",
+    "gatilho": 0.08,
+    "alvo": 0.02,
+    "lados": "compra",
+    "alav": 3
    }
   }
  ]

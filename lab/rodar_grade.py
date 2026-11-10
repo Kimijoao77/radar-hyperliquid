@@ -101,8 +101,8 @@ def main(raiz: Path = RAIZ, api=None) -> int:
                             "fora": {"retorno": fora["retorno"], "pior_queda": fora["pior_queda"], "dias": fora["dias"],
                                      "segurar_moeda": fora["segurar_moeda"]}})
     passado.sort(key=lambda r: -r["nota"])
-    if est.get("versao") != VERSAO:                     # regras novas: guarda o resultado da versão anterior e recomeça
-        anterior = []
+    if est.get("versao") != VERSAO:                     # regras novas: guarda o resultado da versão anterior (e das de antes) e recomeça
+        anterior = list(est.get("anterior") or [])
         try:
             velho = json.loads((raiz / "saida" / "grade.json").read_text(encoding="utf-8"))
             for a in velho.get("ao_vivo", []):
@@ -111,7 +111,7 @@ def main(raiz: Path = RAIZ, api=None) -> int:
                                  "segurar_moeda": r.get("segurar_moeda"), "de": velho.get("inicio_ao_vivo"), "ate": velho.get("gerado")})
         except (OSError, ValueError):
             pass
-        est = {"versao": VERSAO, "anterior": anterior}
+        est = {"versao": VERSAO, "anterior": anterior[-16:]}
     if not est.get("escolhidas") and passado:
         # versão 4: 3 de grade/DCA (maior lucro ao ano no pior dos dois pedaços, nota > 0) e 3 de tendência; até 2 por moeda em cada família
         est.update(inicio=agora // HORA * HORA, escolhidas=[{"moeda": r["moeda"], "config": r["config"]} for r in escolher(passado)])

@@ -56,3 +56,15 @@ def test_rodar_grade_sem_funding_nao_quebra(tmp_path):
     assert R.main(tmp_path, Api(funding=False)) == 0                # o funding falha: as contas seguem sem ele
     rel = json.loads((tmp_path / "saida" / "grade.json").read_text())
     assert rel["versao"] == 4 and rel["funding"] == {} and rel["ao_vivo"]
+
+
+def test_versao_nova_guarda_o_historico_das_anteriores(tmp_path):
+    (tmp_path / "lab" / "dados").mkdir(parents=True)
+    (tmp_path / "saida").mkdir()
+    (tmp_path / "lab" / "dados" / "grade_estado.json").write_text(json.dumps(
+        {"versao": 2, "anterior": [{"moeda": "HYPE", "nome": "v1", "retorno": -0.36}], "escolhidas": [], "inicio": 1}))
+    (tmp_path / "saida" / "grade.json").write_text(json.dumps(
+        {"inicio_ao_vivo": 5, "gerado": 9, "ao_vivo": [{"moeda": "BTC", "nome": "v2", "resultado": {"retorno": 0.01, "pior_queda": 0.02, "segurar_moeda": 0.0}}]}))
+    assert R.main(tmp_path, Api()) == 0
+    est = json.loads((tmp_path / "lab" / "dados" / "grade_estado.json").read_text())
+    assert [a["nome"] for a in est["anterior"]] == ["v1", "v2"] and est["versao"] == 4

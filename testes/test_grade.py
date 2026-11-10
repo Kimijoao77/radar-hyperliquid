@@ -174,12 +174,13 @@ def test_escolher_tres_de_cada_familia_ate_duas_por_moeda():
         return {"moeda": moeda, "config": {"tipo": tipo, "n": nota}, "nota": nota, "liquidada": liq}
     passado = [r("BTC", "dca", 2.0), r("BTC", "grade", 1.9), r("BTC", "dca", 1.8), r("ETH", "dca", 1.7), r("SOL", "dca", 1.6),
                r("HYPE", "tendencia", 0.5), r("HYPE", "tendencia", 0.4), r("HYPE", "tendencia", 0.3), r("BTC", "tendencia", -0.2),
-               r("ETH", "tendencia", -0.3), r("SOL", "grade", -0.1), r("ETH", "grade", 9, liq=True)]
+               r("ETH", "tendencia", -0.3), r("SOL", "grade", -0.1), r("ETH", "grade", 9, liq=True), r("SOL", "tendencia", -9)]
     esc = escolher(passado)
     rev = [(x["moeda"], x["nota"]) for x in esc if x["config"]["tipo"] != "tendencia"]
     tend = [(x["moeda"], x["nota"]) for x in esc if x["config"]["tipo"] == "tendencia"]
     assert rev == [("BTC", 2.0), ("BTC", 1.9), ("ETH", 1.7)]            # até 2 por moeda; nunca a liquidada nem a de nota negativa
     assert tend == [("HYPE", 0.5), ("HYPE", 0.4), ("BTC", -0.2)]        # a tendência entra mesmo no vermelho
+    assert escolher([r("SOL", "tendencia", -9)]) == []                  # liquidada num dos pedaços do passado (nota -9): fora
 
 
 def test_escolher_nao_repete_o_mesmo_robo_com_outra_alavancagem():

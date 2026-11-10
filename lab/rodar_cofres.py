@@ -33,6 +33,8 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
         except (OSError, ValueError):
             pass
         est = {"versao": VERSAO, "anterior": anterior}
+    if est.get("risco") and est["risco"].get("versao") != RISCO["versao"]:
+        est.pop("risco")                                 # regra nova da carteira de risco: escolhe de novo já nesta rodada
     if est.get("versao") == VERSAO and (not est.get("escolhidos") or "risco" not in est):
         pass
     elif saida.exists() and agora - est.get("ultima", 0) < 6 * HORA - 10 * 60 * 1000:
@@ -42,6 +44,7 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
     api = api or Hyperliquid(1000)
     lista = (baixar_lista or (lambda: requests.get(LISTA, timeout=120).json()))()
     cands = candidatos(lista, agora, p)
+    enderecos = {((v.get("summary") or {}).get("vaultAddress") or "").lower() for v in lista} - {""}
     alvo = cands[: p["detalhar"]]
     if not any(c["cofre"] == HLP for c in alvo):
         alvo.append(next((c for c in cands if c["cofre"] == HLP), {"cofre": HLP, "nome": "HLP", "tvl": 0, "idade_dias": 0, "apr": 0}))
@@ -67,9 +70,12 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
         m = medir(ind_t)
         m30 = medir(ind_m) if len(ind_m) >= 5 else {}
         cb = contra_btc(ind_t, velas, p) if velas else {"beta": None, "nas_quedas": None, "trechos": 0, "trechos_queda": 0}
+        lider = (c.get("lider") or d.get("leader") or "").lower()
+        filho = (d.get("relationship") or {}).get("type") == "child" or lider in enderecos   # o dono é outro cofre (ex.: os do HLP)
         medidos.append({**c, "nome": d.get("name") or c["nome"], "comissao": d.get("leaderCommission"), "seguidores": len(d.get("followers") or []),
                         "aceita_deposito": d.get("allowDeposits"), "medidas": m, "mes": m30.get("total"), **cb,
-                        "constante": constante(m), "independente": independente(cb, p), "hlp": c["cofre"] == HLP, "_ind": ind_t, "_ind_m": ind_m})
+                        "constante": constante(m), "independente": independente(cb, p), "hlp": c["cofre"] == HLP, "filho": filho,
+                        "_ind": ind_t, "_ind_m": ind_m})
     medidos.sort(key=lambda x: (not x["constante"], -((x["medidas"] or {}).get("ao_ano") or -9) / max(0.05, (x["medidas"] or {}).get("pior_queda") or 1)))
     # a carteira em curso (desde 03/11) continua: os cofres dela também passam no filtro novo (não seguem o BTC), e a
     # perda de 03 a 09/11 foi dos próprios gestores. O filtro e os pesos valem quando uma carteira nova for montada.
@@ -82,7 +88,7 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
     # carteira de risco: escolhida uma vez (quando alguma passa na regra) e depois fica fixa, como a do HLP
     if not (est.get("risco") or {}).get("escolhidos"):
         boas = sorted([x for x in medidos if de_risco(x)], key=lambda x: -nota_risco(x))[: RISCO["carteira"]]
-        est["risco"] = {"inicio": agora, "tentou": agora, "escolhidos": [x["cofre"] for x in boas],
+        est["risco"] = {"versao": RISCO["versao"], "inicio": agora, "tentou": agora, "escolhidos": [x["cofre"] for x in boas],
                         "pesos": {x["cofre"]: 1 / len(boas) for x in boas},
                         "base": {x["cofre"]: x["_ind"][-1][1] for x in boas if x["_ind"]}}
     # depósito simulado: o do HLP (versão 3) e o da carteira de risco, com a comissão de cada cofre

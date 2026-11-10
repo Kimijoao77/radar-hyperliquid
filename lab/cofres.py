@@ -32,7 +32,9 @@ VERSAO = 3
 # tanto no histórico inteiro quanto na taxa de agora, estão no azul no último mês, não parecem sorte (p ≤ 0,10) e cuja pior
 # queda cabe no risco aceito (até 55 %). Não exige beta baixo: um cofre que ganha quando o BTC cai também serve. Ranking pelo
 # MENOR entre o rendimento do histórico e o de agora (quem só brilhou num dos dois fica para trás); partes iguais.
-RISCO = {"carteira": 4, "ao_ano_minimo": 0.45, "apr_minimo": 0.45, "queda_maxima": 0.55, "p_maximo": 0.10, "extras_por_apr": 30}
+# Versão 2 (10/11, revisão): ficam de fora os cofres-filho (os pedaços do próprio HLP, como o "HLP Liquidator 2", cujo dono é
+# o HLP): ninguém deposita neles direto, o dinheiro só entra pelo HLP. A versão 1 tinha escolhido o Liquidator 2.
+RISCO = {"versao": 2, "carteira": 4, "ao_ano_minimo": 0.45, "apr_minimo": 0.45, "queda_maxima": 0.55, "p_maximo": 0.10, "extras_por_apr": 30}
 
 
 def preco_em(velas: list[list[float]], t: int) -> float | None:
@@ -77,9 +79,10 @@ def independente(c: dict, p: dict) -> bool:
 
 
 def de_risco(c: dict, r: dict = RISCO) -> bool:
-    """Cofre que entra na carteira de risco (ver RISCO). O HLP fica de fora: ele já tem o teste dele."""
+    """Cofre que entra na carteira de risco (ver RISCO). O HLP fica de fora (ele já tem o teste dele) e os cofres-filho
+    também (não aceitam depósito de ninguém além do cofre-pai)."""
     m = c.get("medidas") or {}
-    if not m or c.get("hlp") or not c.get("aceita_deposito"):
+    if not m or c.get("hlp") or c.get("filho") or not c.get("aceita_deposito"):
         return False
     return ((m.get("ao_ano") or 0) >= r["ao_ano_minimo"] and (c.get("apr") or 0) >= r["apr_minimo"] and (c.get("mes") or 0) > 0
             and m.get("pior_queda", 1) <= r["queda_maxima"] and m.get("p", 1) <= r["p_maximo"])

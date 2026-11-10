@@ -17,7 +17,7 @@ Em cada vela, o caminho do preço dentro da hora não é conhecido: a conta é c
 degrau na mesma hora). Taxas: ordem limitada 0,015 %, a mercado 0,045 % (Hyperliquid).
 
 Funding (versão 4): quem está comprado paga, de hora em hora, a taxa de financiamento do perpétuo (quase sempre
-positiva: BTC ~11 % ao ano sobre a posição) e quem está vendido recebe. Com 3× a posição vale 3 vezes o dinheiro, então o
+positiva: nos ~208 dias medidos, de 5 a 10 % ao ano sobre a posição; BTC 7 %) e quem está vendido recebe. Com 3× a posição vale 3 vezes o dinheiro, então o
 custo sobe junto. Antes da versão 4 a conta ignorava isso; agora usa o histórico real da Hyperliquid (fundingHistory).
 """
 from __future__ import annotations
@@ -367,14 +367,14 @@ def _sinal(r: dict) -> tuple:
 
 def escolher(passado: list[dict], por_familia: int = 3, por_moeda: int = 2) -> list[dict]:
     """Quem vai para o ao vivo (versão 5): 3 de grade/DCA e 3 de tendência, já ordenados por nota (maior lucro ao ano no pior
-    dos dois pedaços do passado). Nunca liquidado; até 2 na mesma moeda em cada família; a mesma estratégia na mesma moeda
+    dos dois pedaços do passado). Nunca liquidado (nem no passado inteiro nem em um dos pedaços); até 2 na mesma moeda em cada família; a mesma estratégia na mesma moeda
     entra uma vez só (2× e 3× do mesmo sinal seriam o mesmo palpite). Grade/DCA só entra com nota > 0; a tendência entra
     mesmo no vermelho, porque o teste serve justamente para saber se ela funciona."""
     out = []
     for fam, tipos in FAMILIAS.items():
         n, cont, vistos = 0, {}, set()
         for r in passado:
-            if r["config"]["tipo"] not in tipos or r.get("liquidada") or (fam == "reverter" and r["nota"] <= 0):
+            if r["config"]["tipo"] not in tipos or r.get("liquidada") or r["nota"] <= -9 or (fam == "reverter" and r["nota"] <= 0):
                 continue
             if cont.get(r["moeda"], 0) >= por_moeda or _sinal(r) in vistos:
                 continue

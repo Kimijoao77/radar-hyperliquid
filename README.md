@@ -130,7 +130,9 @@ com histórico; índice de rendimento que ignora depósitos e saques; constante 
 2 estavam negativos). **Carteira de risco** (10/11, ao lado): até 4 cofres abertos para depósito que rendem 45 % ao ano ou mais
 no histórico inteiro e na taxa de agora, estão no azul no último mês, têm p ≤ 0,10 e pior queda de até 55 %, sem exigir beta
 baixo (um cofre que ganha quando o BTC cai também entra); partes iguais, escolhidos uma vez; a comissão é a de cada cofre
-(o HLP não cobra). → `saida/cofres.json` (`carteira` = só o HLP, `risco` = a carteira de risco)
+(o HLP não cobra). Revisão (10/11, versão 2 da carteira de risco): ficam de fora os **cofres-filho** (os pedaços do próprio
+HLP, como o HLP Liquidator 2, cujo dono é o HLP): ninguém deposita neles direto. → `saida/cofres.json` (`carteira` = só o
+HLP, `risco` = a carteira de risco)
 
 **4. Pools e looping (`lab/pools.py`)** — a cada 12 h, DefiLlama: pools de estáveis e de duas moedas voláteis
 (US$ 5 mi+, 30 dias de dados), só o rendimento de taxas (o de prêmio fica à parte), perda impermanente de 30 dias com

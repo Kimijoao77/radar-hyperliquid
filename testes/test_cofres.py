@@ -68,6 +68,7 @@ def cofre(**k):
 def test_de_risco_regras():
     assert de_risco(cofre())
     assert not de_risco(cofre(hlp=True))                                       # o HLP tem o teste dele
+    assert not de_risco(cofre(filho=True))                                     # cofre-filho (do HLP): ninguém deposita direto
     assert not de_risco(cofre(aceita_deposito=False))                          # fechado para depósito
     assert not de_risco(cofre(apr=0.2))                                        # rende pouco agora
     assert not de_risco(cofre(mes=-0.01))                                      # no vermelho no último mês
@@ -112,3 +113,35 @@ def test_rodar_monta_a_carteira_de_risco(tmp_path):
     assert R.main(tmp_path, Api(), lambda: lista) == 0
     est2 = json.loads((tmp_path / "lab" / "dados" / "cofres_estado.json").read_text())
     assert est2["risco"]["escolhidos"] == ["0x1"] and est2["risco"]["inicio"] == est["risco"]["inicio"]
+
+
+def test_rodar_tira_o_cofre_filho_e_refaz_a_carteira_de_risco_antiga(tmp_path):
+    import math
+
+    import lab.rodar_cofres as R
+    lista = [{"apr": a, "summary": {"vaultAddress": f"0x{i}", "name": f"c{i}", "tvl": str(1e6 - i), "isClosed": False, "createTimeMillis": 0,
+                                    "leader": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303" if i == 2 else f"0xl{i}"}}
+             for i, a in enumerate([0.9, 0.9, 0.9])] + [
+        {"apr": 0.25, "summary": {"vaultAddress": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303", "name": "HLP", "tvl": "1", "isClosed": False,
+                                  "createTimeMillis": 0, "leader": "0xhlp"}}]
+
+    class Api:
+        def _post(self, corpo, peso):
+            rel = {"type": "child"} if corpo["vaultAddress"] == "0x1" else {"type": "normal"}
+            return {"name": corpo["vaultAddress"], "leaderCommission": 0.1, "followers": [1], "allowDeposits": True, "relationship": rel,
+                    "portfolio": port(150, lambda k: 20 + (k % 3))}
+
+        def velas(self, moeda, iv, a, b):
+            return [{"t": i * D, "c": str(100 * (1 + 0.15 * math.sin(i / 6)))} for i in range(0, 160)]
+    # estado da versão 1 da carteira de risco (sem "versao"), com um cofre-filho escolhido
+    (tmp_path / "lab" / "dados").mkdir(parents=True)
+    (tmp_path / "lab" / "dados" / "cofres_estado.json").write_text(json.dumps(
+        {"versao": 3, "inicio": 1, "escolhidos": ["0xdfc24b077bc1425ad1dea75bcb6f8158e10df303"], "pesos": {}, "base": {}, "ultima": 10 ** 13,
+         "risco": {"inicio": 1, "escolhidos": ["0x2"], "pesos": {"0x2": 1.0}, "base": {"0x2": 1.0}}}))
+    assert R.main(tmp_path, Api(), lambda: lista) == 0
+    est = json.loads((tmp_path / "lab" / "dados" / "cofres_estado.json").read_text())
+    # 0x1 é filho pela API (relationship) e 0x2 porque o dono é o HLP: só 0x0 fica; a carteira do HLP continua a mesma
+    assert est["risco"]["escolhidos"] == ["0x0"] and est["risco"]["versao"] == 2 and est["inicio"] == 1
+    rel = json.loads((tmp_path / "saida" / "cofres.json").read_text())
+    assert {x["cofre"]: x["filho"] for x in rel["cofres"]} == {"0x0": False, "0x1": True, "0x2": True,
+                                                               "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303": False}

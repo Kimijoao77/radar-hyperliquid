@@ -1,5 +1,5 @@
 {
- "ate": 1794341400000,
+ "ate": 1794345000000,
  "inicio": 1793674800000,
  "variantes": {
   "seletiva": {
@@ -907,6 +907,14 @@
     [
      1794341400000,
      0.01683
+    ],
+    [
+     1794344400000,
+     0.01799
+    ],
+    [
+     1794345000000,
+     0.01912
     ]
    ],
    "fora": {
@@ -920,26 +928,6 @@
     "0xc3d101ae37bba62baf199c6d5e5d8f0eecfd200e": "segura as posições 20.9 min (mediana): curto demais para copiar com atraso"
    },
    "log": [
-    {
-     "lado": "venda",
-     "moeda": "AVAX",
-     "px": 8.004029,
-     "realizado": 0.0,
-     "resultado": -0.54,
-     "t": 1794179615771,
-     "valor": 1190.15,
-     "w": "0x30a68666b5f91348e7fc78785802e0769d86e62b"
-    },
-    {
-     "lado": "venda",
-     "moeda": "AVAX",
-     "px": 8.058805,
-     "realizado": 0.0,
-     "resultado": -0.01,
-     "t": 1794180478312,
-     "valor": 26.66,
-     "w": "0x30a68666b5f91348e7fc78785802e0769d86e62b"
-    },
     {
      "lado": "venda",
      "moeda": "MERL",
@@ -3926,6 +3914,26 @@
      "t": 1794339453973,
      "valor": 234.7,
      "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
+    },
+    {
+     "lado": "compra",
+     "moeda": "ETH",
+     "px": 2058.402717,
+     "realizado": -56.28,
+     "resultado": -57.58,
+     "t": 1794343724965,
+     "valor": 2900.26,
+     "w": "0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412"
+    },
+    {
+     "lado": "venda",
+     "moeda": "ZEC",
+     "px": 1035.963794,
+     "realizado": 6.18,
+     "resultado": 5.75,
+     "t": 1794342949220,
+     "valor": 956.63,
+     "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
     }
    ],
    "pulos": {
@@ -3941,7 +3949,7 @@
      "ordens": 8,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 824.96,
+     "patrimonio": 839.25,
      "pico": 1051.4336280950083,
      "pos": {
       "HYPE": [
@@ -3963,7 +3971,7 @@
      "ordens": 100,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1047.79,
+     "patrimonio": 1065.61,
      "pico": 1092.9339470572115,
      "pos": {
       "BTC": [
@@ -4065,7 +4073,7 @@
      "ordens": 1,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1063.21,
+     "patrimonio": 1038.7,
      "pico": 1085.0849364782034,
      "pos": {
       "BTC": [
@@ -4121,7 +4129,7 @@
      "ordens": 18,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 870.89,
+     "patrimonio": 897.74,
      "pico": 1013.551190378508,
      "pos": {
       "BTC": [
@@ -4152,23 +4160,18 @@
     },
     "0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412": {
      "capital": 1000.0,
-     "colateral": 1038.3309384091906,
+     "colateral": 980.748739938965,
      "expo_max": 3.006169947466979,
      "fator": 0.1923076923076923,
      "inicio": 1794193200000,
-     "ordens": 25,
+     "ordens": 26,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1005.31,
+     "patrimonio": 980.75,
      "pico": 1043.348580779124,
-     "pos": {
-      "ETH": [
-       -1.408986111182387,
-       2018.4611723423752
-      ]
-     },
-     "taxas": 13.656113324092244,
-     "ult": 1794329368284,
+     "pos": {},
+     "taxas": 14.961230701590068,
+     "ult": 1794343664965,
      "vivo": true,
      "w": "0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412"
     },
@@ -4232,7 +4235,7 @@
      "ordens": 509,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 909.17,
+     "patrimonio": 932.14,
      "pico": 1053.8742268860728,
      "pos": {
       "HYPE": [
@@ -4259,23 +4262,18 @@
     },
     "0xfcacebb9332e531c86db39659366c349794cbabb": {
      "capital": 1000.0,
-     "colateral": 1186.6138965614189,
+     "colateral": 1192.3590702085771,
      "expo_max": 3.008576473739277,
      "fator": 0.1998001998001998,
      "inicio": 1793674800000,
-     "ordens": 52,
+     "ordens": 53,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1188.58,
+     "patrimonio": 1192.36,
      "pico": 1192.9130459553112,
-     "pos": {
-      "ZEC": [
-       0.92341848021655,
-       1029.2759739895232
-      ]
-     },
-     "taxas": 31.649906356047037,
-     "ult": 1794339393973,
+     "pos": {},
+     "taxas": 32.08038900641209,
+     "ult": 1794342889220,
      "vivo": true,
      "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
     }

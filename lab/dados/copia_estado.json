@@ -1,5 +1,5 @@
 {
- "ate": 1794399660000,
+ "ate": 1794403260000,
  "inicio": 1793674800000,
  "variantes": {
   "seletiva": {
@@ -1047,6 +1047,14 @@
     [
      1794399660000,
      0.02479
+    ],
+    [
+     1794402000000,
+     0.02426
+    ],
+    [
+     1794403260000,
+     0.0251
     ]
    ],
    "fora": {
@@ -1060,128 +1068,6 @@
     "0xc3d101ae37bba62baf199c6d5e5d8f0eecfd200e": "segura as posições 20.9 min (mediana): curto demais para copiar com atraso"
    },
    "log": [
-    {
-     "lado": "venda",
-     "moeda": "HYPE",
-     "px": 72.748335,
-     "realizado": -0.79,
-     "resultado": -0.8,
-     "t": 1794220743118,
-     "valor": 24.08,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
-    {
-     "lado": "venda",
-     "moeda": "BTC",
-     "px": 74229.704478,
-     "realizado": -11.86,
-     "resultado": -12.16,
-     "t": 1794218429189,
-     "valor": 666.35,
-     "w": "0x816b8dd5f08543d7486a4ec075979a263d14ec51"
-    },
-    {
-     "lado": "venda",
-     "moeda": "BIO",
-     "px": 0.020414,
-     "realizado": 0.0,
-     "resultado": -0.21,
-     "t": 1794224231193,
-     "valor": 460.46,
-     "w": "0xccf595171e2e56655fb4d386b7424da16be69d42"
-    },
-    {
-     "lado": "venda",
-     "moeda": "ARB",
-     "px": 0.176135,
-     "realizado": 0.0,
-     "resultado": -0.16,
-     "t": 1794222519676,
-     "valor": 362.11,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
-    {
-     "lado": "venda",
-     "moeda": "ARB",
-     "px": 0.176875,
-     "realizado": 0.0,
-     "resultado": -0.05,
-     "t": 1794222636110,
-     "valor": 121.35,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
-    {
-     "lado": "compra",
-     "moeda": "AVAX",
-     "obs": "saiu do radar",
-     "px": 8.034815,
-     "realizado": 1.31,
-     "resultado": 0.28,
-     "t": 1794225600000,
-     "valor": 2287.22,
-     "w": "0x30a68666b5f91348e7fc78785802e0769d86e62b"
-    },
-    {
-     "lado": "compra",
-     "moeda": "ETH",
-     "obs": "saiu do radar",
-     "px": 2113.6563,
-     "realizado": 90.29,
-     "resultado": 90.0,
-     "t": 1794225600000,
-     "valor": 649.7,
-     "w": "0x30a68666b5f91348e7fc78785802e0769d86e62b"
-    },
-    {
-     "lado": "compra",
-     "moeda": "BIO",
-     "px": 0.02006,
-     "realizado": 8.0,
-     "resultado": 7.8,
-     "t": 1794225059389,
-     "valor": 452.46,
-     "w": "0xccf595171e2e56655fb4d386b7424da16be69d42"
-    },
-    {
-     "lado": "venda",
-     "moeda": "XRP",
-     "px": 1.098892,
-     "realizado": 0.26,
-     "resultado": 0.07,
-     "t": 1794227807499,
-     "valor": 432.48,
-     "w": "0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356"
-    },
-    {
-     "lado": "venda",
-     "moeda": "USUAL",
-     "px": 0.010458,
-     "realizado": 0.0,
-     "resultado": -0.23,
-     "t": 1794226121724,
-     "valor": 502.24,
-     "w": "0xccf595171e2e56655fb4d386b7424da16be69d42"
-    },
-    {
-     "lado": "venda",
-     "moeda": "AAVE",
-     "px": 133.20863,
-     "realizado": 0.0,
-     "resultado": -0.08,
-     "t": 1794227433271,
-     "valor": 172.65,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
-    {
-     "lado": "compra",
-     "moeda": "ARB",
-     "px": 0.184838,
-     "realizado": -0.83,
-     "resultado": -0.83,
-     "t": 1794228653742,
-     "valor": 17.94,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
     {
      "lado": "compra",
      "moeda": "ARB",
@@ -4065,10 +3951,130 @@
      "t": 1794399495132,
      "valor": 74.2,
      "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "venda",
+     "moeda": "SPX",
+     "px": 0.374603,
+     "realizado": 0.0,
+     "resultado": -0.04,
+     "t": 1794399824072,
+     "valor": 85.27,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "venda",
+     "moeda": "ZEC",
+     "px": 979.05931,
+     "realizado": -6.15,
+     "resultado": -6.19,
+     "t": 1794400025005,
+     "valor": 98.2,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "venda",
+     "moeda": "PUMP",
+     "px": 0.003601,
+     "realizado": 0.0,
+     "resultado": -0.05,
+     "t": 1794400627290,
+     "valor": 107.13,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "venda",
+     "moeda": "PUMP",
+     "px": 0.003602,
+     "realizado": 0.0,
+     "resultado": -0.03,
+     "t": 1794400909922,
+     "valor": 68.97,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "venda",
+     "moeda": "PUMP",
+     "px": 0.003609,
+     "realizado": 0.0,
+     "resultado": -0.01,
+     "t": 1794401173836,
+     "valor": 13.33,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "compra",
+     "moeda": "HYPE",
+     "px": 72.691235,
+     "realizado": 0.0,
+     "resultado": -0.09,
+     "t": 1794401459785,
+     "valor": 192.21,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "venda",
+     "moeda": "HYPE",
+     "px": 72.621243,
+     "realizado": -0.54,
+     "resultado": -0.56,
+     "t": 1794401462146,
+     "valor": 50.65,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "venda",
+     "moeda": "NEAR",
+     "px": 3.747517,
+     "realizado": 121.71,
+     "resultado": 120.42,
+     "t": 1794400191857,
+     "valor": 2860.11,
+     "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
+    },
+    {
+     "lado": "venda",
+     "moeda": "HYPE",
+     "px": 72.415258,
+     "realizado": -1.15,
+     "resultado": -1.19,
+     "t": 1794402358708,
+     "valor": 85.53,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "venda",
+     "moeda": "SPX",
+     "px": 0.375812,
+     "realizado": 0.0,
+     "resultado": -0.03,
+     "t": 1794402440900,
+     "valor": 70.31,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "venda",
+     "moeda": "HYPE",
+     "px": 72.719205,
+     "realizado": -1.44,
+     "resultado": -1.51,
+     "t": 1794402956481,
+     "valor": 155.33,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "compra",
+     "moeda": "ZEC",
+     "px": 979.497049,
+     "realizado": 0.0,
+     "resultado": -0.04,
+     "t": 1794403257496,
+     "valor": 82.98,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
     }
    ],
    "pulos": {
-    "ordem pequena": 112
+    "ordem pequena": 115
    },
    "subs": {
     "0x0cdf0ab9ead733ecf321d09432b5208adae2902f": {
@@ -4080,7 +4086,7 @@
      "ordens": 8,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 834.56,
+     "patrimonio": 849.83,
      "pico": 1051.4336280950083,
      "pos": {
       "HYPE": [
@@ -4102,7 +4108,7 @@
      "ordens": 103,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1068.19,
+     "patrimonio": 1068.76,
      "pico": 1092.9339470572115,
      "pos": {
       "XRP": [
@@ -4192,7 +4198,7 @@
      "ordens": 1,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1037.26,
+     "patrimonio": 1042.69,
      "pico": 1085.0849364782034,
      "pos": {
       "BTC": [
@@ -4248,7 +4254,7 @@
      "ordens": 25,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 876.89,
+     "patrimonio": 873.17,
      "pico": 1013.551190378508,
      "pos": {
       "BTC": [
@@ -4286,7 +4292,7 @@
      "ordens": 28,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 973.26,
+     "patrimonio": 978.93,
      "pico": 1043.348580779124,
      "pos": {
       "ETH": [
@@ -4342,7 +4348,7 @@
      "ordens": 2,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1000.87,
+     "patrimonio": 999.49,
      "pico": 1006.5585985704353,
      "pos": {
       "BTC": [
@@ -4357,61 +4363,56 @@
     },
     "0xf24504bb689f1461fbfd89712eb4872130ed4e47": {
      "capital": 1000.0,
-     "colateral": 1048.9463447532605,
+     "colateral": 1039.212060364492,
      "expo_max": 3.0005394698810237,
      "fator": 0.3527336860670194,
      "inicio": 1793674800000,
-     "ordens": 537,
+     "ordens": 548,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 970.57,
+     "patrimonio": 974.35,
      "pico": 1053.8742268860728,
      "pos": {
       "HYPE": [
-       13.959187241103264,
-       73.52557711289207
+       12.588671980047195,
+       73.39270490364034
       ],
       "PUMP": [
-       -36924.33627894395,
-       0.003578315811084848
+       -89520.70866405021,
+       0.0035919602306188794
       ],
       "SPX": [
-       -228.13005905006958,
-       0.3742826810384491
+       -642.8686080266962,
+       0.37484105303173176
       ],
       "XPL": [
        4188.412601261096,
        0.06392244948614478
       ],
       "ZEC": [
-       0.32154281909835275,
-       1040.3595409810493
+       0.3059542349286316,
+       1023.507495929689
       ]
      },
-     "taxas": 20.554852063484123,
-     "ult": 1794399435132,
+     "taxas": 21.009315503289166,
+     "ult": 1794403197496,
      "vivo": true,
      "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
     },
     "0xfcacebb9332e531c86db39659366c349794cbabb": {
      "capital": 1000.0,
-     "colateral": 1134.55299706962,
+     "colateral": 1254.9774584294494,
      "expo_max": 3.008576473739277,
      "fator": 0.1998001998001998,
      "inicio": 1793674800000,
-     "ordens": 57,
+     "ordens": 58,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1275.64,
+     "patrimonio": 1254.98,
      "pico": 1288.2298838809227,
-     "pos": {
-      "NEAR": [
-       763.2017479079219,
-       3.588041856845114
-      ]
-     },
-     "taxas": 35.38370919465881,
-     "ult": 1794387991922,
+     "pos": {},
+     "taxas": 36.67075929233463,
+     "ult": 1794400131857,
      "vivo": true,
      "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
     }

@@ -1,25 +1,25 @@
-# Radar Hyperliquid — 2026-11-11 12:24 UTC
+# Radar Hyperliquid — 2026-11-11 13:24 UTC
 
 No radar: 21 carteiras promissoras (20 descartadas, 104 recusadas na triagem).
 
-- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 6408 operações, resultado US$ 17,914, acerto 82 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0xccf595171e2e56655fb4d386b7424da16be69d42`  — 667 operações, resultado US$ 26,433, acerto 96 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0x0526345bf8e09eb32256008c2844c8949ee3bb9a`  — 3040 operações, resultado US$ 14,242, acerto 83 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 6418 operações, resultado US$ 17,940, acerto 82 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0xccf595171e2e56655fb4d386b7424da16be69d42`  — 671 operações, resultado US$ 27,038, acerto 96 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x0526345bf8e09eb32256008c2844c8949ee3bb9a`  — 3042 operações, resultado US$ 14,252, acerto 83 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0xf24504bb689f1461fbfd89712eb4872130ed4e47`  — 395 operações, resultado US$ 97,488, acerto 54 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356`  — 120 operações, resultado US$ 34,644, acerto 99 %, q = 0.0044. lucro consistente (q = 0,004) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356`  — 120 operações, resultado US$ 34,644, acerto 99 %, q = 0.0042. lucro consistente (q = 0,004) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0x4276dcb71aa01041cecdac9eca20d621825927f1`  — 341 operações, resultado US$ 21,232, acerto 57 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Promissora** `0x988c56fe019f5573cd9cfcdebb5ef357b33118fc`  — 115 operações, resultado US$ 61,347, acerto 81 %, q = 0.0007. números fortes (q = menos de 0,001), falta confirmar no período acompanhado (0/20 operações)
-- **Promissora** `0xfcacebb9332e531c86db39659366c349794cbabb`  — 144 operações, resultado US$ 22,871, acerto 69 %, q = 0.0105. números fortes (q = 0,010), falta confirmar no período acompanhado (13/20 operações)
-- **Promissora** `0x816b8dd5f08543d7486a4ec075979a263d14ec51`  — 73 operações, resultado US$ 127,053, acerto 88 %, q = 0.0029. números fortes (q = 0,003), falta confirmar no período acompanhado (11/20 operações)
-- **Promissora** `0x24fb52e17e3d4fd62a119b8f53c1a3f3bfe65c2f`  — 76 operações, resultado US$ 1,275,088, acerto 59 %, q = 0.0027. números fortes (q = 0,003), falta confirmar no período acompanhado (8/20 operações)
-- **Promissora** `0x3cc561c1276cccf56d74cc6d65c516ef88a998d2`  — 69 operações, resultado US$ 169,634, acerto 74 %, q = 0.0022. números fortes (q = 0,002), falta confirmar no período acompanhado (7/20 operações)
-- **Promissora** `0xa4db748d91c6618c77a6f4598bf6b849d5b95f49`  — 74 operações, resultado US$ 30,152, acerto 65 %, q = 0.0086. números fortes (q = 0,009), falta confirmar no período acompanhado (0/20 operações)
-- **Promissora** `0x5e0730c1a09e60ccc25057203865a0550a269fea`  — 60 operações, resultado US$ 294,361, acerto 73 %, q = 0.0147. números fortes (q = 0,015), falta confirmar no período acompanhado (3/20 operações)
-- **Promissora** `0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412`  — 87 operações, resultado US$ 65,267, acerto 82 %, q = 0.0145. números fortes (q = 0,014), falta confirmar no período acompanhado (6/20 operações)
+- **Promissora** `0xfcacebb9332e531c86db39659366c349794cbabb`  — 145 operações, resultado US$ 23,852, acerto 69 %, q = 0.0144. números fortes (q = 0,014), falta confirmar no período acompanhado (14/20 operações)
+- **Promissora** `0x816b8dd5f08543d7486a4ec075979a263d14ec51`  — 73 operações, resultado US$ 127,053, acerto 88 %, q = 0.0028. números fortes (q = 0,003), falta confirmar no período acompanhado (11/20 operações)
+- **Promissora** `0x24fb52e17e3d4fd62a119b8f53c1a3f3bfe65c2f`  — 76 operações, resultado US$ 1,275,088, acerto 59 %, q = 0.0026. números fortes (q = 0,003), falta confirmar no período acompanhado (8/20 operações)
+- **Promissora** `0x3cc561c1276cccf56d74cc6d65c516ef88a998d2`  — 69 operações, resultado US$ 169,634, acerto 74 %, q = 0.0021. números fortes (q = 0,002), falta confirmar no período acompanhado (7/20 operações)
+- **Promissora** `0xa4db748d91c6618c77a6f4598bf6b849d5b95f49`  — 74 operações, resultado US$ 30,152, acerto 65 %, q = 0.009. números fortes (q = 0,009), falta confirmar no período acompanhado (0/20 operações)
+- **Promissora** `0x5e0730c1a09e60ccc25057203865a0550a269fea`  — 60 operações, resultado US$ 294,361, acerto 73 %, q = 0.015. números fortes (q = 0,015), falta confirmar no período acompanhado (3/20 operações)
+- **Promissora** `0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412`  — 87 operações, resultado US$ 65,267, acerto 82 %, q = 0.0149. números fortes (q = 0,015), falta confirmar no período acompanhado (6/20 operações)
 - **Promissora** `0x45ac5eda8bf2527f09067fd16c530be6f86e8404`  — 113 operações, resultado US$ 50,527, acerto 71 %, q = 0.2052. tende a ganhar (q = 0,205), mas ainda sem constância suficiente
-- **Promissora** `0x7f62c09129d1cfaf76980f17d97509f94dbc6924`  — 68 operações, resultado US$ 42,618, acerto 56 %, q = 0.0467. números fortes (q = 0,047), falta confirmar no período acompanhado (0/20 operações)
-- **Promissora** `0x9378b60ccc9855be6a9e7151391610596ed93183`  — 46 operações, resultado US$ 48,321, acerto 61 %, q = 0.0738. números fortes (q = 0,074), falta confirmar no período acompanhado (3/20 operações)
-- **Promissora** `0xea36da2abea3b7b6b03fa391ea3af071a9bf76d2`  — 55 operações, resultado US$ 24,801, acerto 51 %, q = 0.1036. tende a ganhar (q = 0,104), mas ainda sem constância suficiente
-- **Promissora** `0x0cdf0ab9ead733ecf321d09432b5208adae2902f`  — 100 operações, resultado US$ 11,528, acerto 88 %, q = 0.1053. tende a ganhar (q = 0,105), mas ainda sem constância suficiente
-- **Promissora** `0x0fe269d6d9e04ecc659b6e3d582a7f35ce419e0f`  — 72 operações, resultado US$ 224,168, acerto 60 %, q = 0.0974. números fortes (q = 0,097), falta confirmar no período acompanhado (3/20 operações)
-- **Promissora** `0x441c8cbe1aa06beea4c84cfff5e12753f37822fb`  — 49 operações, resultado US$ 350,841, acerto 43 %, q = 0.1603. tende a ganhar (q = 0,160), mas ainda sem constância suficiente
+- **Promissora** `0x7f62c09129d1cfaf76980f17d97509f94dbc6924`  — 68 operações, resultado US$ 42,618, acerto 56 %, q = 0.0476. números fortes (q = 0,048), falta confirmar no período acompanhado (0/20 operações)
+- **Promissora** `0x9378b60ccc9855be6a9e7151391610596ed93183`  — 46 operações, resultado US$ 48,321, acerto 61 %, q = 0.0748. números fortes (q = 0,075), falta confirmar no período acompanhado (3/20 operações)
+- **Promissora** `0xea36da2abea3b7b6b03fa391ea3af071a9bf76d2`  — 55 operações, resultado US$ 24,801, acerto 51 %, q = 0.1044. tende a ganhar (q = 0,104), mas ainda sem constância suficiente
+- **Promissora** `0x0cdf0ab9ead733ecf321d09432b5208adae2902f`  — 100 operações, resultado US$ 11,528, acerto 88 %, q = 0.1058. tende a ganhar (q = 0,106), mas ainda sem constância suficiente
+- **Promissora** `0x0fe269d6d9e04ecc659b6e3d582a7f35ce419e0f`  — 72 operações, resultado US$ 224,168, acerto 60 %, q = 0.0985. números fortes (q = 0,098), falta confirmar no período acompanhado (3/20 operações)
+- **Promissora** `0x441c8cbe1aa06beea4c84cfff5e12753f37822fb`  — 49 operações, resultado US$ 350,841, acerto 43 %, q = 0.1607. tende a ganhar (q = 0,161), mas ainda sem constância suficiente

@@ -34,6 +34,16 @@ longo prazo"), a ideia **não** vira teste: vai para o João como "apresentar" (
    CAPITAL = 1000.0          # dinheiro de mentira
    MOEDA = "US$"             # ou "R$" para ideias da bolsa brasileira
    INTERVALO_H = 1           # 1 = toda hora; 24 = uma vez por dia (bom para bolsa e juros)
+
+   # a página do teste no app (escreva para o João, em português simples):
+   RISCO = 3                 # 1 baixo, 2 médio, 3 alto, 4 muito alto
+   GANHA = "Quando ... (uma frase)"
+   PERDE = "Quando ... (uma frase)"
+   REGRAS = [["Título curto", "a regra em uma frase"], ...]          # as regras do teste, com custos
+   ONDE = ["Hyperliquid"]                                           # onde daria para fazer de verdade
+   PRECISA = ["USDC na Hyperliquid"]                                # o que precisaria ter
+   PASSOS = [["Passo", "como fazer"], ...]                          # como fazer de verdade com pouco dinheiro
+   FONTE = "Hyperliquid (velas de 1 h)"                             # de onde vêm os dados
    ```
 
 3. **Registre** em `lab/ideias/indice.json` (uma lista):

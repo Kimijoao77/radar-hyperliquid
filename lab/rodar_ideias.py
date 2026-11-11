@@ -99,7 +99,17 @@ def rodar_um(item: dict, hl: DadosHL, llama: DadosLlama, agora: int, seco: bool 
             "desde": estado["inicio"], "capital": capital, "saldo": round(saldo, 2), "retorno": round(saldo / capital - 1, 6),
             "curva": _curva_curta(curva), "posicoes": cart.get("posicoes", {}), "taxas": round(cart.get("taxas", 0), 2),
             "creditos": round(cart.get("creditos", 0), 2), "ops": (estado.get("ops") or [])[-15:], "nota": estado.get("nota", ""),
-            "erro": estado.get("erro", ""), "ultima": estado.get("ultima")}
+            "erro": estado.get("erro", ""), "ultima": estado.get("ultima"), "guia": _guia(mod)}
+
+
+def _guia(mod) -> dict:
+    """O texto da página do teste no app (opcional no módulo): risco 1 a 4, como ganha, como perde, as regras e o que
+    precisaria para fazer de verdade."""
+    g = {}
+    for k in ("RISCO", "GANHA", "PERDE", "REGRAS", "ONDE", "PRECISA", "PASSOS", "FONTE", "RITMO"):
+        if hasattr(mod, k):
+            g[k.lower()] = getattr(mod, k)
+    return g
 
 
 def main(argv=None) -> int:

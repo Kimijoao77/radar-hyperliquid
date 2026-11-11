@@ -14,6 +14,23 @@ RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 from lab import rodar_ideias  # noqa: E402
 
+if "--fontes" in sys.argv:
+    # confere se cada fonte de dados responde daqui (o GitHub); o proxy da sessão do Claude bloqueia quase todas
+    from lab.ideias.base import DadosBR, DadosHL, DadosLlama
+    br, hl, ll = DadosBR(), DadosHL(), DadosLlama()
+    for nome, f in [("Hyperliquid (preços)", lambda: f"{len(hl.precos())} moedas, BTC {hl.precos().get('BTC')}"),
+                    ("Hyperliquid (velas)", lambda: f"{len(hl.velas('ETH', '1h', 24))} velas de ETH"),
+                    ("DefiLlama (pools)", lambda: f"{len(ll.pools())} pools"),
+                    ("Banco Central (CDI)", lambda: str(br.juros('cdi', 2))),
+                    ("Banco Central (IPCA)", lambda: str(br.juros('ipca', 1))),
+                    ("Yahoo (HGLG11)", lambda: f"preço {br.preco('HGLG11.SA')}, {len(br.proventos('HGLG11.SA'))} proventos em 2 anos"),
+                    ("Yahoo (dólar)", lambda: f"BRL=X {br.preco('BRL=X')}")]:
+        try:
+            print(f"ok   {nome}: {f()}")
+        except Exception as ex:  # noqa: BLE001
+            print(f"ERRO {nome}: {type(ex).__name__}: {ex}")
+    sys.exit(0)
+
 indice = json.loads(rodar_ideias.INDICE.read_text(encoding="utf-8"))
 mudou = False
 for item in indice:

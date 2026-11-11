@@ -27,6 +27,8 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - name: As fontes de dados respondem?
+        run: python lab/conferir_ideias.py --fontes
       - name: Conferir os testes marcados
         run: python lab/conferir_ideias.py
       - name: Salvar

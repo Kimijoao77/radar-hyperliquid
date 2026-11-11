@@ -13,7 +13,13 @@ Guia completo: lab/ideias/COMO.md.
 """
 from __future__ import annotations
 
+import io
+import json
+import tempfile
 import time
+import zipfile
+from datetime import date, timedelta
+from pathlib import Path
 
 import requests
 
@@ -197,16 +203,69 @@ class DadosLlama:
         return _get(f"https://yields.llama.fi/chart/{pool_id}").get("data", [])
 
 
+B3_URL = "https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D{d:%d%m%Y}.ZIP"
+CACHE_B3 = Path(tempfile.gettempdir()) / "placar-b3"
+
+
+def _ler_cotahist(conteudo: bytes) -> dict[str, dict]:
+    """O arquivo da série histórica da B3 (um pregão): {ticker: {o, h, l, c, volume}} do mercado à vista."""
+    z = zipfile.ZipFile(io.BytesIO(conteudo))
+    out = {}
+    for linha in z.read(z.namelist()[0]).decode("latin-1").splitlines():
+        if not linha.startswith("01") or linha[24:27] != "010":      # 010 = mercado à vista (020 é o fracionário)
+            continue
+        n = lambda a, b: int(linha[a:b]) / 100  # noqa: E731
+        out[linha[12:24].strip()] = {"o": n(56, 69), "h": n(69, 82), "l": n(82, 95), "c": n(108, 121), "volume": n(170, 188)}
+    return out
+
+
 class DadosBR:
-    """Bolsa e juros (para ideias de canais de investimento do Brasil): taxas do Banco Central (CDI, Selic, IPCA) e
-    velas diárias do Yahoo Finance de ações, FIIs e ETFs da B3 (com ".SA": PETR4.SA, HGLG11.SA, BOVA11.SA), índices
-    (^BVSP), ações de fora (AAPL) e câmbio (BRL=X = reais por dólar). Públicos e sem chave."""
+    """Bolsa e juros (para ideias de canais de investimento do Brasil): taxas do Banco Central (CDI, Selic, IPCA),
+    cotações diárias da própria B3 (ações, FIIs e ETFs: o arquivo público da série histórica, um por pregão) e, quando
+    o Yahoo Finance deixa, velas longas e proventos (ele recusou o GitHub em 11/11: 429). Públicos e sem chave."""
 
     SERIES = {"cdi": 12, "selic": 11, "ipca": 433}     # CDI e Selic em % ao dia útil; IPCA em % no mês
 
     def __init__(self):
         self._velas: dict = {}
         self._divs: dict = {}
+        self._pregoes: dict = {}
+
+    def pregao(self, dia: date) -> dict[str, dict] | None:
+        """Todas as cotações à vista de um dia da B3 ({ticker: {o, h, l, c, volume}}), ou None sem pregão/arquivo."""
+        k = dia.isoformat()
+        if k in self._pregoes:
+            return self._pregoes[k]
+        arq = CACHE_B3 / f"{k}.json"
+        dados = None
+        if arq.exists():
+            dados = json.loads(arq.read_text())
+        else:
+            try:
+                r = S.get(B3_URL.format(d=dia), headers={"User-Agent": NAVEGADOR}, timeout=90)
+                if r.status_code == 200 and r.content[:2] == b"PK":
+                    dados = _ler_cotahist(r.content)
+                    CACHE_B3.mkdir(parents=True, exist_ok=True)
+                    arq.write_text(json.dumps(dados))
+            except (requests.RequestException, zipfile.BadZipFile):
+                dados = None
+        self._pregoes[k] = dados
+        return dados
+
+    def b3(self, ticker: str, pregoes: int = 1) -> list[dict]:
+        """Os últimos `pregoes` dias de um ticker da B3 (PETR4, HGLG11, BOVA11; sem ".SA"), do mais velho para o mais
+        novo: [{dia, o, h, l, c, volume}]. O arquivo de um dia sai na noite do pregão; de manhã, o último é o de ontem."""
+        tk = ticker.upper().removesuffix(".SA")
+        out, d, tentativas = [], date.today(), int(pregoes * 1.6) + 8
+        while len(out) < pregoes and tentativas > 0:
+            p = self.pregao(d)
+            if p and tk in p:
+                out.append({"dia": d.isoformat(), **p[tk]})
+            d -= timedelta(days=1)
+            tentativas -= 1
+        if not out:
+            raise RuntimeError(f"{tk} não apareceu nos pregões recentes da B3")
+        return out[::-1]
 
     def juros(self, serie: str = "cdi", ultimos: int = 30) -> list[dict]:
         """[{data: "AAAA-MM-DD", valor}] da série do Banco Central ("cdi", "selic", "ipca" ou o número da série)."""
@@ -267,6 +326,13 @@ class DadosBR:
         return self._divs.get(ticker, [])
 
     def preco(self, ticker: str) -> float:
+        """Último fechamento: da B3 para ticker brasileiro (PETR4 ou PETR4.SA); do Yahoo para o resto (AAPL, BRL=X)."""
+        tk = ticker.upper()
+        if tk.endswith(".SA") or (tk[:4].isalpha() and tk[4:].isdigit()):
+            try:
+                return float(self.b3(tk)[-1]["c"])
+            except RuntimeError:
+                pass
         return float(self.velas(ticker, "5d")[-1]["c"])
 
 

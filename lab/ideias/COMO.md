@@ -83,7 +83,9 @@ com o resultado até ali. Não apague o arquivo de quem já rodou.
 | `ctx.hl.precos()` / `.velas(moeda, "1h", n)` / `.contextos()` / `.funding_historico(moeda, desde_ms)` | Hyperliquid (cripto, perpétuos) |
 | `ctx.llama.pools()` / `.historico(pool_id)` | DefiLlama: rendimento e tamanho de pools, empréstimos e cofres |
 | `ctx.br.juros("cdi" \| "selic" \| "ipca", n)` | Banco Central: CDI e Selic em % ao dia útil, IPCA em % no mês |
-| `ctx.br.velas("PETR4.SA", "1y")` / `.preco(t)` / `.proventos(t)` | Yahoo Finance: B3 (`.SA`), FIIs, ETFs, `^BVSP`, ações de fora, `BRL=X` |
+| `ctx.br.b3("HGLG11", n)` / `.preco("PETR4")` | B3: os últimos n pregões de ação, FII ou ETF (`[{dia, o, h, l, c, volume}]`), do arquivo público da série histórica |
+| `ctx.br.pregao(date)` | Todas as cotações à vista de um dia da B3 (`{ticker: {o, h, l, c, volume}}`): bom para ranking e carteira |
+| `ctx.br.velas("AAPL", "1y")` / `.proventos(t)` | Yahoo Finance (velas longas, proventos, ações de fora, `BRL=X`). **Recusou o GitHub em 11/11 (429)**: use só se a conferência passar; para a B3, prefira `b3()` e guarde o histórico em `ctx.memoria` |
 | `ctx.buscar(url, navegador=False)` | Qualquer API pública em JSON |
 
 Cada rodada tem até 2 minutos. Peça só os dados que vai usar (as respostas de `precos`, `contextos`, `pools` e `velas` do
@@ -98,8 +100,11 @@ Yahoo ficam guardadas na rodada, então chamar duas vezes não custa nada).
   usando o APY daquela hora (`ctx.llama.pools()`), não um número fixo do vídeo.
 - **Funding**: quem está vendido em perpétuo recebe (ou paga) `funding_h` por hora sobre o valor da posição; credite.
 - **Juros do caixa**: se a ideia diz "deixa o resto no CDI", credite o CDI do dia no caixa (`INTERVALO_H = 24`).
-- **Proventos**: para FIIs e ações, credite os proventos na data com (`ctx.br.proventos`) e guarde em `ctx.memoria` quais
-  já entraram, para não creditar duas vezes.
+- **Proventos**: para FIIs e ações, credite os proventos na data com e guarde em `ctx.memoria` quais já entraram, para
+  não creditar duas vezes. Sem o Yahoo, use o rendimento anunciado pelo fundo (confira na web ao criar o teste) e
+  confira de novo a cada leitura.
+- **B3**: o arquivo de um pregão sai à noite; rode com `INTERVALO_H = 24` e compre ou venda no fechamento do último
+  pregão (`ctx.br.b3(t)[-1]["c"]`), pondo o preço em `ctx.precos_extras[t]` para avaliar a carteira.
 - **Capital**: use o valor que a ideia sugere (R$ 5.000 para bolsa, US$ 1.000 para cripto, se ela não disser).
 
 ## Exemplos

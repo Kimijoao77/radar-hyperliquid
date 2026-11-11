@@ -1,20 +1,20 @@
-# Radar Hyperliquid — 2026-11-11 00:17 UTC
+# Radar Hyperliquid — 2026-11-11 01:17 UTC
 
 No radar: 22 carteiras promissoras (19 descartadas, 104 recusadas na triagem).
 
-- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 6317 operações, resultado US$ 17,536, acerto 81 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 6319 operações, resultado US$ 17,554, acerto 81 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0xccf595171e2e56655fb4d386b7424da16be69d42`  — 666 operações, resultado US$ 26,370, acerto 96 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0x0526345bf8e09eb32256008c2844c8949ee3bb9a`  — 3033 operações, resultado US$ 14,237, acerto 83 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0x1165647bdea6b9cb851f4ce99a2a0a66ea7d1356`  — 119 operações, resultado US$ 34,473, acerto 99 %, q = 0.0059. lucro consistente (q = 0,006) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0xf24504bb689f1461fbfd89712eb4872130ed4e47`  — 394 operações, resultado US$ 88,742, acerto 54 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0x4276dcb71aa01041cecdac9eca20d621825927f1`  — 340 operações, resultado US$ 21,025, acerto 57 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Promissora** `0x988c56fe019f5573cd9cfcdebb5ef357b33118fc`  — 115 operações, resultado US$ 61,347, acerto 81 %, q = 0.0007. números fortes (q = menos de 0,001), falta confirmar no período acompanhado (0/20 operações)
-- **Promissora** `0xfcacebb9332e531c86db39659366c349794cbabb`  — 143 operações, resultado US$ 23,376, acerto 69 %, q = 0.0068. números fortes (q = 0,007), falta confirmar no período acompanhado (12/20 operações)
+- **Promissora** `0xfcacebb9332e531c86db39659366c349794cbabb`  — 144 operações, resultado US$ 22,871, acerto 69 %, q = 0.0105. números fortes (q = 0,010), falta confirmar no período acompanhado (13/20 operações)
 - **Promissora** `0x816b8dd5f08543d7486a4ec075979a263d14ec51`  — 73 operações, resultado US$ 127,053, acerto 88 %, q = 0.0029. números fortes (q = 0,003), falta confirmar no período acompanhado (11/20 operações)
 - **Promissora** `0x24fb52e17e3d4fd62a119b8f53c1a3f3bfe65c2f`  — 76 operações, resultado US$ 1,275,088, acerto 59 %, q = 0.0027. números fortes (q = 0,003), falta confirmar no período acompanhado (8/20 operações)
 - **Promissora** `0x3cc561c1276cccf56d74cc6d65c516ef88a998d2`  — 69 operações, resultado US$ 169,634, acerto 74 %, q = 0.0022. números fortes (q = 0,002), falta confirmar no período acompanhado (7/20 operações)
 - **Promissora** `0xd8fa7f9ef693ede67dd519752f32b48ef8958fe2`  — 93 operações, resultado US$ 14,890, acerto 70 %, q = 0.006. números fortes (q = 0,006), falta confirmar no período acompanhado (0/20 operações)
-- **Promissora** `0xa4db748d91c6618c77a6f4598bf6b849d5b95f49`  — 74 operações, resultado US$ 30,152, acerto 65 %, q = 0.008. números fortes (q = 0,008), falta confirmar no período acompanhado (0/20 operações)
+- **Promissora** `0xa4db748d91c6618c77a6f4598bf6b849d5b95f49`  — 74 operações, resultado US$ 30,152, acerto 65 %, q = 0.0086. números fortes (q = 0,009), falta confirmar no período acompanhado (0/20 operações)
 - **Promissora** `0x5e0730c1a09e60ccc25057203865a0550a269fea`  — 60 operações, resultado US$ 294,361, acerto 73 %, q = 0.0147. números fortes (q = 0,015), falta confirmar no período acompanhado (3/20 operações)
 - **Promissora** `0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412`  — 87 operações, resultado US$ 65,267, acerto 82 %, q = 0.0145. números fortes (q = 0,014), falta confirmar no período acompanhado (6/20 operações)
 - **Promissora** `0x45ac5eda8bf2527f09067fd16c530be6f86e8404`  — 113 operações, resultado US$ 50,527, acerto 71 %, q = 0.2052. tende a ganhar (q = 0,205), mas ainda sem constância suficiente

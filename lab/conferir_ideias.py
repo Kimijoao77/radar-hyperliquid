@@ -41,7 +41,8 @@ if "--fontes" in sys.argv:
                     ("DefiLlama (pools)", lambda: f"{len(ll.pools())} pools"),
                     ("Banco Central (CDI)", lambda: str(br.juros('cdi', 2))),
                     ("Banco Central (IPCA)", lambda: str(br.juros('ipca', 1))),
-                    ("Yahoo (HGLG11)", lambda: f"preço {br.preco('HGLG11.SA')}, {len(br.proventos('HGLG11.SA'))} proventos em 2 anos"),
+                    ("B3 (HGLG11 pelo DadosBR)", lambda: f"últimos pregões {[(x['dia'], x['c']) for x in br.b3('HGLG11', 3)]}"),
+                    ("Yahoo (HGLG11)", lambda: f"{len(br.velas('HGLG11.SA', '1mo'))} velas, {len(br.proventos('HGLG11.SA', '1mo'))} proventos"),
                     ("Yahoo (dólar)", lambda: f"BRL=X {br.preco('BRL=X')}"),
                     ("B3 (cotações do dia)", lambda: _b3())]:
         try:

@@ -14,6 +14,24 @@ RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 from lab import rodar_ideias  # noqa: E402
 
+def _b3() -> str:
+    """O arquivo público de cotações da B3 (série histórica), plano B se o Yahoo recusar."""
+    import io as _io
+    import zipfile
+    from datetime import timedelta
+    import requests
+    d = datetime.now(timezone.utc) - timedelta(days=1)
+    for _ in range(6):
+        nome = f"COTAHIST_D{d:%d%m%Y}.ZIP"
+        r = requests.get(f"https://bvmf.bmfbovespa.com.br/InstDados/SerHist/{nome}", timeout=60, headers={"User-Agent": "Mozilla/5.0"})
+        if r.status_code == 200 and r.content[:2] == b"PK":
+            linhas = zipfile.ZipFile(_io.BytesIO(r.content)).read(zipfile.ZipFile(_io.BytesIO(r.content)).namelist()[0]).decode("latin-1").splitlines()
+            hg = [x for x in linhas if x[12:24].strip() == "HGLG11"]
+            return f"{nome}: {len(linhas)} linhas; HGLG11 fechou {int(hg[0][108:121]) / 100 if hg else '?'}"
+        d -= timedelta(days=1)
+    return f"sem arquivo (último status {r.status_code})"
+
+
 if "--fontes" in sys.argv:
     # confere se cada fonte de dados responde daqui (o GitHub); o proxy da sessão do Claude bloqueia quase todas
     from lab.ideias.base import DadosBR, DadosHL, DadosLlama
@@ -24,7 +42,8 @@ if "--fontes" in sys.argv:
                     ("Banco Central (CDI)", lambda: str(br.juros('cdi', 2))),
                     ("Banco Central (IPCA)", lambda: str(br.juros('ipca', 1))),
                     ("Yahoo (HGLG11)", lambda: f"preço {br.preco('HGLG11.SA')}, {len(br.proventos('HGLG11.SA'))} proventos em 2 anos"),
-                    ("Yahoo (dólar)", lambda: f"BRL=X {br.preco('BRL=X')}")]:
+                    ("Yahoo (dólar)", lambda: f"BRL=X {br.preco('BRL=X')}"),
+                    ("B3 (cotações do dia)", lambda: _b3())]:
         try:
             print(f"ok   {nome}: {f()}")
         except Exception as ex:  # noqa: BLE001

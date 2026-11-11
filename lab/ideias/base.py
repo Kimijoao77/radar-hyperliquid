@@ -217,13 +217,41 @@ class DadosBR:
             out.append({"data": f"{a}-{m}-{d}", "valor": float(x["valor"])})
         return out
 
+    _crumb: str | None = None
+
+    def _yahoo(self, caminho: str) -> dict:
+        """O Yahoo às vezes recusa robôs: tenta os dois servidores e, se precisar, pega o cookie e o "crumb" como o
+        navegador faz (o mesmo jeito do yfinance)."""
+        ultimo = None
+        for host in ("query1", "query2"):
+            try:
+                r = S.get(f"https://{host}.finance.yahoo.com{caminho}", headers={"User-Agent": NAVEGADOR}, timeout=30)
+                if r.status_code == 200:
+                    return r.json()
+                ultimo = r.status_code
+            except requests.RequestException as ex:
+                ultimo = type(ex).__name__
+        try:
+            if DadosBR._crumb is None:
+                S.get("https://fc.yahoo.com", headers={"User-Agent": NAVEGADOR}, timeout=30)
+                c = S.get("https://query1.finance.yahoo.com/v1/test/getcrumb", headers={"User-Agent": NAVEGADOR}, timeout=30)
+                DadosBR._crumb = c.text.strip() if c.status_code == 200 and "<" not in c.text else ""
+            if DadosBR._crumb:
+                sep = "&" if "?" in caminho else "?"
+                r = S.get(f"https://query2.finance.yahoo.com{caminho}{sep}crumb={DadosBR._crumb}", headers={"User-Agent": NAVEGADOR}, timeout=30)
+                if r.status_code == 200:
+                    return r.json()
+                ultimo = r.status_code
+        except requests.RequestException as ex:
+            ultimo = type(ex).__name__
+        raise RuntimeError(f"o Yahoo recusou ({ultimo})")
+
     def velas(self, ticker: str, periodo: str = "1y", intervalo: str = "1d") -> list[dict]:
         """[{t (ms), o, h, l, c, ajustado}] da mais velha para a mais nova (ajustado = com proventos reinvestidos).
         periodo: 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, max; intervalo: 1d, 1wk, 1mo (ou 1h nos últimos 730 dias)."""
         chave = (ticker, periodo, intervalo)
         if chave not in self._velas:
-            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range={periodo}&interval={intervalo}&events=div"
-            r = _get(url, ua=NAVEGADOR)["chart"]["result"][0]
+            r = self._yahoo(f"/v8/finance/chart/{ticker}?range={periodo}&interval={intervalo}&events=div")["chart"]["result"][0]
             q = r["indicators"]["quote"][0]
             adj = ((r["indicators"].get("adjclose") or [{}])[0].get("adjclose")) or q["close"]
             self._velas[chave] = [{"t": int(t) * 1000, "o": q["open"][i], "h": q["high"][i], "l": q["low"][i], "c": q["close"][i],

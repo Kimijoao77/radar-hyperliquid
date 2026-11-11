@@ -1,5 +1,5 @@
 {
- "ate": 1794403260000,
+ "ate": 1794406860000,
  "inicio": 1793674800000,
  "variantes": {
   "seletiva": {
@@ -1055,6 +1055,14 @@
     [
      1794403260000,
      0.0251
+    ],
+    [
+     1794405600000,
+     0.02633
+    ],
+    [
+     1794406860000,
+     0.02601
     ]
    ],
    "fora": {
@@ -1068,26 +1076,6 @@
     "0xc3d101ae37bba62baf199c6d5e5d8f0eecfd200e": "segura as posições 20.9 min (mediana): curto demais para copiar com atraso"
    },
    "log": [
-    {
-     "lado": "compra",
-     "moeda": "ARB",
-     "px": 0.184749,
-     "realizado": -4.18,
-     "resultado": -4.22,
-     "t": 1794228835322,
-     "valor": 91.6,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
-    {
-     "lado": "venda",
-     "moeda": "AAVE",
-     "px": 134.097578,
-     "realizado": 0.0,
-     "resultado": -0.04,
-     "t": 1794228846990,
-     "valor": 97.16,
-     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
-    },
     {
      "lado": "venda",
      "moeda": "PUMP",
@@ -4071,6 +4059,26 @@
      "t": 1794403257496,
      "valor": 82.98,
      "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
+    },
+    {
+     "lado": "compra",
+     "moeda": "ZEC",
+     "px": 986.437268,
+     "realizado": 0.0,
+     "resultado": -0.01,
+     "t": 1794404014857,
+     "valor": 30.92,
+     "w": "0x988c56fe019f5573cd9cfcdebb5ef357b33118fc"
+    },
+    {
+     "lado": "venda",
+     "moeda": "ZEC",
+     "px": 982.670224,
+     "realizado": -3.28,
+     "resultado": -3.32,
+     "t": 1794406634217,
+     "valor": 78.97,
+     "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
     }
    ],
    "pulos": {
@@ -4086,7 +4094,7 @@
      "ordens": 8,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 849.83,
+     "patrimonio": 850.84,
      "pico": 1051.4336280950083,
      "pos": {
       "HYPE": [
@@ -4108,7 +4116,7 @@
      "ordens": 103,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1068.76,
+     "patrimonio": 1067.96,
      "pico": 1092.9339470572115,
      "pos": {
       "XRP": [
@@ -4198,7 +4206,7 @@
      "ordens": 1,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1042.69,
+     "patrimonio": 1053.33,
      "pico": 1085.0849364782034,
      "pos": {
       "BTC": [
@@ -4247,14 +4255,14 @@
     },
     "0x988c56fe019f5573cd9cfcdebb5ef357b33118fc": {
      "capital": 1000.0,
-     "colateral": 943.6598617437462,
+     "colateral": 943.6459464778678,
      "expo_max": 3.0004746974983445,
      "fator": 0.20986358866736624,
      "inicio": 1794193200000,
-     "ordens": 25,
+     "ordens": 26,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 873.17,
+     "patrimonio": 872.81,
      "pico": 1013.551190378508,
      "pos": {
       "BTC": [
@@ -4274,12 +4282,12 @@
        568.8020356034021
       ],
       "ZEC": [
-       0.3108504488387975,
-       1139.6395434169717
+       0.3421984261253657,
+       1125.6050502920405
       ]
      },
-     "taxas": 2.8935866017833205,
-     "ult": 1794380154407,
+     "taxas": 2.9075018676617117,
+     "ult": 1794403954857,
      "vivo": true,
      "w": "0x988c56fe019f5573cd9cfcdebb5ef357b33118fc"
     },
@@ -4292,7 +4300,7 @@
      "ordens": 28,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 978.93,
+     "patrimonio": 984.6,
      "pico": 1043.348580779124,
      "pos": {
       "ETH": [
@@ -4348,7 +4356,7 @@
      "ordens": 2,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 999.49,
+     "patrimonio": 996.8,
      "pico": 1006.5585985704353,
      "pos": {
       "BTC": [
@@ -4363,14 +4371,14 @@
     },
     "0xf24504bb689f1461fbfd89712eb4872130ed4e47": {
      "capital": 1000.0,
-     "colateral": 1039.212060364492,
+     "colateral": 1035.894758377117,
      "expo_max": 3.0005394698810237,
      "fator": 0.3527336860670194,
      "inicio": 1793674800000,
-     "ordens": 548,
+     "ordens": 549,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 974.35,
+     "patrimonio": 975.47,
      "pico": 1053.8742268860728,
      "pos": {
       "HYPE": [
@@ -4390,12 +4398,12 @@
        0.06392244948614478
       ],
       "ZEC": [
-       0.3059542349286316,
+       0.22559221169320762,
        1023.507495929689
       ]
      },
-     "taxas": 21.009315503289166,
-     "ult": 1794403197496,
+     "taxas": 21.044851718618034,
+     "ult": 1794406574217,
      "vivo": true,
      "w": "0xf24504bb689f1461fbfd89712eb4872130ed4e47"
     },

@@ -37,9 +37,20 @@ MINUTO = 60_000
 # 10×) ficou como regra de comparação nos testes; de 03/11 a 09/11 ele deu +5,7 % e o seletivo +8,1 % (sem a melhor
 # carteira: −6,8 % e +0,7 %).
 TODAS = {"nome": "Cópia fiel: todas", "atraso_s": 60, "teto": 10.0, "alvo": None, "parada": None, "filtro": False}
+# 12/11/2026: vários copy tradings lado a lado (pedido do João), cada um mudando UMA coisa do seletivo, para saber o que
+# pesa: o atraso, a alavancagem, quem é copiado e por quanto tempo a carteira segura a posição.
 VARIANTES = {
     "seletiva": {"nome": "Copy trading", "atraso_s": 60, "teto": 3.0, "alvo": 2.0, "parada": 0.25,
                  "filtro": True, "duracao_minima_min": 30},
+    "rapida": {"nome": "Copy rápido (10 s)", "atraso_s": 10, "teto": 3.0, "alvo": 2.0, "parada": 0.25,
+               "filtro": True, "duracao_minima_min": 30},
+    "agressiva": {"nome": "Copy agressivo (4×)", "atraso_s": 60, "teto": 6.0, "alvo": 4.0, "parada": 0.35,
+                  "filtro": True, "duracao_minima_min": 30},
+    "habilidade": {"nome": "Copy só das de habilidade", "atraso_s": 60, "teto": 3.0, "alvo": 2.0, "parada": 0.25,
+                   "filtro": True, "duracao_minima_min": 30, "classes": ["Habilidade provável"]},
+    "longas": {"nome": "Copy de quem segura horas", "atraso_s": 60, "teto": 3.0, "alvo": 2.0, "parada": 0.25,
+               "filtro": True, "duracao_minima_min": 180},
+    "todas": {**TODAS, "nome": "Copy de todas (sem filtro)"},
 }
 
 
@@ -314,6 +325,8 @@ def copiavel(c: dict, var: dict) -> tuple[bool, str]:
     """Para a variante seletiva: dá para copiar com atraso de 1 min?"""
     if not var.get("filtro"):
         return True, ""
+    if var.get("classes") and c.get("classe_nome") not in var["classes"]:
+        return False, f"é {c.get('classe_nome') or 'sem classe'}: esta cópia só segue {', '.join(var['classes']).lower()}"
     g = c.get("geral") or {}
     dur = g.get("duracao_mediana_min")
     if dur is None or dur < var["duracao_minima_min"]:

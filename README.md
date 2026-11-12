@@ -15,6 +15,9 @@ Tudo usa a API pública e gratuita da Hyperliquid (sem conta e sem chave). **Nad
 > entrou o teste de **vender moeda recém-listada** (`lab/listagens.py`); as pools concentradas (versão 5) pararam de
 > superestimar a fatia da taxa; as apostas (versão 2) refizeram o ajuste e desligam sozinhas se a regra não se confirmar.
 
+> **12/11:** o copy trading virou **seis testes lado a lado** (`lab/copia.py → VARIANTES`), cada um mudando uma coisa do
+> seletivo: atraso de 10 s, alavancagem 4×, só carteiras de habilidade provável, só quem segura 3 h ou mais, e todas sem filtro.
+
 ## Fases
 
 | Fase | O que faz | Situação |

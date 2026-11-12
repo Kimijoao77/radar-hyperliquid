@@ -193,7 +193,9 @@ def test_rodar_ponta_a_ponta(tmp_path, monkeypatch):
     assert rodar_copia.main(tmp_path, Api(), agora) == 0
     out = json.loads((tmp_path / "saida" / "copia_fiel.json").read_text())
     assert out["refeito"] is True and out["versao"] == rodar_copia.VERSAO
-    assert list(out["variantes"]) == ["seletiva"]                    # um copy trading só
+    assert list(out["variantes"]) == list(C.VARIANTES)               # vários copy tradings lado a lado (12/11)
+    assert out["variantes"]["habilidade"]["carteiras"] == 0          # a carteira de mentira não tem classe "Habilidade provável"
+    assert out["variantes"]["longas"]["carteiras"] == 0              # segura 120 min, abaixo dos 180 da variante
     todas = out["variantes"]["seletiva"]
     assert todas["carteiras"] == 1 and todas["ordens"] == 2
     assert 0.04 < todas["retorno"] < 0.05                             # 1× (2× / exposição típica 2 = fator 1) e +5 %
@@ -238,3 +240,14 @@ def test_rodar_deixa_de_fora_quem_opera_em_mercados_de_terceiros(tmp_path, monke
         v = out["variantes"][nome]
         assert v["carteiras"] == 0 and "terceiros" in v["fora"][0]["motivo"]
     importlib.reload(armazenamento)
+
+
+def test_variantes_mudam_uma_coisa_cada():
+    base = C.VARIANTES["seletiva"]
+    assert C.VARIANTES["rapida"]["atraso_s"] < base["atraso_s"]
+    assert C.VARIANTES["agressiva"]["alvo"] > base["alvo"] and C.VARIANTES["agressiva"]["teto"] > base["teto"]
+    hab = {"geral": {"duracao_mediana_min": 200}, "copiavel": {"ok": True}, "classe_nome": "Habilidade provável"}
+    pro = {**hab, "classe_nome": "Promissora"}
+    assert C.copiavel(hab, C.VARIANTES["habilidade"])[0] and not C.copiavel(pro, C.VARIANTES["habilidade"])[0]
+    assert C.copiavel(pro, C.VARIANTES["longas"])[0] and not C.copiavel({**pro, "geral": {"duracao_mediana_min": 90}}, C.VARIANTES["longas"])[0]
+    assert C.copiavel({"geral": {"duracao_mediana_min": 0.1}}, C.VARIANTES["todas"])[0]

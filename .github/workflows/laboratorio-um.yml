@@ -38,7 +38,8 @@ jobs:
         run: |
           git config user.name "radar-bot"
           git config user.email "radar-bot@users.noreply.github.com"
-          git add "saida/$LAB.json" "lab/dados/${LAB}_estado.json"
+          SAIDA="$LAB"; [ "$LAB" = "copia" ] && SAIDA="copia_fiel"     # a cópia grava saida/copia_fiel.json
+          git add "saida/$SAIDA.json" "lab/dados/${LAB}_estado.json"
           if git diff --cached --quiet; then echo "nada novo"; exit 0; fi
           git commit -q -m "Laboratório ($LAB): $(date -u +'%Y-%m-%d %H:%M') UTC"
           for i in 1 2 3 4 5; do git push -q && exit 0; sleep 5; git pull -q --rebase; done

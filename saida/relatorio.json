@@ -55,7 +55,7 @@
      "exposicao_max": 0.0,
      "exposicao_mediana": 0.0,
      "exposicao_p90": 0.0,
-     "fotos": 323,
+     "fotos": 324,
      "posicionado": 0.028
     },
     "conta_ref": 18497.92,
@@ -875,7 +875,7 @@
      "exposicao_max": 4.85,
      "exposicao_mediana": 3.0,
      "exposicao_p90": 3.37,
-     "fotos": 323,
+     "fotos": 324,
      "posicionado": 1.0
     },
     "conta_ref": 49419.14,
@@ -1682,7 +1682,7 @@
      "t1": 1794777435369
     }
    ],
-   "saldo": 1928.8,
+   "saldo": 1931.82,
    "situacao": "observando"
   },
   {
@@ -1739,7 +1739,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 324,
+     "fotos": 325,
      "posicionado": 0.0
     },
     "conta_ref": 41195.4,
@@ -2614,7 +2614,7 @@
      "exposicao_max": 8.57,
      "exposicao_mediana": 5.44,
      "exposicao_p90": 6.93,
-     "fotos": 327,
+     "fotos": 328,
      "posicionado": 1.0
     },
     "conta_ref": 87257.75,
@@ -3390,7 +3390,7 @@
      "t1": 1794623350791
     }
    ],
-   "saldo": 48725.81,
+   "saldo": 50348.48,
    "situacao": "observando"
   },
   {
@@ -3475,11 +3475,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 25,
-     "configurada_mediana": 25,
-     "exposicao_max": 25.72,
-     "exposicao_mediana": 15.99,
-     "exposicao_p90": 22.29,
-     "fotos": 171,
+     "configurada_mediana": 25.0,
+     "exposicao_max": 26.91,
+     "exposicao_mediana": 16.0,
+     "exposicao_p90": 22.61,
+     "fotos": 172,
      "posicionado": 0.985
     },
     "conta_ref": 40461.58,
@@ -3832,7 +3832,7 @@
    "dias_faltam": 53.7,
    "dias_observada": 6.3,
    "estilo": {
-    "alavancagem_mediana": 15.99,
+    "alavancagem_mediana": 16.0,
     "dias_semana": [
      9,
      14,
@@ -4228,7 +4228,7 @@
      "t1": 1794733374424
     }
    ],
-   "saldo": 32395.35,
+   "saldo": 30505.93,
    "situacao": "observando"
   },
   {
@@ -4301,8 +4301,8 @@
      "exposicao_max": 9.33,
      "exposicao_mediana": 4.89,
      "exposicao_p90": 7.52,
-     "fotos": 325,
-     "posicionado": 0.234
+     "fotos": 326,
+     "posicionado": 0.231
     },
     "conta_ref": 32172.4,
     "dia0": "2026-08-16",
@@ -5146,7 +5146,7 @@
      "exposicao_max": 14.86,
      "exposicao_mediana": 10.0,
      "exposicao_p90": 11.25,
-     "fotos": 323,
+     "fotos": 324,
      "posicionado": 0.949
     },
     "conta_ref": 10598.8,
@@ -6025,14 +6025,14 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 40,
-     "configurada_mediana": 40.0,
+     "configurada_mediana": 40,
      "exposicao_max": 39.36,
-     "exposicao_mediana": 10.4,
+     "exposicao_mediana": 10.42,
      "exposicao_p90": 20.49,
-     "fotos": 171,
+     "fotos": 172,
      "posicionado": 1.0
     },
-    "conta_ref": 28889.51,
+    "conta_ref": 28836.94,
     "dia0": "2026-09-27",
     "giro_dia": 218037.64,
     "n": 78,
@@ -6391,7 +6391,7 @@
    "dias_faltam": 53.7,
    "dias_observada": 6.3,
    "estilo": {
-    "alavancagem_mediana": 10.4,
+    "alavancagem_mediana": 10.42,
     "dias_semana": [
      11,
      18,
@@ -6800,7 +6800,7 @@
      "t1": 1794734010007
     }
    ],
-   "saldo": 22448.01,
+   "saldo": 22367.27,
    "situacao": "observando"
   },
   {
@@ -6840,7 +6840,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 327,
+     "fotos": 328,
      "posicionado": null
     },
     "conta_ref": 57964.76,
@@ -7754,7 +7754,7 @@
      "exposicao_max": 10.11,
      "exposicao_mediana": 6.32,
      "exposicao_p90": 9.3,
-     "fotos": 326,
+     "fotos": 327,
      "posicionado": 0.485
     },
     "conta_ref": 566588.08,
@@ -8627,16 +8627,16 @@
     {
      "duracao_min": 0.0,
      "entrada": 7507.155753,
-     "fills": 462,
+     "fills": 513,
      "lado": "long",
-     "liquidada": false,
+     "liquidada": true,
      "moeda": "xyz:SP500",
      "nocional": 277997.48,
      "ordens_entrada": 390,
      "parcial": false,
-     "resultado": -7.57,
-     "retorno": -3e-05,
-     "saida": 0.0,
+     "resultado": 742.56,
+     "retorno": 0.00267,
+     "saida": 7565.889583,
      "t0": 1794666315023,
      "t1": null
     },
@@ -8688,11 +8688,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 20,
-     "configurada_mediana": 20,
+     "configurada_mediana": 20.0,
      "exposicao_max": 14.89,
-     "exposicao_mediana": 8.58,
+     "exposicao_mediana": 9.15,
      "exposicao_p90": 13.0,
-     "fotos": 171,
+     "fotos": 172,
      "posicionado": 1.0
     },
     "conta_ref": 70337.69,
@@ -9098,7 +9098,7 @@
    "dias_faltam": 53.7,
    "dias_observada": 6.3,
    "estilo": {
-    "alavancagem_mediana": 8.58,
+    "alavancagem_mediana": 9.15,
     "dias_semana": [
      9,
      16,
@@ -9217,8 +9217,8 @@
    "nota": 1.71,
    "operador": {
     "nota": 52,
-    "ordens": 2375,
-    "ordens_por_dia": 24.7,
+    "ordens": 2423,
+    "ordens_por_dia": 25.2,
     "rotulo": "Indefinido",
     "sinais": [
      {
@@ -9231,7 +9231,7 @@
       "leitura": "meio-termo",
       "nome": "Horas ativas",
       "pontos": 0,
-      "valor": "13 de 24"
+      "valor": "14 de 24"
      },
      {
       "leitura": "nada de especial (o acaso dá uns 5 %)",
@@ -9581,7 +9581,7 @@
      "exposicao_max": 10.01,
      "exposicao_mediana": 9.96,
      "exposicao_p90": 9.98,
-     "fotos": 171,
+     "fotos": 172,
      "posicionado": 1.0
     },
     "conta_ref": 84687.3,
@@ -10363,11 +10363,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 6,
-     "configurada_mediana": 6.0,
+     "configurada_mediana": 6,
      "exposicao_max": 9.99,
-     "exposicao_mediana": 4.09,
-     "exposicao_p90": 7.68,
-     "fotos": 326,
+     "exposicao_mediana": 4.08,
+     "exposicao_p90": 7.67,
+     "fotos": 327,
      "posicionado": 1.0
     },
     "conta_ref": 10892.55,
@@ -10782,7 +10782,7 @@
    "dias_faltam": 47.0,
    "dias_observada": 13.0,
    "estilo": {
-    "alavancagem_mediana": 4.09,
+    "alavancagem_mediana": 4.08,
     "dias_semana": [
      15,
      16,
@@ -11177,7 +11177,7 @@
      "t1": 1793889626736
     }
    ],
-   "saldo": 7193.63,
+   "saldo": 7447.18,
    "situacao": "observando"
   },
   {
@@ -11234,7 +11234,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 326,
+     "fotos": 327,
      "posicionado": null
     },
     "conta_ref": 216909.98,
@@ -12097,7 +12097,7 @@
      "exposicao_max": 12.2,
      "exposicao_mediana": 8.39,
      "exposicao_p90": 10.58,
-     "fotos": 171,
+     "fotos": 172,
      "posicionado": 1.0
     },
     "conta_ref": 1090066.16,
@@ -14652,7 +14652,7 @@
      0.963,
      0.002479,
      0.005602,
-     4.09
+     4.08
     ],
     "0x0fe269d6d9e04ecc659b6e3d582a7f35ce419e0f": [
      0.0,
@@ -14719,12 +14719,12 @@
      21.56
     ],
     "0x7f62c09129d1cfaf76980f17d97509f94dbc6924": [
-     0.253615,
+     0.254077,
      1.0,
      1.0,
-     0.004528,
-     0.012076,
-     10.4
+     0.004537,
+     0.012098,
+     10.42
     ],
     "0x816b8dd5f08543d7486a4ec075979a263d14ec51": [
      0.0,
@@ -14756,7 +14756,7 @@
      0.976,
      0.001486,
      0.002588,
-     8.58
+     9.15
     ],
     "0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412": [
      0.448457,
@@ -14764,7 +14764,7 @@
      0.934,
      0.030459,
      0.055507,
-     15.99
+     16.0
     ],
     "0xccf595171e2e56655fb4d386b7424da16be69d42": [
      0.00321,
@@ -14814,7 +14814,7 @@
      0.963,
      0.002479,
      0.005602,
-     4.09
+     4.08
     ],
     "0x0fe269d6d9e04ecc659b6e3d582a7f35ce419e0f": [
      0.0,
@@ -14865,12 +14865,12 @@
      8.39
     ],
     "0x7f62c09129d1cfaf76980f17d97509f94dbc6924": [
-     0.30368,
+     0.304234,
      1.0,
      1.0,
-     0.004528,
-     0.012076,
-     10.4
+     0.004537,
+     0.012098,
+     10.42
     ],
     "0x9378b60ccc9855be6a9e7151391610596ed93183": [
      0.0,
@@ -14886,7 +14886,7 @@
      0.976,
      0.001486,
      0.002588,
-     8.58
+     9.15
     ],
     "0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412": [
      0.071671,
@@ -14894,7 +14894,7 @@
      0.934,
      0.030459,
      0.055507,
-     15.99
+     16.0
     ],
     "0xccf595171e2e56655fb4d386b7424da16be69d42": [
      0.023288,
@@ -14936,8 +14936,8 @@
  ],
  "descartadas": 26,
  "fila": 0,
- "gerado": 1794780642723,
- "gerado_txt": "2026-11-15 22:10 UTC",
+ "gerado": 1794784242919,
+ "gerado_txt": "2026-11-15 23:10 UTC",
  "nomes": {
   "habilidade": "Habilidade provável",
   "observando": "Em observação",
@@ -14964,10 +14964,10 @@
  },
  "ultima_coleta": {
   "carteiras": 15,
-  "em": 1794780637822,
+  "em": 1794784238072,
   "erros": 0,
   "fila": 0,
-  "fills_novos": 13,
+  "fills_novos": 51,
   "minutos": 0.1,
   "peso_gasto": 333
  },

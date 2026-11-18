@@ -1,7 +1,12 @@
 name: Sonda
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      script:
+        description: "Qual sonda (sonda ou sonda_previsoes)"
+        required: false
+        default: "sonda"
 
 permissions:
   contents: write
@@ -16,7 +21,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install requests
-      - run: python lab/sonda.py
+      - run: python lab/${{ inputs.script || 'sonda' }}.py
       - name: Guardar
         run: |
           git config user.name "radar-bot"

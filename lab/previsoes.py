@@ -44,6 +44,7 @@ TAXA_CATEGORIA = {"Cripto": 0.07, "Esportes": 0.05, "Economia": 0.05, "Política
 
 # categoria em português a partir das etiquetas (tags) do mercado
 CATEGORIAS = [
+    ("Cultura", {"tweet-markets", "mentions", "elon-tweets", "tweets"}),     # "quantos tweets" antes de política
     ("Esportes", {"sports", "nba", "nfl", "nhl", "mlb", "soccer", "football", "tennis", "esports", "ufc", "mma", "boxing",
                   "golf", "f1", "formula-1", "cricket", "basketball", "baseball", "hockey", "ncaa", "epl", "champions-league",
                   "dota-2", "counter-strike", "league-of-legends", "valorant", "games"}),

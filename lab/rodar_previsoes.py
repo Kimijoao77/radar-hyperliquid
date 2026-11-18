@@ -18,13 +18,17 @@ from lab.previsoes import (APOSTA, CAPITAL, DIA, HORA, NOVAS_POR_HORA, POR_EVENT
                            categoria, cotas_por, evento, fim_esperado, lista, ms_de, no_passado, resolucao, resumo_passado, taxa,
                            CURTISSIMOS)
 
-PAGINAS = 4                  # até 4 × 500 mercados abertos por rodada
+PAGINAS = 12                 # até 12 × 100 mercados por lista (a API devolve no máximo 100 por vez)
 PASSADO_POR_RODADA = 80      # mercados fechados medidos por rodada (cada um pede o preço de cada hora)
 PASSADO_DIAS = 30            # o passado olha os mercados que fecharam nos últimos 30 dias
 PASSADO_GUARDA = 45 * DIA
 VOLUME_PASSADO = 20000       # só mercados fechados com pelo menos US$ 20 mil negociados
 TEMPO_MAX = 4 * 60           # segundos por rodada no passado (o resto fica para a próxima hora)
 FECHADAS_GUARDA = 300
+
+
+class Recusado(Exception):
+    """A API recusou o pedido (4xx): não adianta repetir."""
 
 
 class Polymarket:
@@ -34,14 +38,17 @@ class Polymarket:
     def __init__(self):
         self.s = requests.Session()
         self.s.headers["User-Agent"] = "laboratorio-investimentos/1.0"
+        self.avisos = 0
 
     def _get(self, url, params):
         for i in range(3):
             try:
                 r = self.s.get(url, params=params, timeout=40)
-                if r.status_code == 429:
+                if r.status_code == 429 or r.status_code >= 500:
                     time.sleep(5 * (i + 1))
                     continue
+                if r.status_code >= 400:                           # pedido errado: tentar de novo não adianta
+                    raise Recusado(f"{r.status_code} {r.text[:120]}")
                 r.raise_for_status()
                 return r.json()
             except requests.RequestException as ex:
@@ -53,7 +60,7 @@ class Polymarket:
 
     def mercados(self, **params) -> list[dict]:
         out = []
-        lim = int(params.pop("limit", 500))
+        lim = int(params.pop("limit", 100))
         for pag in range(int(params.pop("paginas", 1))):
             r = self._get(f"{self.G}/markets", {**params, "limit": lim, "offset": pag * lim}) or []
             out += r
@@ -68,14 +75,23 @@ class Polymarket:
             base = [("id", x) for x in parte] + [("limit", "100"), ("include_tag", "true")]
             try:
                 r = self._get(f"{self.G}/markets", base + [("closed", "any")]) or []
-            except requests.RequestException:                      # sem o "any": abertos e fechados em separado
+            except (requests.RequestException, Recusado):         # sem o "any": abertos e fechados em separado
                 r = (self._get(f"{self.G}/markets", base + [("closed", "false")]) or []) + (self._get(f"{self.G}/markets", base + [("closed", "true")]) or [])
             out.update({str(m.get("id")): m for m in r})
         return out
 
     def historico(self, token: str, ini_ms: int, fim_ms: int) -> list[tuple[int, float]]:
-        r = self._get(f"{self.C}/prices-history", {"market": token, "startTs": ini_ms // 1000, "endTs": fim_ms // 1000, "fidelity": 60}) or {}
-        return sorted((int(p["t"]) * 1000, float(p["p"])) for p in r.get("history", []) if p.get("p") is not None)
+        """O preço de cada hora: pelo CLOB e, se ele recusar, pela API de dados (v2, até 15 dias por pedido)."""
+        try:
+            r = self._get(f"{self.C}/prices-history", {"market": token, "startTs": ini_ms // 1000, "endTs": fim_ms // 1000, "fidelity": 60}) or {}
+            return sorted((int(p["t"]) * 1000, float(p["p"])) for p in r.get("history", []) if p.get("p") is not None)
+        except Recusado as ex:
+            if self.avisos < 3:
+                print("previsoes: o CLOB recusou o histórico:", str(ex)[:140])
+                self.avisos += 1
+        r = self._get("https://data-api.polymarket.com/v2/prices-history",
+                      {"token_id": token, "start": ini_ms // 1000, "end": fim_ms // 1000, "bucket_seconds": 3600}) or {}
+        return sorted((int(p["timestamp"]) * 1000, float(p["price"])) for p in r.get("data", []) if p.get("price") is not None)
 
 
 def _iso(ms: int) -> str:
@@ -189,13 +205,13 @@ def main(raiz: Path = RAIZ, api=None, agora: int | None = None) -> int:
         c["curva"] = _afinar(c["curva"] + [[agora, round(_patrimonio(c), 4)]], agora)
 
     # 3) o passado, aos poucos: os mesmos jeitos nos mercados que já fecharam
-    medidos = 0
+    medidos = sem_hist = 0
     try:
         filtro = dict(closed="true", end_date_min=_iso(agora - PASSADO_DIAS * DIA), end_date_max=_iso(agora), volume_num_min=VOLUME_PASSADO,
                       include_tag="true", paginas=PAGINAS)
         try:
             fechados = api.mercados(**filtro, order="volumeNum", ascending="false")
-        except requests.RequestException:                           # se a ordem por volume não valer, sem ordem
+        except (requests.RequestException, Recusado):              # se a ordem por volume não valer, sem ordem
             fechados = api.mercados(**filtro)
     except Exception as ex:  # noqa: BLE001
         print("previsoes: sem a lista de fechados", str(ex)[:100])
@@ -215,6 +231,10 @@ def main(raiz: Path = RAIZ, api=None, agora: int | None = None) -> int:
             continue
         try:
             hist = api.historico(str(toks[0]), min(fech, fim) - 8 * DIA, fech)
+        except Recusado:                                            # o histórico desse mercado não vem: não pede de novo
+            est["vistos"][mid] = agora
+            sem_hist += 1
+            continue
         except Exception as ex:  # noqa: BLE001
             print("previsoes: sem histórico", mid, str(ex)[:80])
             continue
@@ -252,7 +272,7 @@ def main(raiz: Path = RAIZ, api=None, agora: int | None = None) -> int:
     print(f"previsoes: {len(abertos)} mercados abertos vistos; {fechou} apostas resolvidas; novas "
           + ", ".join(f"{v} {n}" for v, n in novas.items())
           + "; " + "; ".join(f"{v} {o['retorno']:+.2%} ({len(o['abertas'])} abertas)" for v, o in vars_out.items())
-          + f"; passado: {passado['mercados']} mercados ({medidos} novos)")
+          + f"; passado: {passado['mercados']} mercados ({medidos} novos, {sem_hist} sem histórico)")
     return 0
 
 

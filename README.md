@@ -18,6 +18,12 @@ Tudo usa a API pública e gratuita da Hyperliquid (sem conta e sem chave). **Nad
 > **12/11:** o copy trading virou **seis testes lado a lado** (`lab/copia.py → VARIANTES`), cada um mudando uma coisa do
 > seletivo: atraso de 10 s, alavancagem 4×, só carteiras de habilidade provável, só quem segura 3 h ou mais, e todas sem filtro.
 
+> **18/11:** entrou o teste de **mercados de previsão** (`lab/previsoes.py`, pedido do João: "apostas em geral, as
+> famosas previsões"). Lê os preços públicos do Polymarket e anota apostas de mentira de US$ 20 em três jeitos lado a lado
+> (quase certas a 88–97¢ até 48 h; favoritas a 65–88¢ até 7 dias; azarões a 3–15¢ até 7 dias), com o ask do livro e a
+> taxa de verdade. O mesmo filtro roda nos mercados que fecharam nos últimos 30 dias (80 por hora) e a calibração mostra
+> se o preço acerta a chance real. Sem conta e sem ordem de verdade.
+
 ## Fases
 
 | Fase | O que faz | Situação |

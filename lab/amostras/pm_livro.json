@@ -1,0 +1,48 @@
+{
+ "status": 200,
+ "url": "https://clob.polymarket.com/book?token_id=24311993416250967184934994624698800676997037532450350296031351132304163713420",
+ "corpo": {
+  "market": "0xa5de56057087074ea0d8250d3593e71edf05becf939a4291b3fbafd69d1e4613",
+  "asset_id": "24311993416250967184934994624698800676997037532450350296031351132304163713420",
+  "timestamp": "1795035418706",
+  "hash": "3f39d838a70100ce4ea8524dc09134b69ab52e37",
+  "bids": {
+   "_tamanho": 3,
+   "_amostra": [
+    {
+     "price": "0.01",
+     "size": "29875.85"
+    },
+    {
+     "price": "0.02",
+     "size": "19220.39"
+    },
+    {
+     "price": "0.03",
+     "size": "356"
+    }
+   ]
+  },
+  "asks": {
+   "_tamanho": 58,
+   "_amostra": [
+    {
+     "price": "0.99",
+     "size": "144725"
+    },
+    {
+     "price": "0.98",
+     "size": "14761"
+    },
+    {
+     "price": "0.97",
+     "size": "96331.55"
+    }
+   ]
+  },
+  "min_order_size": "5",
+  "tick_size": "0.01",
+  "neg_risk": false,
+  "last_trade_price": "0.040"
+ }
+}

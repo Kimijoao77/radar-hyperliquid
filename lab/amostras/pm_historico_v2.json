@@ -1,0 +1,32 @@
+{
+ "status": 200,
+ "url": "https://data-api.polymarket.com/v2/prices-history?token_id=24311993416250967184934994624698800676997037532450350296031351132304163713420&interval=1w&bucket_seconds=3600",
+ "corpo": {
+  "data": {
+   "_tamanho": 130,
+   "_amostra": [
+    {
+     "timestamp": 1794528000,
+     "price": 0.505,
+     "resolution_seconds": 3600
+    },
+    {
+     "timestamp": 1794531600,
+     "price": 0.5,
+     "resolution_seconds": 3600
+    },
+    {
+     "timestamp": 1794535200,
+     "price": 0.5,
+     "resolution_seconds": 3600
+    }
+   ]
+  },
+  "pagination": {
+   "limit": 10000,
+   "offset": 0,
+   "has_more": false,
+   "next_cursor": null
+  }
+ }
+}

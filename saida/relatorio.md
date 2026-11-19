@@ -1,11 +1,11 @@
-# Radar Hyperliquid — 2026-11-19 11:14 UTC
+# Radar Hyperliquid — 2026-11-19 12:14 UTC
 
-No radar: 22 carteiras promissoras (26 descartadas, 157 recusadas na triagem).
+No radar: 21 carteiras promissoras (27 descartadas, 157 recusadas na triagem).
 
-- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 7968 operações, resultado US$ 23,244, acerto 82 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0xccf595171e2e56655fb4d386b7424da16be69d42`  — 744 operações, resultado US$ 30,909, acerto 97 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0x0526345bf8e09eb32256008c2844c8949ee3bb9a`  — 3151 operações, resultado US$ 16,199, acerto 83 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0xf24504bb689f1461fbfd89712eb4872130ed4e47`  — 429 operações, resultado US$ 92,560, acerto 53 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 7976 operações, resultado US$ 23,252, acerto 82 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0xccf595171e2e56655fb4d386b7424da16be69d42`  — 745 operações, resultado US$ 30,946, acerto 97 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x0526345bf8e09eb32256008c2844c8949ee3bb9a`  — 3152 operações, resultado US$ 16,200, acerto 83 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0xf24504bb689f1461fbfd89712eb4872130ed4e47`  — 430 operações, resultado US$ 92,414, acerto 53 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412`  — 133 operações, resultado US$ 113,116, acerto 83 %, q = 0.0014. lucro consistente (q = 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0x4276dcb71aa01041cecdac9eca20d621825927f1`  — 352 operações, resultado US$ 21,252, acerto 56 %, q = 0.0006. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0xfcacebb9332e531c86db39659366c349794cbabb`  — 155 operações, resultado US$ 20,386, acerto 67 %, q = 0.0254. lucro consistente (q = 0,025) e continuou ganhando depois que entrou no radar
@@ -18,7 +18,6 @@ No radar: 22 carteiras promissoras (26 descartadas, 157 recusadas na triagem).
 - **Promissora** `0xca4336bba924332e7f1a08db0cd91d456d5cd918`  — 136 operações, resultado US$ 80,463, acerto 52 %, q = 0.0546. números fortes (q = 0,055), falta confirmar no período acompanhado (0/20 operações)
 - **Promissora** `0xf93d2fb3354b5091e7cd042e3686e287153b73d6`  — 46 operações, resultado US$ 55,671, acerto 56 %, q = 0.0666. tende a ganhar (q = 0,067), mas ainda sem constância suficiente
 - **Promissora** `0xa4db748d91c6618c77a6f4598bf6b849d5b95f49`  — 78 operações, resultado US$ 25,652, acerto 63 %, q = 0.058. números fortes (q = 0,058), falta confirmar no período acompanhado (2/20 operações)
-- **Promissora** `0x5b4de68d586678c9ddb21d7a655fbf61957cbba2`  — 192 operações, resultado US$ 29,231, acerto 52 %, q = 0.0022. tende a ganhar (q = 0,002), mas ainda sem constância suficiente
 - **Promissora** `0x9378b60ccc9855be6a9e7151391610596ed93183`  — 47 operações, resultado US$ 48,268, acerto 60 %, q = 0.0749. números fortes (q = 0,075), falta confirmar no período acompanhado (4/20 operações)
 - **Promissora** `0xd5cdced12319e63668d5fbd6e9f14fbae195edf3`  — 33 operações, resultado US$ 96,980, acerto 73 %, q = 0.0749. tende a ganhar (q = 0,075), mas ainda sem constância suficiente
 - **Promissora** `0x0cdf0ab9ead733ecf321d09432b5208adae2902f`  — 100 operações, resultado US$ 11,528, acerto 88 %, q = 0.1003. tende a ganhar (q = 0,100), mas ainda sem constância suficiente

@@ -1,5 +1,5 @@
 {
- "ate": 1795093860000,
+ "ate": 1795097460000,
  "inicio": 1793674800000,
  "variantes": {
   "agressiva": {
@@ -2271,6 +2271,14 @@
     [
      1795093860000,
      -0.0009
+    ],
+    [
+     1795096800000,
+     -0.00047
+    ],
+    [
+     1795097460000,
+     2e-05
     ]
    ],
    "fora": {
@@ -2286,16 +2294,6 @@
     "0xf93d2fb3354b5091e7cd042e3686e287153b73d6": "96 % das ordens em mercados de terceiros (xyz:…), que têm saldo separado: não dá para copiar na proporção certa"
    },
    "log": [
-    {
-     "lado": "venda",
-     "moeda": "ZRO",
-     "px": 1.482173,
-     "realizado": -14.55,
-     "resultado": -14.72,
-     "t": 1794666351004,
-     "valor": 379.47,
-     "w": "0x24fb52e17e3d4fd62a119b8f53c1a3f3bfe65c2f"
-    },
     {
      "lado": "venda",
      "moeda": "BTC",
@@ -5297,6 +5295,16 @@
      "t": 1795093126876,
      "valor": 64.84,
      "w": "0xca4336bba924332e7f1a08db0cd91d456d5cd918"
+    },
+    {
+     "lado": "compra",
+     "moeda": "HYPE",
+     "px": 68.758152,
+     "realizado": 0.0,
+     "resultado": -2.23,
+     "t": 1795096451577,
+     "valor": 4962.06,
+     "w": "0x9378b60ccc9855be6a9e7151391610596ed93183"
     }
    ],
    "pulos": {
@@ -5448,8 +5456,8 @@
      "ordens": 26,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1044.61,
-     "pico": 1059.9281927060504,
+     "patrimonio": 1064.21,
+     "pico": 1064.2072483170778,
      "pos": {
       "NEAR": [
        -768.2397473961882,
@@ -5467,18 +5475,23 @@
     },
     "0x9378b60ccc9855be6a9e7151391610596ed93183": {
      "capital": 1000.0,
-     "colateral": 912.9515497708111,
+     "colateral": 910.7186242062814,
      "expo_max": 6.034404250674583,
      "fator": 1.0,
      "inicio": 1794193200000,
-     "ordens": 8,
+     "ordens": 9,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 912.95,
+     "patrimonio": 895.34,
      "pico": 1000.0,
-     "pos": {},
-     "taxas": 9.251355760002967,
-     "ult": 1794709095676,
+     "pos": {
+      "HYPE": [
+       72.16681446938311,
+       68.75815215830264
+      ]
+     },
+     "taxas": 11.484281324532596,
+     "ult": 1795096391577,
      "vivo": true,
      "w": "0x9378b60ccc9855be6a9e7151391610596ed93183"
     },
@@ -5508,7 +5521,7 @@
      "ordens": 251,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 936.02,
+     "patrimonio": 930.72,
      "pico": 1265.250687898224,
      "pos": {
       "ETH": [
@@ -5530,8 +5543,8 @@
      "ordens": 22,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1111.84,
-     "pico": 1118.1290771040913,
+     "patrimonio": 1131.77,
+     "pico": 1131.7737315681227,
      "pos": {
       "BTC": [
        0.03963032120263215,
@@ -7903,6 +7916,14 @@
     [
      1795093860000,
      -0.00484
+    ],
+    [
+     1795096800000,
+     -0.00571
+    ],
+    [
+     1795097460000,
+     -0.00501
     ]
    ],
    "fora": {
@@ -10967,7 +10988,7 @@
      "ordens": 237,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 985.36,
+     "patrimonio": 982.5,
      "pico": 1139.5392394616983,
      "pos": {
       "ETH": [
@@ -11006,7 +11027,7 @@
      "ordens": 753,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 992.68,
+     "patrimonio": 994.69,
      "pico": 1054.2936260854638,
      "pos": {
       "PUMP": [
@@ -13315,6 +13336,14 @@
     [
      1795093860000,
      -0.01645
+    ],
+    [
+     1795096800000,
+     -0.01579
+    ],
+    [
+     1795097460000,
+     -0.0158
     ]
    ],
    "fora": {
@@ -13335,16 +13364,6 @@
     "0xf93d2fb3354b5091e7cd042e3686e287153b73d6": "segura as posições 62.4 min (mediana): curto demais para copiar com atraso"
    },
    "log": [
-    {
-     "lado": "compra",
-     "moeda": "NEAR",
-     "px": 3.653257,
-     "realizado": -55.83,
-     "resultado": -56.9,
-     "t": 1794357530522,
-     "valor": 2385.04,
-     "w": "0xfcacebb9332e531c86db39659366c349794cbabb"
-    },
     {
      "lado": "venda",
      "moeda": "ZEC",
@@ -16349,6 +16368,16 @@
      "t": 1795093126876,
      "valor": 33.11,
      "w": "0xca4336bba924332e7f1a08db0cd91d456d5cd918"
+    },
+    {
+     "lado": "compra",
+     "moeda": "HYPE",
+     "px": 68.758152,
+     "realizado": 0.0,
+     "resultado": -1.28,
+     "t": 1795096451577,
+     "valor": 2842.24,
+     "w": "0x9378b60ccc9855be6a9e7151391610596ed93183"
     }
    ],
    "pulos": {
@@ -16466,7 +16495,7 @@
      "ordens": 24,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 999.55,
+     "patrimonio": 1008.53,
      "pico": 1040.342281269086,
      "pos": {
       "ZEC": [
@@ -16481,18 +16510,23 @@
     },
     "0x9378b60ccc9855be6a9e7151391610596ed93183": {
      "capital": 1000.0,
-     "colateral": 946.940770376095,
+     "colateral": 945.6617611510673,
      "expo_max": 3.008576473739277,
      "fator": 1.0,
      "inicio": 1794193200000,
-     "ordens": 8,
+     "ordens": 9,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 946.94,
+     "patrimonio": 936.85,
      "pico": 1000.0,
-     "pos": {},
-     "taxas": 5.314102763479834,
-     "ult": 1794709095676,
+     "pos": {
+      "HYPE": [
+       41.33681073540375,
+       68.75815215830264
+      ]
+     },
+     "taxas": 6.593111988507566,
+     "ult": 1795096391577,
      "vivo": true,
      "w": "0x9378b60ccc9855be6a9e7151391610596ed93183"
     },
@@ -16522,8 +16556,8 @@
      "ordens": 21,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1060.22,
-     "pico": 1063.2124033671548,
+     "patrimonio": 1069.77,
+     "pico": 1069.771271400502,
      "pos": {
       "BTC": [
        0.01986284321574328,
@@ -18861,6 +18895,14 @@
     [
      1795093860000,
      -0.02336
+    ],
+    [
+     1795096800000,
+     -0.02306
+    ],
+    [
+     1795097460000,
+     -0.0229
     ]
    ],
    "fora": {
@@ -18876,16 +18918,6 @@
     "0xf93d2fb3354b5091e7cd042e3686e287153b73d6": "96 % das ordens em mercados de terceiros (xyz:…), que têm saldo separado: não dá para copiar na proporção certa"
    },
    "log": [
-    {
-     "lado": "venda",
-     "moeda": "BTC",
-     "px": 63526.036223,
-     "realizado": 0.0,
-     "resultado": -0.03,
-     "t": 1794696655597,
-     "valor": 65.22,
-     "w": "0x7f62c09129d1cfaf76980f17d97509f94dbc6924"
-    },
     {
      "lado": "compra",
      "moeda": "HYPE",
@@ -21876,6 +21908,16 @@
      "t": 1795093076876,
      "valor": 33.49,
      "w": "0xca4336bba924332e7f1a08db0cd91d456d5cd918"
+    },
+    {
+     "lado": "compra",
+     "moeda": "HYPE",
+     "px": 68.749269,
+     "realizado": 0.0,
+     "resultado": -1.28,
+     "t": 1795096401577,
+     "valor": 2854.78,
+     "w": "0x9378b60ccc9855be6a9e7151391610596ed93183"
     }
    ],
    "pulos": {
@@ -22027,7 +22069,7 @@
      "ordens": 25,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 999.28,
+     "patrimonio": 1008.32,
      "pico": 1043.0198405759152,
      "pos": {
       "NEAR": [
@@ -22046,18 +22088,23 @@
     },
     "0x9378b60ccc9855be6a9e7151391610596ed93183": {
      "capital": 1000.0,
-     "colateral": 951.118866961762,
-     "expo_max": 3.0085764737392755,
+     "colateral": 949.8342144861284,
+     "expo_max": 3.008576473739276,
      "fator": 1.0,
      "inicio": 1794193200000,
-     "ordens": 8,
+     "ordens": 9,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 951.12,
+     "patrimonio": 941.35,
      "pico": 1000.0,
-     "pos": {},
-     "taxas": 5.303628032465214,
-     "ult": 1794709095676,
+     "pos": {
+      "HYPE": [
+       41.52456185061789,
+       68.74926915437757
+      ]
+     },
+     "taxas": 6.5882805080987925,
+     "ult": 1795096391577,
      "vivo": true,
      "w": "0x9378b60ccc9855be6a9e7151391610596ed93183"
     },
@@ -22087,7 +22134,7 @@
      "ordens": 239,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 885.62,
+     "patrimonio": 883.14,
      "pico": 1046.3003712040056,
      "pos": {
       "ETH": [
@@ -22109,8 +22156,8 @@
      "ordens": 21,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1061.54,
-     "pico": 1063.6669480440721,
+     "patrimonio": 1071.11,
+     "pico": 1071.1121163227765,
      "pos": {
       "BTC": [
        0.019921596789986735,
@@ -22186,7 +22233,7 @@
      "ordens": 751,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 983.18,
+     "patrimonio": 985.16,
      "pico": 1055.9484925494464,
      "pos": {
       "PUMP": [
@@ -24495,6 +24542,14 @@
     [
      1795093860000,
      -0.01878
+    ],
+    [
+     1795096800000,
+     -0.01854
+    ],
+    [
+     1795097460000,
+     -0.01836
     ]
    ],
    "fora": {
@@ -24510,16 +24565,6 @@
     "0xf93d2fb3354b5091e7cd042e3686e287153b73d6": "96 % das ordens em mercados de terceiros (xyz:…), que têm saldo separado: não dá para copiar na proporção certa"
    },
    "log": [
-    {
-     "lado": "venda",
-     "moeda": "BTC",
-     "px": 63336.805163,
-     "realizado": 0.0,
-     "resultado": -0.04,
-     "t": 1794696705597,
-     "valor": 94.25,
-     "w": "0x7f62c09129d1cfaf76980f17d97509f94dbc6924"
-    },
     {
      "lado": "compra",
      "moeda": "HYPE",
@@ -27510,6 +27555,16 @@
      "t": 1795093126876,
      "valor": 33.11,
      "w": "0xca4336bba924332e7f1a08db0cd91d456d5cd918"
+    },
+    {
+     "lado": "compra",
+     "moeda": "HYPE",
+     "px": 68.758152,
+     "realizado": 0.0,
+     "resultado": -1.28,
+     "t": 1795096451577,
+     "valor": 2842.24,
+     "w": "0x9378b60ccc9855be6a9e7151391610596ed93183"
     }
    ],
    "pulos": {
@@ -27661,7 +27716,7 @@
      "ordens": 24,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 999.55,
+     "patrimonio": 1008.53,
      "pico": 1040.342281269086,
      "pos": {
       "ZEC": [
@@ -27676,18 +27731,23 @@
     },
     "0x9378b60ccc9855be6a9e7151391610596ed93183": {
      "capital": 1000.0,
-     "colateral": 946.940770376095,
+     "colateral": 945.6617611510673,
      "expo_max": 3.008576473739277,
      "fator": 1.0,
      "inicio": 1794193200000,
-     "ordens": 8,
+     "ordens": 9,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 946.94,
+     "patrimonio": 936.85,
      "pico": 1000.0,
-     "pos": {},
-     "taxas": 5.314102763479834,
-     "ult": 1794709095676,
+     "pos": {
+      "HYPE": [
+       41.33681073540375,
+       68.75815215830264
+      ]
+     },
+     "taxas": 6.593111988507566,
+     "ult": 1795096391577,
      "vivo": true,
      "w": "0x9378b60ccc9855be6a9e7151391610596ed93183"
     },
@@ -27717,7 +27777,7 @@
      "ordens": 239,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 985.94,
+     "patrimonio": 983.19,
      "pico": 1136.3338382076379,
      "pos": {
       "ETH": [
@@ -27739,8 +27799,8 @@
      "ordens": 21,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1060.22,
-     "pico": 1063.2124033671548,
+     "patrimonio": 1069.77,
+     "pico": 1069.771271400502,
      "pos": {
       "BTC": [
        0.01986284321574328,
@@ -27816,7 +27876,7 @@
      "ordens": 753,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 992.68,
+     "patrimonio": 994.69,
      "pico": 1054.2936260854638,
      "pos": {
       "PUMP": [
@@ -30125,6 +30185,14 @@
     [
      1795093860000,
      -0.17092
+    ],
+    [
+     1795096800000,
+     -0.16992
+    ],
+    [
+     1795097460000,
+     -0.16903
     ]
    ],
    "fora": {
@@ -30137,16 +30205,6 @@
     "0xf93d2fb3354b5091e7cd042e3686e287153b73d6": "96 % das ordens em mercados de terceiros (xyz:…), que têm saldo separado: não dá para copiar na proporção certa"
    },
    "log": [
-    {
-     "lado": "venda",
-     "moeda": "STRK",
-     "px": 0.034382,
-     "realizado": 0.0,
-     "resultado": -0.03,
-     "t": 1794750178005,
-     "valor": 66.75,
-     "w": "0x3e7c16408c6691e0218167cee78bec7ebad03909"
-    },
     {
      "lado": "compra",
      "moeda": "STRK",
@@ -33137,6 +33195,16 @@
      "t": 1795093126876,
      "valor": 97.07,
      "w": "0xca4336bba924332e7f1a08db0cd91d456d5cd918"
+    },
+    {
+     "lado": "compra",
+     "moeda": "HYPE",
+     "px": 68.758152,
+     "realizado": 0.0,
+     "resultado": -2.17,
+     "t": 1795096451577,
+     "valor": 4822.12,
+     "w": "0x9378b60ccc9855be6a9e7151391610596ed93183"
     }
    ],
    "pulos": {
@@ -33156,7 +33224,7 @@
      "pico": 1000.0,
      "pos": {},
      "taxas": 3.2303836276209363,
-     "ult": 1795087671565,
+     "ult": 1795094689283,
      "vivo": true,
      "w": "0x0526345bf8e09eb32256008c2844c8949ee3bb9a"
     },
@@ -33224,7 +33292,7 @@
      "pico": 1000.0,
      "pos": {},
      "taxas": 26.36125514057146,
-     "ult": 1795093265585,
+     "ult": 1795095693253,
      "vivo": true,
      "w": "0x3e7c16408c6691e0218167cee78bec7ebad03909"
     },
@@ -33339,8 +33407,8 @@
      "ordens": 28,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 1052.83,
-     "pico": 1072.169558602948,
+     "patrimonio": 1072.58,
+     "pico": 1072.5831417798217,
      "pos": {
       "NEAR": [
        -774.2862146498278,
@@ -33358,18 +33426,23 @@
     },
     "0x9378b60ccc9855be6a9e7151391610596ed93183": {
      "capital": 1000.0,
-     "colateral": 887.2042149357046,
+     "colateral": 885.0342630111082,
      "expo_max": 10.095934089703889,
      "fator": 1.0,
      "inicio": 1794193200000,
-     "ordens": 8,
+     "ordens": 9,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 887.2,
+     "patrimonio": 870.09,
      "pico": 1000.0,
-     "pos": {},
-     "taxas": 12.668681273686463,
-     "ult": 1794709095676,
+     "pos": {
+      "HYPE": [
+       70.13154421151161,
+       68.75815215830264
+      ]
+     },
+     "taxas": 14.838633198282793,
+     "ult": 1795096391577,
      "vivo": true,
      "w": "0x9378b60ccc9855be6a9e7151391610596ed93183"
     },
@@ -33399,7 +33472,7 @@
      "ordens": 255,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 767.66,
+     "patrimonio": 759.12,
      "pico": 1805.6877872845773,
      "pos": {
       "ETH": [
@@ -33421,7 +33494,7 @@
      "ordens": 21,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 978.61,
+     "patrimonio": 1019.31,
      "pico": 1145.0790947072344,
      "pos": {
       "BTC": [
@@ -33498,7 +33571,7 @@
      "ordens": 790,
      "parou": null,
      "parou_em": null,
-     "patrimonio": 857.63,
+     "patrimonio": 862.54,
      "pico": 1141.6806374962089,
      "pos": {
       "PUMP": [

@@ -1,4 +1,4 @@
-# Radar Hyperliquid — 2026-11-19 15:14 UTC
+# Radar Hyperliquid — 2026-11-19 15:19 UTC
 
 No radar: 21 carteiras promissoras (27 descartadas, 157 recusadas na triagem).
 

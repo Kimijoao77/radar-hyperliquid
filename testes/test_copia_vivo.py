@@ -339,3 +339,12 @@ def test_saida_no_formato_do_laboratorio_e_resumo(mundo):
     r = m.robo.resumo(m.t)
     assert r["carteiras"] == 1 and r["mudancas_1h"] == 1 and set(r["retorno"]) == set(C.VARIANTES)
     assert r["volta_s"] == 3.0 and r["partiu"] == s["semente"]["t"]
+
+
+def test_curva_um_ponto_por_minuto_nas_ultimas_horas_e_um_a_cada_dez_minutos_antes():
+    agora = 100 * V.HORA
+    velha = [[agora - 5 * V.HORA + i * 60_000, i] for i in range(31)]            # 31 pontos de minuto em minuto, há 5 h
+    nova = [[agora - 10 * 60_000 + i * 60_000, i] for i in range(10)]
+    c = V.afinar(velha + nova, agora)
+    assert [p[1] for p in c[:4]] == [0, 10, 20, 30] and c[4:] == nova
+    assert V.afinar(c, agora) == c

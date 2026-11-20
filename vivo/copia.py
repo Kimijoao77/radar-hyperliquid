@@ -46,7 +46,9 @@ MAX_TERCEIROS = 0.8           # igual ao laboratório: carteira quase toda em me
 MAX_LOG = 300
 MAX_CURVA = 2000
 MAX_MUDANCAS = 400
-PONTO_CURVA_MS = 10 * 60_000
+PONTO_CURVA_MS = 60_000       # um ponto da curva por minuto nas últimas horas: o Nexus compara o gêmeo com o normal no
+RECENTE_MS = 3 * 3_600_000    # mesmo instante (o da última rodada do normal), e precisa do valor daquele minuto
+PONTO_ANTIGO_MS = 10 * 60_000  # depois de 3 h fica um ponto a cada 10 minutos
 GRAVAR_MS = 60_000
 HORA = 3_600_000
 SEMEAR_POR_VOLTA = 3          # carteiras acertadas por volta na partida (cada uma custa uma consulta de fills)
@@ -65,6 +67,15 @@ def _ler(caminho: Path, padrao):
         return json.loads(caminho.read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError):
         return padrao
+
+
+def afinar(curva: list, agora: int) -> list:
+    """Guarda todos os pontos das últimas horas e, dos mais velhos, um a cada 10 minutos."""
+    out: list = []
+    for p in curva:
+        if p[0] > agora - RECENTE_MS or not out or p[0] - out[-1][0] >= PONTO_ANTIGO_MS - 1000:
+            out.append(p)
+    return out
 
 
 def _reduzir(curva: list, n: int = 400) -> list:
@@ -480,8 +491,7 @@ class CopiaAoVivo:
         for nome, v in self.est["variantes"].items():
             ativas = list(v["subs"].values())
             if ativas and (not v["curva"] or t - v["curva"][-1][0] >= PONTO_CURVA_MS):
-                v["curva"].append([t, C.resumo(ativas)["retorno"]])
-                del v["curva"][:-MAX_CURVA]
+                v["curva"] = afinar(v["curva"] + [[t, C.resumo(ativas)["retorno"]]], t)[-MAX_CURVA:]
         try:
             self.medir()
         except Exception:  # noqa: BLE001  (medida é extra: nunca derruba a cópia)
@@ -536,7 +546,9 @@ class CopiaAoVivo:
             subs.sort(key=lambda s: -s["retorno"])
             saida["variantes"][nome] = {
                 "nome": C.VARIANTES[nome]["nome"], "regras": {k: var[k] for k in var if k != "nome"},
-                **C.resumo(list(v["subs"].values())), "curva": _reduzir(v["curva"]), "subcontas": subs,
+                **C.resumo(list(v["subs"].values())),
+                "curva": (_reduzir([p for p in v["curva"] if p[0] <= agora - RECENTE_MS], 300)
+                          + [p for p in v["curva"] if p[0] > agora - RECENTE_MS]), "subcontas": subs,
                 "ordens_recentes": v["log"][-150:], "pulos": v["pulos"], "na_fila": len(v["fila"]),
                 "custo_do_atraso_bps": self.custo_do_atraso(v["log"]),
                 "fora": [{"w": w, "motivo": m} for w, m in v["fora"].items()],

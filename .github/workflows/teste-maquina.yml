@@ -1,0 +1,32 @@
+name: Teste da máquina
+
+# Instala o motor num Ubuntu limpo do GitHub exatamente como a VPS faz (vivo/instalar.sh), para saber que o texto de
+# instalação funciona antes de alguém pagar uma máquina. Só roda quando chamado à mão.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  instalar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Instala como na VPS
+        run: |
+          curl -fsSL "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/vivo/instalar.sh" -o /tmp/instalar.sh
+          sudo env TOKEN="${{ github.token }}" bash /tmp/instalar.sh
+      - name: Confere o motor, a publicação e o agendamento
+        run: |
+          systemctl is-active radar-vivo.service radar-atualiza.timer
+          sleep 70
+          sudo cat /opt/radar/saida/maquina.json; echo
+          sudo env PUBLICAR=1 bash /opt/radar/vivo/atualizar.sh
+          sudo runuser -u radar -- git -C /opt/radar log --oneline -3
+          sudo runuser -u radar -- git -C /opt/radar status -sb | head -3
+          systemctl list-timers radar-atualiza.timer --no-pager
+          sudo journalctl -u radar-vivo -n 15 --no-pager
+      - name: Log da instalação
+        if: always()
+        run: sudo tail -n 80 /var/log/radar-instalar.log || true

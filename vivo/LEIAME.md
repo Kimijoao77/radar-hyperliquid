@@ -16,6 +16,15 @@ de corretora nem de carteira, e nenhuma ordem de verdade é enviada.
   preço do livro de ofertas daquele instante (ao vivo não existe a espera de 60 s ou 10 s que o laboratório supõe).
   Mede o atraso de detecção e o custo do atraso. Resultado em `vivo/gemeo/saida/copia_fiel.json`; estado em
   `vivo/dados/copia_estado.json`.
+- **Diário das medidas** (`vivo/dados/medidas.json`, desde 20/11/2026): o estado só guarda as últimas 400 mudanças
+  (meio dia), e essas medidas não dá para refazer depois. O diário guarda um resumo por dia (UTC), para sempre:
+  mudanças vistas, atraso de detecção e custo do atraso (n, mediana, média, p90 e pior) e o tamanho médio da ordem.
+  Fica fora do estado do robô, então não é zerado quando as regras mudam de versão. É com ele que o "ambiente" da
+  evolução (evolucao-hyperliquid: hoje 60 s e 0,05 %, números supostos) vai ser acertado com números medidos.
+  **Pendente (decidido com o João em 20/11):** a evolução não muda por enquanto. Com umas 2 semanas de diário, se a
+  máquina se mostrar melhor que o normal, nasce uma segunda população na evolução, ao lado da atual (que não é
+  tocada), já com o atraso e o custo medidos aqui. Primeiras horas (56 medidas): atraso mediano de 1,5 s; custo
+  mediano de 0,02 %, médio de 0,06 %, e 10 % das ordens saíram 0,29 % ou mais piores que as da carteira.
 - `gemeos.py`: os gêmeos dos outros laboratórios (grade/tendência/reversão, cofres, pools concentradas, listagens,
   previsões), um por vez, cada um num processo separado e no ritmo da máquina. Os que decidem em velas de 1 hora
   (grade, tendência, reversão, listagens) dão o mesmo resultado do normal por construção; onde o ritmo importa

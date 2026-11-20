@@ -327,6 +327,105 @@ def test_mede_o_atraso_de_deteccao_e_o_custo_do_atraso(mundo):
     assert ("fills", W1) not in m.api.pedidos                # cada mudança é medida uma vez só
 
 
+DIA = 86_400_000
+
+
+def test_diario_das_medidas_um_resumo_por_dia_que_sobrevive_ao_estado_zerado(mundo):
+    m = mundo
+    arq = m.raiz / "vivo" / "dados" / "medidas.json"
+    m.volta()
+    t_fill = m.t + 1_200
+    m.api.fills[W1] = [{"coin": "BTC", "time": t_fill, "px": "100.1", "sz": "40", "side": "B"}]
+    m.api.contas[W1] = (10_000.0, {"BTC": 40.0})
+    m.volta(3)
+    m.volta(10)                                              # mede: 1,8 s de atraso; a cópia comprou a 100,01 e ela a 100,1
+    hoje = m.robo.medidas.d["hoje"]
+    assert hoje["mudancas"] == 1 and hoje["atraso_ms"] == [1800] and hoje["sem_fill"] == 0
+    assert hoje["custo_bps"] == [pytest.approx(-9.0, abs=0.1)] and hoje["valor"] > 0     # uma medida por mudança, não por cópia
+    m.volta(3)
+    assert m.robo.medidas.d["hoje"]["atraso_ms"] == [1800]   # cada mudança entra uma vez só
+    m.robo.gravar(m.t)
+    dia1 = V.dia_de(m.t)
+    assert json.loads(arq.read_text())["hoje"]["dia"] == dia1
+    assert m.robo.montar_saida(m.t)["maquina"]["diario"]["hoje"]["atraso_ms"]["mediana"] == 1800
+
+    # no dia seguinte: uma mudança sem ordem dela (ajuste da bolsa). O dia que acabou vira resumo e as cruas saem
+    m.t += DIA
+    m.api.contas[W1] = (10_000.0, {"BTC": 30.0})
+    m.volta(3)
+    m.volta(10)
+    m.robo.gravar(m.t)
+    d = json.loads(arq.read_text())
+    assert d["dias"][dia1]["valor_medio"] > 100              # o tamanho médio da ordem da cópia (US$)
+    assert d["dias"][dia1] == {"mudancas": 1, "sem_fill": 0, "valor_medio": d["dias"][dia1]["valor_medio"],
+                               "atraso_ms": {"n": 1, "mediana": 1800, "media": 1800, "p90": 1800, "pior": 1800},
+                               "custo_bps": {"n": 1, "mediana": pytest.approx(-9.0, abs=0.1), "media": pytest.approx(-9.0, abs=0.1),
+                                             "p90": pytest.approx(-9.0, abs=0.1), "pior": pytest.approx(-9.0, abs=0.1)}}
+    assert d["hoje"]["dia"] == V.dia_de(m.t) and d["hoje"]["mudancas"] == 1 and d["hoje"]["sem_fill"] == 1
+    assert d["hoje"]["atraso_ms"] == [] and d["hoje"]["custo_bps"] == []
+
+    # o estado do robô é zerado (regras novas, máquina refeita): o diário continua de onde estava
+    m.robo.arq_estado.unlink()
+    novo = m.novo()
+    assert novo.est.get("mudancas") == [] and novo.medidas.d["dias"][dia1]["atraso_ms"]["n"] == 1
+    assert novo.medidas.resumo()["desde"] == dia1 and novo.medidas.resumo()["dias"] == 1
+
+
+def test_diario_novo_comeca_com_as_medidas_que_o_estado_ainda_guarda(mundo):
+    m = mundo
+    m.volta()
+    m.api.fills[W1] = [{"coin": "BTC", "time": m.t + 1_200, "px": "100.1", "sz": "40", "side": "B"}]
+    m.api.contas[W1] = (10_000.0, {"BTC": 40.0})
+    m.volta(3)
+    m.volta(10)
+    m.api.contas[W1] = (10_000.0, {"BTC": 30.0})             # outra mudança, ainda na fila para medir
+    m.volta(3)
+    m.robo.gravar(m.t)
+    (m.raiz / "vivo" / "dados" / "medidas.json").unlink()    # como na máquina, que já media antes de o diário existir
+    novo = m.novo()
+    hoje = novo.medidas.d["hoje"]
+    assert hoje["mudancas"] == 2 and hoje["atraso_ms"] == [1800] and hoje["custo_bps"] == [pytest.approx(-9.0, abs=0.1)]
+    novo.gravar(m.t)
+    assert m.novo().medidas.d["hoje"]["mudancas"] == 2       # com o arquivo no lugar, não entra de novo
+
+
+def test_diario_com_defeito_nao_derruba_a_copia(mundo):
+    m = mundo
+    m.volta()
+
+    def quebra(*a, **k):
+        raise RuntimeError("disco cheio")
+    m.robo.medidas.mudanca = m.robo.medidas.medida = m.robo.medidas.gravar = quebra
+    m.api.fills[W1] = [{"coin": "BTC", "time": m.t + 1_200, "px": "100.1", "sz": "40", "side": "B"}]
+    m.api.contas[W1] = (10_000.0, {"BTC": 40.0})
+    m.volta(3)
+    m.volta(10)
+    m.robo.gravar(m.t)
+    assert m.sub("seletiva")["pos"]["BTC"][0] > 0 and m.robo.arq_estado.exists()     # copiou e guardou o estado assim mesmo
+
+
+def test_diario_medida_atrasada_de_antes_da_meia_noite_nao_reabre_o_dia_fechado(tmp_path):
+    d = V.Medidas(tmp_path / "medidas.json")
+    t = 5 * DIA + 1000
+    d.mudanca(t - 2000)                                      # 23:59:59 do dia 5
+    d.medida(t - 2000, 900, 1.5, 300.0)
+    d.mudanca(t)                                             # 00:00:01 do dia 6
+    d.medida(t - 2000, 1100, 2.5, 500.0)                     # medida, já no dia 6, de uma mudança do dia 5
+    assert sorted(d.d["dias"]) == [V.dia_de(t - 2000)] and d.d["dias"][V.dia_de(t - 2000)]["atraso_ms"]["n"] == 1
+    assert d.d["hoje"]["dia"] == V.dia_de(t) and d.d["hoje"]["atraso_ms"] == [1100] and d.d["hoje"]["mudancas"] == 1
+    d.gravar()
+    assert V.Medidas(tmp_path / "medidas.json").d == d.d     # relê igual
+    (tmp_path / "medidas.json").write_text("{quebrado")
+    assert V.Medidas(tmp_path / "medidas.json").d["dias"] == {}      # arquivo estragado: começa de novo, sem travar...
+    guardados = list(tmp_path.glob("medidas-guardado-*.json"))
+    assert len(guardados) == 1 and guardados[0].read_text() == "{quebrado"   # ...e o estragado fica guardado ao lado
+
+
+def test_resumir():
+    assert V.resumir([]) is None
+    assert V.resumir(list(range(1, 11))) == {"n": 10, "mediana": 5.5, "media": 5.5, "p90": 10, "pior": 10}
+
+
 def test_saida_no_formato_do_laboratorio_e_resumo(mundo):
     m = mundo
     m.volta()

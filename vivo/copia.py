@@ -31,6 +31,12 @@ dois sem essa diferença, o gêmeo guarda uma foto das subcontas a cada mudança
 custo) e, quando o laboratório publica uma rodada nova (o "ate" dela), avalia a foto daquele instante com as velas de
 1 minuto da Hyperliquid, pela mesma conta do laboratório (lab.copia.Precos e patrimonio). Sai em "comparacoes".
 Isto só mede: a cópia em si continua igual (a ordem sai no preço do livro).
+
+Diário das medidas (20/11/2026): o atraso de detecção e o custo do atraso só existem ao vivo e não dá para refazer
+depois (dependem do livro daquele segundo). As mudanças guardadas no estado são só as últimas 400 (meio dia), então
+cada medida também vai para vivo/dados/medidas.json, que só cresce: um resumo por dia (UTC) para sempre. Fica num
+arquivo separado do estado para sobreviver quando as regras mudam de versão e o gêmeo recomeça. Serve para acertar
+com números medidos o "ambiente" dos testes (o atraso e o escorregamento que o laboratório e a evolução supõem).
 """
 from __future__ import annotations
 
@@ -65,6 +71,10 @@ SEMEAR_POR_VOLTA = 3          # carteiras acertadas por volta na partida (cada u
 JANELA_SEMENTE_MS = 10 * 60_000
 
 
+MEDIDAS_VERSAO = 1
+MAX_MEDIDAS_DIA = 20_000      # medidas cruas guardadas do dia em curso (depois da virada fica só o resumo)
+
+
 def _gravar(caminho: Path, obj) -> None:
     caminho.parent.mkdir(parents=True, exist_ok=True)
     tmp = caminho.with_suffix(caminho.suffix + ".tmp")
@@ -93,6 +103,98 @@ def _reduzir(curva: list, n: int = 400) -> list:
         return curva
     passo = len(curva) / n
     return [curva[int(i * passo)] for i in range(n)] + [curva[-1]]
+
+
+def dia_de(t: int) -> str:
+    return datetime.fromtimestamp(t / 1000, timezone.utc).strftime("%Y-%m-%d")
+
+
+def resumir(vals: list) -> dict | None:
+    """n, mediana, média, o valor que 90 % das medidas não passam e o pior."""
+    if not vals:
+        return None
+    o = sorted(vals)
+    n = len(o)
+    return {"n": n, "mediana": round(statistics.median(o), 1), "media": round(sum(o) / n, 1),
+            "p90": round(o[min(n - 1, int(0.9 * n))], 1), "pior": round(o[-1], 1)}
+
+
+class Medidas:
+    """O diário das medidas ao vivo: um resumo por dia (UTC), para sempre, e as medidas cruas do dia em curso.
+    atraso_ms: quanto depois da ordem dela a máquina viu a mudança. custo_bps: quanto pior foi o preço da cópia em
+    relação ao dela, em centésimos de 1 % (uma medida por mudança: a média das cópias, pesada pelo valor da ordem)."""
+
+    def __init__(self, caminho: Path):
+        self.caminho = Path(caminho)
+        d = _ler(self.caminho, {})
+        if isinstance(d, dict) and d.get("versao") == MEDIDAS_VERSAO:
+            self.d = d
+        else:
+            self.d = {"versao": MEDIDAS_VERSAO}
+            if self.caminho.exists():              # ilegível ou de outra versão: fica guardado ao lado, nunca é apagado
+                try:
+                    self.caminho.replace(self.caminho.with_name(f"medidas-guardado-{int(self.caminho.stat().st_mtime)}.json"))
+                except OSError:
+                    pass
+        self.d.setdefault("_leia", "Diário das medidas da máquina 24 h (vivo/copia.py). Um resumo por dia (UTC), que só cresce. "
+                                   "atraso_ms: tempo entre a ordem da carteira e a máquina ver a mudança. custo_bps: quanto pior "
+                                   "foi o preço da cópia em relação ao dela, em centésimos de 1 % (positivo = a cópia pagou mais "
+                                   "caro ou vendeu mais barato). valor_medio: tamanho médio da ordem da cópia (US$).")
+        self.d.setdefault("dias", {})
+        self.d.setdefault("hoje", None)
+        self.sujo = False
+
+    def _hoje(self, t: int) -> dict:
+        dia = dia_de(t)
+        h = self.d["hoje"]
+        if h is not None and dia <= h["dia"]:      # medida de uma mudança de antes da meia-noite: conta no dia em curso
+            return h
+        if h is None or h["dia"] != dia:
+            self.virar(t)
+            h = self.d["hoje"] = {"dia": dia, "mudancas": 0, "sem_fill": 0, "atraso_ms": [], "custo_bps": [], "valor": 0.0}
+            self.sujo = True
+        return h
+
+    @staticmethod
+    def fechar_dia(h: dict) -> dict:
+        n = len(h["custo_bps"])
+        return {"mudancas": h["mudancas"], "sem_fill": h["sem_fill"], "atraso_ms": resumir(h["atraso_ms"]),
+                "custo_bps": resumir(h["custo_bps"]), "valor_medio": round(h["valor"] / n, 2) if n else None}
+
+    def virar(self, t: int) -> None:
+        """Passou da meia-noite (UTC): o dia que acabou vira um resumo e as medidas cruas dele saem."""
+        h = self.d["hoje"]
+        if h is not None and h["dia"] < dia_de(t):
+            if h["mudancas"] or h["atraso_ms"] or h["custo_bps"]:
+                self.d["dias"][h["dia"]] = self.fechar_dia(h)
+            self.d["hoje"] = None
+            self.sujo = True
+
+    def mudanca(self, t: int) -> None:
+        self._hoje(t)["mudancas"] += 1
+        self.sujo = True
+
+    def medida(self, t: int, atraso_ms: float | None, custo_bps: float | None = None, valor: float = 0.0) -> None:
+        h = self._hoje(t)
+        if atraso_ms is None:
+            h["sem_fill"] += 1
+        elif len(h["atraso_ms"]) < MAX_MEDIDAS_DIA:
+            h["atraso_ms"].append(round(atraso_ms))
+        if custo_bps is not None and len(h["custo_bps"]) < MAX_MEDIDAS_DIA:
+            h["custo_bps"].append(round(custo_bps, 2))
+            h["valor"] = round(h["valor"] + valor, 2)
+        self.sujo = True
+
+    def resumo(self) -> dict:
+        """Os dias fechados e o dia em curso (parcial), já resumidos."""
+        h = self.d["hoje"]
+        return {"dias": len(self.d["dias"]), "desde": min(self.d["dias"], default=h["dia"] if h else None),
+                "hoje": {"dia": h["dia"], **self.fechar_dia(h)} if h else None}
+
+    def gravar(self) -> None:
+        if self.sujo:
+            _gravar(self.caminho, self.d)
+            self.sujo = False
 
 
 class PrecosVivos:
@@ -168,6 +270,7 @@ class CopiaAoVivo:
         self.arq_saida = self.raiz / "vivo" / "gemeo" / "saida" / "copia_fiel.json"
         self.arq_radar = self.raiz / "saida" / "relatorio.json"
         self.arq_lab = self.raiz / "lab" / "dados" / "copia_estado.json"
+        self.medidas = Medidas(self.raiz / "vivo" / "dados" / "medidas.json")   # o diário: fora do estado, nunca é zerado
         est = _ler(self.arq_estado, {})
         self.est = est if est.get("versao") == VERSAO else {"versao": VERSAO}
         self.est.setdefault("variantes", {})
@@ -177,6 +280,10 @@ class CopiaAoVivo:
         self.est.setdefault("seq", 0)
         self.est.setdefault("fotos", {})         # cópia → [[t, base, capital, {moeda: [quantidade, custo]}]]
         self.est.setdefault("comparacoes", {})   # "ate" do laboratório → {cópia: retorno no preço da vela}
+        try:
+            self._semear_medidas()
+        except Exception:  # noqa: BLE001  (o diário é extra: nunca derruba a cópia)
+            pass
         self.arq_normal = self.raiz / "saida" / "copia_fiel.json"
         self.normal_lido = None
         self.pendente: dict | None = None        # comparação esperando as velas: {ate, moedas, velas}
@@ -290,6 +397,10 @@ class CopiaAoVivo:
         self.est["mudancas"].append(mud)
         if de is not None:
             self.est["conferir"].append(mud["id"])
+            try:
+                self.medidas.mudanca(t)
+            except Exception:  # noqa: BLE001  (o diário é extra: nunca derruba a cópia)
+                pass
         for nome, var in VARIANTES.items():
             if so is not None and nome not in so:
                 continue
@@ -436,11 +547,46 @@ class CopiaAoVivo:
             seus = [f for f in fills if f.get("coin") == m["moeda"] and m["antes_t"] - 2000 <= int(f["time"]) <= m["t"] + 1000]
             if not seus:
                 m["sem_fill"] = True               # mudou sem ordem dela (ajuste da bolsa) ou o fill ainda não apareceu
+                self.medidas.medida(m["t"], None)
                 continue
             qtd = sum(float(f["sz"]) for f in seus)
             m["atraso_ms"] = max(0, m["t"] - max(int(f["time"]) for f in seus))
             if qtd > 0:
                 m["px_dela"] = round(sum(float(f["px"]) * float(f["sz"]) for f in seus) / qtd, 8)
+            self.medidas.medida(m["t"], m["atraso_ms"], *self._custo_da_mudanca(m))
+
+    def _custo_da_mudanca(self, m: dict) -> tuple[float | None, float]:
+        """Para o diário: o custo da mudança numa medida só (a média das cópias, pesada pelo valor de cada ordem) e o
+        tamanho médio dessas ordens."""
+        pares = [(c, o.get("valor") or 0.0) for v in self.est["variantes"].values() for o in v["log"]
+                 if o.get("mud") == m["id"] for c in [self._custo_bps(o, m)] if c is not None]
+        peso = sum(x for _, x in pares)
+        return (sum(c * x for c, x in pares) / peso if peso > 0 else None), (peso / len(pares) if pares else 0.0)
+
+    def _semear_medidas(self) -> None:
+        """Diário novo: entram as medidas que o estado ainda guarda (as últimas mudanças, de antes de o diário existir)."""
+        d = self.medidas
+        if d.caminho.exists() or d.d["dias"] or d.d["hoje"]:
+            return
+        for m in sorted(self.est["mudancas"], key=lambda x: x["t"]):
+            if m.get("de") is None:
+                continue
+            d.mudanca(m["t"])
+            if "atraso_ms" in m:
+                d.medida(m["t"], m["atraso_ms"], *self._custo_da_mudanca(m))
+            elif m.get("sem_fill"):
+                d.medida(m["t"], None)
+
+    @staticmethod
+    def _custo_bps(o: dict, m: dict) -> float | None:
+        """Quanto pior foi o preço da ordem `o` da cópia em relação ao da carteira na mudança `m`, em centésimos de
+        1 %. None se a mudança não foi medida ou se a ordem foi para o lado contrário do dela."""
+        if not m.get("px_dela") or m.get("de") is None:
+            return None
+        compra = o["lado"] == "compra"
+        if compra != (m["para"] > m["de"]):
+            return None
+        return (1 if compra else -1) * (o["px"] / m["px_dela"] - 1) * 10_000
 
     def custo_do_atraso(self, log: list) -> dict | None:
         """Quanto pior foi o preço da cópia em relação ao dela, em centésimos de 1 % (mediana das ordens recentes que
@@ -449,12 +595,9 @@ class CopiaAoVivo:
         vals = []
         for o in log:
             m = por_id.get(o.get("mud"))
-            if not m or not m.get("px_dela") or m.get("de") is None:
-                continue
-            compra = o["lado"] == "compra"
-            if compra != (m["para"] > m["de"]):
-                continue
-            vals.append((1 if compra else -1) * (o["px"] / m["px_dela"] - 1) * 10_000)
+            c = self._custo_bps(o, m) if m else None
+            if c is not None:
+                vals.append(c)
         if not vals:
             return None
         return {"mediana": round(statistics.median(vals), 1), "ordens": len(vals)}
@@ -620,6 +763,7 @@ class CopiaAoVivo:
                 "mudancas": self.est["seq"], "a_acertar": len(self.est.get("a_acertar") or []),
                 "atraso_deteccao_ms": ({"mediana": round(statistics.median(atrasos)), "pior": max(atrasos),
                                         "medidas": len(atrasos)} if atrasos else None),
+                "diario": self.medidas.resumo(),     # as medidas guardadas para sempre (vivo/dados/medidas.json)
             },
             "variantes": {},
         }
@@ -656,6 +800,11 @@ class CopiaAoVivo:
 
     def gravar(self, agora: int) -> None:
         self.gravado = agora
+        try:
+            self.medidas.virar(agora)
+            self.medidas.gravar()
+        except Exception:  # noqa: BLE001  (o diário é extra: nunca derruba a cópia)
+            pass
         _gravar(self.arq_estado, self.est)
         _gravar(self.arq_saida, self.montar_saida(agora))
 

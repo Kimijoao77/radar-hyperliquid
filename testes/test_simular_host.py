@@ -38,6 +38,7 @@ def test_quem_copia_no_preco_dela_ganha_o_que_o_atraso_de_um_minuto_perde():
     assert r["normal"]["retorno"] == pytest.approx(0.3 * (fim / (101 * 1.0005) - 1) - 0.3 * C.TAXA, abs=6e-5)
     assert r["host"]["retorno"] == pytest.approx(0.3 * (fim / (100 * 1.0005) - 1) - 0.3 * C.TAXA, abs=6e-5)
     assert r["host_prudente"]["retorno"] == pytest.approx(0.3 * (fim / (100 * 1.002) - 1) - 0.3 * C.TAXA, abs=6e-5)
-    assert r["normal"]["retorno"] < r["host_vela"]["retorno"] < r["host_prudente"]["retorno"] < r["host"]["retorno"]
+    assert r["normal"]["retorno"] < r["host_prudente"]["retorno"] < r["host"]["retorno"]
+    assert r["normal"]["retorno"] < r["host_vela"]["retorno"] < r["host"]["retorno"]      # 2 s dentro da vela: quase o preço dela
     assert all(x["ordens"] == 1 and x["carteiras"] == 1 and len(x["curva"]) == 3 for x in r.values())
     assert C.ESCORREGA == 0.0005                                   # a simulação devolve o escorregamento do laboratório

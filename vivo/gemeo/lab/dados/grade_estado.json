@@ -1,0 +1,178 @@
+{
+ "versao": 7,
+ "anterior": [
+  {
+   "moeda": "HYPE",
+   "nome": "Grade ±10 %, 20 degraus, 3×",
+   "retorno": -0.3572,
+   "pior_queda": 0.4072,
+   "segurar_moeda": -0.1535,
+   "de": 1793721600000,
+   "ate": 1794217804260
+  },
+  {
+   "moeda": "BTC",
+   "nome": "Grade ±20 %, 20 degraus, 3×",
+   "retorno": -0.0557,
+   "pior_queda": 0.1224,
+   "segurar_moeda": -0.0405,
+   "de": 1793721600000,
+   "ate": 1794217804260
+  },
+  {
+   "moeda": "HYPE",
+   "nome": "DCA a cada −2 %, alvo +3 %, 3×",
+   "retorno": -0.1694,
+   "pior_queda": 0.2556,
+   "segurar_moeda": -0.1535,
+   "de": 1793721600000,
+   "ate": 1794217804260
+  },
+  {
+   "moeda": "ETH",
+   "nome": "DCA a cada −3 %, alvo +1.5 %, 3×",
+   "retorno": 0.0581,
+   "pior_queda": 0.0306,
+   "segurar_moeda": -0.0769,
+   "de": 1793721600000,
+   "ate": 1794217804260
+  },
+  {
+   "moeda": "HYPE",
+   "nome": "Grade ±10 %, 10 degraus",
+   "retorno": 0.0105,
+   "pior_queda": 0.011,
+   "segurar_moeda": 0.0172,
+   "de": 1794218400000,
+   "ate": 1794305482578
+  },
+  {
+   "moeda": "BTC",
+   "nome": "Grade ±10 %, 10 degraus",
+   "retorno": 0.0013,
+   "pior_queda": 0.0068,
+   "segurar_moeda": 0.0031,
+   "de": 1794218400000,
+   "ate": 1794305482578
+  },
+  {
+   "moeda": "HYPE",
+   "nome": "DCA a cada −3 %, alvo +3 %, pausa na queda",
+   "retorno": 0.0,
+   "pior_queda": 0.0,
+   "segurar_moeda": 0.0172,
+   "de": 1794218400000,
+   "ate": 1794305482578
+  },
+  {
+   "moeda": "ETH",
+   "nome": "DCA a cada −3 %, alvo +1.5 %",
+   "retorno": -0.0003,
+   "pior_queda": 0.001,
+   "segurar_moeda": -0.0021,
+   "de": 1794218400000,
+   "ate": 1794305482578
+  }
+ ],
+ "inicio": 1794312000000,
+ "escolhidas": [
+  {
+   "moeda": "HYPE",
+   "config": {
+    "tipo": "dca",
+    "passo": 0.02,
+    "alvo": 0.03,
+    "alav": 3,
+    "pausa": true
+   },
+   "inicio": 1794312000000
+  },
+  {
+   "moeda": "HYPE",
+   "config": {
+    "tipo": "dca",
+    "passo": 0.02,
+    "alvo": 0.015,
+    "alav": 3,
+    "pausa": true
+   },
+   "inicio": 1794312000000
+  },
+  {
+   "moeda": "ETH",
+   "config": {
+    "tipo": "dca",
+    "passo": 0.03,
+    "alvo": 0.015,
+    "alav": 3,
+    "pausa": false
+   },
+   "inicio": 1794312000000
+  },
+  {
+   "moeda": "HYPE",
+   "config": {
+    "tipo": "tendencia",
+    "modo": "medias",
+    "a": 48,
+    "b": 168,
+    "alav": 3
+   },
+   "inicio": 1794312000000
+  },
+  {
+   "moeda": "SOL",
+   "config": {
+    "tipo": "tendencia",
+    "modo": "medias",
+    "a": 48,
+    "b": 168,
+    "alav": 3
+   },
+   "inicio": 1794312000000
+  },
+  {
+   "moeda": "SOL",
+   "config": {
+    "tipo": "tendencia",
+    "modo": "rompe",
+    "a": 240,
+    "alav": 2
+   },
+   "inicio": 1794312000000
+  },
+  {
+   "moeda": "kPEPE",
+   "config": {
+    "tipo": "reversao",
+    "gatilho": 0.08,
+    "alvo": 0.02,
+    "lados": "ambos",
+    "alav": 3
+   },
+   "inicio": 1794337200000
+  },
+  {
+   "moeda": "AVAX",
+   "config": {
+    "tipo": "reversao",
+    "gatilho": 0.05,
+    "alvo": 0.04,
+    "lados": "ambos",
+    "alav": 3
+   },
+   "inicio": 1794337200000
+  },
+  {
+   "moeda": "kPEPE",
+   "config": {
+    "tipo": "reversao",
+    "gatilho": 0.08,
+    "alvo": 0.02,
+    "lados": "compra",
+    "alav": 3
+   },
+   "inicio": 1794337200000
+  }
+ ]
+}

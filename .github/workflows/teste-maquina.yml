@@ -4,17 +4,23 @@ name: Teste da máquina
 # instalação funciona antes de alguém pagar uma máquina. Só roda quando chamado à mão.
 on:
   workflow_dispatch:
+    inputs:
+      sistema:
+        description: "Imagem do Ubuntu (ubuntu-24.04 ou ubuntu-26.04)"
+        required: false
+        default: "ubuntu-24.04"
 
 permissions:
   contents: write
 
 jobs:
   instalar:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.sistema || 'ubuntu-24.04' }}
     timeout-minutes: 15
     steps:
       - name: Instala como na VPS
         run: |
+          cat /etc/os-release | head -4; python3 --version
           curl -fsSL "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/vivo/instalar.sh" -o /tmp/instalar.sh
           sudo env TOKEN="${{ github.token }}" bash /tmp/instalar.sh
       - name: Confere o motor, a publicação e o agendamento

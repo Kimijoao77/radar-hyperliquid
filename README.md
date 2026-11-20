@@ -97,8 +97,9 @@ ganha uma subconta de US$ 1.000; o teste é a soma. Começa sem posição e entr
 - **seletiva**: só as copiáveis (mediana de 30 min ou mais com a posição aberta e o radar diz que dá), com a exposição
   levada a 2× da típica dela (no máximo 3×) e **parada de proteção**: caiu 25 % do pico, para de copiar aquela carteira.
 - Funding fica de fora. Spot e pares de terceiros também. → `saida/copia_fiel.json`, estado em `lab/dados/copia_estado.json`.
-- **Ao vivo (desde 20/11, `vivo/copia.py`)**: a mesma cópia, mas rodando o tempo todo numa máquina em Tóquio, vendo as
-  mudanças em segundos e executando (no papel) no preço do livro de ofertas. Ver `vivo/LEIAME.md`. → `saida/copia_ao_vivo.json`.
+- **Gêmeo ao vivo (desde 20/11, `vivo/copia.py`)**: a mesma cópia, partindo das mesmas subcontas, mas rodando o tempo
+  todo numa máquina em Tóquio, vendo as mudanças em segundos e executando (no papel) no preço do livro de ofertas.
+  Os outros laboratórios também têm gêmeo lá (`vivo/gemeos.py`). Ver `vivo/LEIAME.md`. → `vivo/gemeo/saida/`.
 - Versão 2 (09/11), que refez tudo desde 03/11: fills do mesmo instante seguem a cadeia "posição antes → depois" (a API
   manda em qualquer ordem, e a cópia ficava com restos de posições que a carteira já tinha fechado); posição que some da
   foto da conta sem fill (mercado encerrado) zera na cópia também; mercados de terceiros (HIP-3, `xyz:GOLD`) ficam de

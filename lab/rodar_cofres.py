@@ -14,6 +14,7 @@ sys.path.insert(0, str(RAIZ))
 
 from lab.cofres import (DIA, HLP, LISTA, PADRAO, RISCO, VERSAO, candidatos, constante, contra_btc, de_risco, depositar, independente, indice,  # noqa: E402
                         medir, nota_risco, reduzir)
+from lab import sem_espera  # noqa: E402
 from radar.api import Hyperliquid  # noqa: E402
 
 HORA = 3600 * 1000
@@ -37,7 +38,7 @@ def main(raiz: Path = RAIZ, api=None, baixar_lista=None) -> int:
         est.pop("risco")                                 # regra nova da carteira de risco: escolhe de novo já nesta rodada
     if est.get("versao") == VERSAO and (not est.get("escolhidos") or "risco" not in est):
         pass
-    elif saida.exists() and agora - est.get("ultima", 0) < 6 * HORA - 10 * 60 * 1000:
+    elif saida.exists() and agora - est.get("ultima", 0) < 6 * HORA - 10 * 60 * 1000 and not sem_espera():
         print("cofres: rodou há menos de 6 h")
         return 0
     p = PADRAO

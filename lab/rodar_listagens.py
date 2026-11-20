@@ -14,6 +14,7 @@ sys.path.insert(0, str(RAIZ))
 
 from lab.listagens import (ALAVS, CAPITAL, ESPERA_H, HORA, MAXIMO, PARADA, PARTE, PRAZO_H, VERSAO, carteira, estreia_de,  # noqa: E402
                            resumo_op, simular)
+from lab import sem_espera  # noqa: E402
 from radar.api import Hyperliquid  # noqa: E402
 
 JANELA = 90                  # as últimas moedas da lista da Hyperliquid (a lista cresce no fim: as novas ficam lá)
@@ -57,7 +58,7 @@ def main(raiz: Path = RAIZ, api=None, agora: int | None = None) -> int:
     est = json.loads(arq.read_text(encoding="utf-8")) if arq.exists() else {}
     if est.get("versao") != VERSAO:
         est = {"versao": VERSAO, "inicio": agora // HORA * HORA, "moedas": {}, "passado": {}, "vivo": {}}
-    if saida.exists() and agora - est.get("ultima", 0) < 50 * 60 * 1000:
+    if saida.exists() and agora - est.get("ultima", 0) < 50 * 60 * 1000 and not sem_espera():
         print("listagens: rodou há menos de 50 min")
         return 0
     api = api or Hyperliquid(1000)

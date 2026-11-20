@@ -14,6 +14,7 @@ sys.path.insert(0, str(RAIZ))
 
 from lab.concentradas import (API, BALANCO_MAX, CAPITAL, FAIXAS, NOMES, POR_FAIXA, TVL_MIN, VERSAO, VOLUME_MIN, abrir,  # noqa: E402
                               andar, balanco, escolher, fechar, num, valor_usd)
+from lab import sem_espera  # noqa: E402
 from lab.rodar_memecoins import Gecko  # noqa: E402
 
 S = requests.Session()
@@ -38,7 +39,7 @@ def main(raiz: Path = RAIZ, meteora=_meteora, gecko=None, agora: int | None = No
     est = json.loads(arq.read_text(encoding="utf-8")) if arq.exists() else {}
     if est.get("versao") != VERSAO:
         est = {"versao": VERSAO, "inicio": agora, "faixas": {k: {"caixa": CAPITAL, "abertas": [], "fechadas": [], "curva": []} for k in FAIXAS}}
-    if saida.exists() and agora - est.get("ultima", 0) < 50 * 60 * 1000:
+    if saida.exists() and agora - est.get("ultima", 0) < 50 * 60 * 1000 and not sem_espera():
         print("concentradas: rodou há menos de 50 min")
         return 0
     g = gecko or Gecko()

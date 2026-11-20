@@ -1,24 +1,29 @@
-"""Copy trading em tempo real (simulação, sem dinheiro e sem chave): o robô que a máquina 24 h roda.
+"""Copy trading em tempo real (simulação, sem dinheiro e sem chave): o gêmeo ao vivo da cópia fiel do laboratório.
 
 O laboratório (lab/copia.py, de hora em hora no GitHub) refaz a cópia DEPOIS, com os fills que o radar coletou e o
-preço das velas. Aqui é ao vivo: a cada poucos segundos a máquina olha a conta de cada carteira do radar na Hyperliquid,
-e quando a posição dela numa moeda muda, cada cópia ajusta a sua subconta. Três diferenças para o laboratório:
+preço das velas, supondo um atraso (60 s ou 10 s). Aqui é ao vivo: a cada poucos segundos a máquina olha a conta de
+cada carteira do radar na Hyperliquid e, quando a posição dela numa moeda muda, cada cópia ajusta a sua subconta na
+mesma volta.
 
-- o atraso é de verdade: a cópia "imediata" executa na mesma volta em que a mudança foi vista; as outras esperam os
-  segundos da regra delas (10 s, 60 s) e executam no preço daquele momento;
+Versão 2 (20/11/2026, pedido do João: "as mesmas ordens que faz no normal, para poder comparar"): o gêmeo começa do
+estado do laboratório (as mesmas cópias, as mesmas subcontas, o mesmo saldo e as mesmas posições abertas) e segue as
+mesmas regras: quem entra, alavancagem, teto, parada de proteção, taxa (lab.copia). Dali em diante as ordens são as
+mesmas; o que muda é só o que a máquina tem de diferente:
+
+- o atraso é o de verdade: a ordem sai na volta em que a mudança foi vista (alguns segundos), não 60 s ou 10 s depois;
 - o preço de execução vem do livro de ofertas daquele instante (o que uma ordem a mercado daquele tamanho pagaria),
-  não de uma estimativa de escorregamento;
+  não da vela do minuto com um escorregamento estimado;
 - a proporção usa o saldo da carteira naquele instante (valor da posição ÷ saldo da conta), não a foto da hora.
 
-As regras de cada cópia (quem entra, alavancagem, teto, parada de proteção, taxa) são as mesmas do laboratório, e as
-contas também (lab.copia). Cada carteira ganha uma subconta de US$ 1.000 quando entra; a cópia começa sem posição e
-entra na primeira mudança de cada moeda.
+O que a carteira operou entre a última rodada do laboratório e a partida do gêmeo é acertado na primeira olhada (os
+fills desse intervalo dizem em quais moedas ela mexeu).
 
 Duas medidas que só dá para tirar ao vivo:
 - atraso de detecção: quanto tempo depois da ordem dela a máquina viu a mudança;
 - custo do atraso: quanto pior (em centésimos de 1 %) foi o preço da cópia em relação ao preço que ela pegou.
 
-Estado em vivo/dados/copia_estado.json; resultado em saida/copia_ao_vivo.json (o vivo/atualizar.sh publica).
+Estado em vivo/dados/copia_estado.json; resultado em vivo/gemeo/saida/copia_fiel.json, no mesmo formato do
+saida/copia_fiel.json do laboratório (o Nexus lê os dois com o mesmo código e põe lado a lado).
 """
 from __future__ import annotations
 
@@ -29,15 +34,14 @@ from pathlib import Path
 
 from lab import copia as C
 
-VERSAO = 1
-# As mesmas cópias do laboratório e mais uma, que só existe ao vivo: a seletiva sem espera nenhuma.
-VARIANTES = {
-    "imediata": {**C.VARIANTES["seletiva"], "nome": "Copy imediato (ao ver a mudança)", "atraso_s": 0},
-    **C.VARIANTES,
-}
+VERSAO = 2
+# As mesmas cópias do laboratório. Ao vivo nenhuma espera: "atraso_s" vira 0 e o atraso que o laboratório supõe fica
+# em "atraso_normal_s" (só informação). Por isso, ao vivo, a cópia de 60 s e a de 10 s são o mesmo robô.
+VARIANTES = {nome: {**var, "atraso_s": 0, "atraso_normal_s": var["atraso_s"]} for nome, var in C.VARIANTES.items()}
 CICLO_MIN_S = 3.0             # o mais rápido que a máquina olha todas as carteiras
-ORCAMENTO = 700               # peso por minuto gasto olhando contas (o limite da Hyperliquid é 1200 por IP)
-FOLGA_PARA_MEDIR = 300        # só confere os fills dela (peso 20+) quando sobra isso do orçamento
+ORCAMENTO = 600               # peso por minuto gasto olhando contas (o limite da Hyperliquid é 1200 por IP, e os
+                              # laboratórios gêmeos usam uma parte: vivo/gemeos.py)
+FOLGA_PARA_MEDIR = 250        # só confere os fills dela (peso 20+) quando sobra isso do orçamento
 MAX_TERCEIROS = 0.8           # igual ao laboratório: carteira quase toda em mercados de terceiros fica de fora
 MAX_LOG = 300
 MAX_CURVA = 2000
@@ -45,6 +49,8 @@ MAX_MUDANCAS = 400
 PONTO_CURVA_MS = 10 * 60_000
 GRAVAR_MS = 60_000
 HORA = 3_600_000
+SEMEAR_POR_VOLTA = 3          # carteiras acertadas por volta na partida (cada uma custa uma consulta de fills)
+JANELA_SEMENTE_MS = 10 * 60_000
 
 
 def _gravar(caminho: Path, obj) -> None:
@@ -59,6 +65,13 @@ def _ler(caminho: Path, padrao):
         return json.loads(caminho.read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError):
         return padrao
+
+
+def _reduzir(curva: list, n: int = 400) -> list:
+    if len(curva) <= n:
+        return curva
+    passo = len(curva) / n
+    return [curva[int(i * passo)] for i in range(n)] + [curva[-1]]
 
 
 class PrecosVivos:
@@ -131,8 +144,9 @@ class CopiaAoVivo:
         self.ler_fills = ler_fills
         self.precos = PrecosVivos()
         self.arq_estado = self.raiz / "vivo" / "dados" / "copia_estado.json"
-        self.arq_saida = self.raiz / "saida" / "copia_ao_vivo.json"
+        self.arq_saida = self.raiz / "vivo" / "gemeo" / "saida" / "copia_fiel.json"
         self.arq_radar = self.raiz / "saida" / "relatorio.json"
+        self.arq_lab = self.raiz / "lab" / "dados" / "copia_estado.json"
         est = _ler(self.arq_estado, {})
         self.est = est if est.get("versao") == VERSAO else {"versao": VERSAO}
         self.est.setdefault("variantes", {})
@@ -148,6 +162,42 @@ class CopiaAoVivo:
         self.livros: dict[str, dict | None] = {}  # livro de cada moeda, guardado só durante a volta
         self.falhas: list[int] = []               # instantes das consultas que falharam (última hora)
         self.voltas: list[tuple[int, int]] = []   # (instante, duração em ms) das últimas voltas
+        self.acertar: dict[str, dict[str, set]] = {}   # partida: carteira → {cópia: moedas em que ela mexeu no intervalo}
+        self.tentou: dict[str, int] = {}
+
+    # ------------------------------------------------------------ a partida: o mesmo ponto do laboratório
+    def semear(self, agora: int) -> None:
+        """Começa do estado da cópia fiel do laboratório (as mesmas subcontas, saldos e posições). Sem esse estado
+        (repositório novo), começa do zero, como o laboratório começaria."""
+        lab = _ler(self.arq_lab, {})
+        sem = {"t": agora, "ate": None, "de": "zero", "retorno": {}}
+        if lab.get("variantes") and lab.get("ate"):
+            for nome in VARIANTES:
+                v = lab["variantes"].get(nome)
+                if not v:
+                    continue
+                self.est["variantes"][nome] = {"subs": v.get("subs", {}), "curva": v.get("curva", []), "log": v.get("log", []),
+                                               "pulos": v.get("pulos", {}), "fora": v.get("fora", {}), "fila": []}
+                sem["retorno"][nome] = C.resumo(list(v.get("subs", {}).values()))["retorno"]
+            self.est["inicio"] = lab.get("inicio", agora)
+            sem.update(ate=lab["ate"], de="laboratório")
+            self.est["a_acertar"] = self.carteiras()
+        self.est["semente"] = sem
+
+    def acertar_partida(self, w: str) -> None:
+        """Em quais moedas a carteira mexeu depois da última ordem que o laboratório já tinha copiado (os fills dela
+        desde um pouco antes da última rodada). Na primeira olhada, a cópia vai para a posição de agora nessas moedas."""
+        ate = self.est["semente"]["ate"]
+        fills = self.api.fills_desde(w, ate - JANELA_SEMENTE_MS)
+        out: dict[str, set] = {}
+        for nome, v in self.est["variantes"].items():
+            sc = v["subs"].get(w)
+            if not sc or not sc["vivo"]:
+                continue
+            moedas = {f["coin"] for f in fills if C.copiavel_mercado(f.get("coin", "@")) and int(f["time"]) > sc["ult"]}
+            if moedas:
+                out[nome] = moedas
+        self.acertar[w] = out
 
     # ------------------------------------------------------------ quem é copiado
     def _terceiros(self, w: str) -> float:
@@ -161,7 +211,7 @@ class CopiaAoVivo:
 
     def carregar_radar(self, agora: int) -> None:
         """Relê a lista do radar quando ela muda (o GitHub atualiza de hora em hora e a máquina baixa). Carteira nova
-        ganha subconta; carteira que saiu do radar é fechada e congelada."""
+        ganha subconta; carteira que saiu do radar é fechada e congelada. As mesmas regras do laboratório."""
         try:
             st = self.arq_radar.stat()
             marca = (st.st_mtime_ns, st.st_size)
@@ -205,36 +255,55 @@ class CopiaAoVivo:
         return sorted(vivas)
 
     # ------------------------------------------------------------ ver a mudança
+    def _mudanca(self, w: str, moeda: str, de: float | None, para: float, frac: float | None, t: int, antes_t: int,
+                 so: set | None = None) -> dict:
+        """Anota a mudança e põe na fila de cada cópia que segue a carteira (ou só das cópias em `so`)."""
+        self.est["seq"] += 1
+        mud = {"id": self.est["seq"], "t": t, "antes_t": antes_t, "w": w, "moeda": moeda, "de": de, "para": para,
+               "frac": None if frac is None else round(frac, 6)}
+        self.est["mudancas"].append(mud)
+        if de is not None:
+            self.est["conferir"].append(mud["id"])
+        for nome, var in VARIANTES.items():
+            if so is not None and nome not in so:
+                continue
+            v = self.est["variantes"].get(nome)
+            if v and v["subs"].get(w, {}).get("vivo"):
+                v["fila"].append({"exec": t + var["atraso_s"] * 1000, "t": t, "w": w, "moeda": moeda,
+                                  "frac": mud["frac"], "mud": mud["id"]})
+        return mud
+
     def ver(self, w: str, conta: dict, t: int) -> list[dict]:
         """Compara a conta da carteira com a última olhada. Cada moeda cuja posição mudou vira uma mudança, que entra
-        na fila de cada cópia (para executar depois do atraso dela). Volta as mudanças."""
+        na fila de cada cópia. Volta as mudanças."""
         saldo, pos, valor = ler_conta(conta)
         ant = self.est["vistas"].get(w)
         self.est["vistas"][w] = {"t": t, "v": round(saldo, 2), "pos": pos}
-        if ant is None:
-            return []                              # primeira olhada: só anota o que ela já tinha
-        novas = []
-        for moeda in sorted(set(pos) | set(ant["pos"])):
-            de, para = ant["pos"].get(moeda, 0.0), pos.get(moeda, 0.0)
-            if C._perto(de, para):
-                continue
+
+        def fracao(moeda: str) -> float | None:
+            para = pos.get(moeda, 0.0)
             if not para:
-                frac = 0.0
-            elif saldo > 0:
-                frac = (1 if para > 0 else -1) * valor.get(moeda, 0.0) / saldo
-            else:
-                frac = None                        # conta sem saldo visível: não dá para saber a proporção
-            self.est["seq"] += 1
-            mud = {"id": self.est["seq"], "t": t, "antes_t": ant["t"], "w": w, "moeda": moeda, "de": de, "para": para,
-                   "frac": None if frac is None else round(frac, 6)}
-            self.est["mudancas"].append(mud)
-            self.est["conferir"].append(mud["id"])
-            novas.append(mud)
-            for nome, var in VARIANTES.items():
-                v = self.est["variantes"].get(nome)
-                if v and v["subs"].get(w, {}).get("vivo"):
-                    v["fila"].append({"exec": t + var["atraso_s"] * 1000, "t": t, "w": w, "moeda": moeda,
-                                      "frac": mud["frac"], "mud": mud["id"]})
+                return 0.0
+            if saldo > 0:
+                return (1 if para > 0 else -1) * valor.get(moeda, 0.0) / saldo
+            return None                            # conta sem saldo visível: não dá para saber a proporção
+
+        novas = []
+        if ant is None:
+            # primeira olhada: só anota o que ela já tinha. Na partida, acerta as moedas em que ela mexeu depois da
+            # última ordem que o laboratório copiou (uma mudança por moeda, para as cópias que ainda não a tinham visto)
+            por_moeda: dict[str, set] = {}
+            for nome, moedas in (self.acertar.pop(w, None) or {}).items():
+                for moeda in moedas:
+                    por_moeda.setdefault(moeda, set()).add(nome)
+            for moeda in sorted(por_moeda):
+                novas.append(self._mudanca(w, moeda, None, pos.get(moeda, 0.0), fracao(moeda), t,
+                                           self.est["semente"]["ate"], por_moeda[moeda]))
+        else:
+            for moeda in sorted(set(pos) | set(ant["pos"])):
+                de, para = ant["pos"].get(moeda, 0.0), pos.get(moeda, 0.0)
+                if not C._perto(de, para):
+                    novas.append(self._mudanca(w, moeda, de, para, fracao(moeda), t, ant["t"]))
         del self.est["mudancas"][:-MAX_MUDANCAS]
         del self.est["conferir"][:-60]
         return novas
@@ -354,7 +423,7 @@ class CopiaAoVivo:
         vals = []
         for o in log:
             m = por_id.get(o.get("mud"))
-            if not m or not m.get("px_dela"):
+            if not m or not m.get("px_dela") or m.get("de") is None:
                 continue
             compra = o["lado"] == "compra"
             if compra != (m["para"] > m["de"]):
@@ -369,20 +438,40 @@ class CopiaAoVivo:
         """Chamado o tempo todo pelo motor; faz uma volta quando chega a hora dela."""
         if agora < self.proximo:
             return
+        try:
+            self.precos.atualizar(self.api.mids())
+        except Exception:  # noqa: BLE001  (segue com o preço da volta anterior)
+            self.falhas.append(agora)
+        if not self.precos.p:
+            self.proximo = agora + 1000            # sem nenhum preço ainda, o saldo das subcontas sairia errado: espera
+            return
+        if "semente" not in self.est:
+            self.semear(agora)
         self.carregar_radar(agora)
         ws = self.carteiras()
         self.ciclo_ms = int(max(CICLO_MIN_S, len(ws) * 2 * 60 / ORCAMENTO) * 1000)
         self.proximo = agora + self.ciclo_ms
         self.livros = {}
-        try:
-            self.precos.atualizar(self.api.mids())
-        except Exception:  # noqa: BLE001  (segue com o preço da volta anterior)
-            self.falhas.append(agora)
+        a_acertar, acertadas = self.est.get("a_acertar") or [], 0
         for w in ws:
+            if w in a_acertar:                     # partida: antes da primeira olhada, o que ela fez no intervalo
+                if acertadas >= SEMEAR_POR_VOLTA:
+                    continue
+                acertadas += 1
+                try:
+                    self.acertar_partida(w)
+                except Exception:  # noqa: BLE001
+                    self.falhas.append(self.relogio())
+                    self.tentou[w] = self.tentou.get(w, 0) + 1
+                    if self.tentou[w] < 3:
+                        continue                   # tenta de novo na próxima volta; na terceira falha, segue sem o acerto
+                a_acertar.remove(w)
             try:
                 conta = self.api.estado(w)
             except Exception:  # noqa: BLE001  (esta carteira fica para a próxima volta)
                 self.falhas.append(self.relogio())
+                if w in self.acertar:              # o acerto da partida espera a primeira olhada dar certo
+                    a_acertar.append(w)
                 continue
             self.ver(w, conta, self.relogio())
         t = self.relogio()
@@ -406,18 +495,20 @@ class CopiaAoVivo:
 
     # ------------------------------------------------------------ o que sai
     def montar_saida(self, agora: int) -> dict:
+        """O mesmo formato do saida/copia_fiel.json do laboratório, e mais dois blocos só do gêmeo: "maquina" (as
+        medidas ao vivo) e "semente" (de onde e quando ele partiu)."""
         mud = self.est["mudancas"]
         atrasos = [m["atraso_ms"] for m in mud if "atraso_ms" in m]
         duracoes = [d for _, d in self.voltas]
         saida = {
             "gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
             "inicio": self.est.get("inicio", agora), "ate": agora, "versao": VERSAO, "ao_vivo": True,
-            "modo": "simulação (sem dinheiro, sem chave)", "taxa": C.TAXA,
+            "modo": "simulação (sem dinheiro, sem chave)", "taxa": C.TAXA, "semente": self.est.get("semente"),
             "maquina": {
                 "carteiras_olhadas": len(self.carteiras()), "volta_s": round(self.ciclo_ms / 1000, 1),
                 "volta_demora_ms": round(statistics.median(duracoes)) if duracoes else None,
                 "falhas_1h": len(self.falhas), "mudancas_1h": sum(1 for m in mud if m["t"] > agora - HORA),
-                "mudancas": self.est["seq"],
+                "mudancas": self.est["seq"], "a_acertar": len(self.est.get("a_acertar") or []),
                 "atraso_deteccao_ms": ({"mediana": round(statistics.median(atrasos)), "pior": max(atrasos),
                                         "medidas": len(atrasos)} if atrasos else None),
             },
@@ -444,8 +535,8 @@ class CopiaAoVivo:
                              "duracao_min": (c.get("geral") or {}).get("duracao_mediana_min")})
             subs.sort(key=lambda s: -s["retorno"])
             saida["variantes"][nome] = {
-                "nome": var["nome"], "regras": {k: var[k] for k in var if k != "nome"},
-                **C.resumo(list(v["subs"].values())), "curva": v["curva"][-400:], "subcontas": subs,
+                "nome": C.VARIANTES[nome]["nome"], "regras": {k: var[k] for k in var if k != "nome"},
+                **C.resumo(list(v["subs"].values())), "curva": _reduzir(v["curva"]), "subcontas": subs,
                 "ordens_recentes": v["log"][-150:], "pulos": v["pulos"], "na_fila": len(v["fila"]),
                 "custo_do_atraso_bps": self.custo_do_atraso(v["log"]),
                 "fora": [{"w": w, "motivo": m} for w, m in v["fora"].items()],
@@ -463,7 +554,10 @@ class CopiaAoVivo:
     def resumo(self, agora: int) -> dict:
         """O que vai no sinal de vida da máquina (saida/maquina.json)."""
         mud = self.est["mudancas"]
+        atrasos = [m["atraso_ms"] for m in mud if "atraso_ms" in m]
         return {"carteiras": len(self.carteiras()), "volta_s": round(self.ciclo_ms / 1000, 1),
                 "mudancas_1h": sum(1 for m in mud if m["t"] > agora - HORA), "falhas_1h": len(self.falhas),
+                "atraso_deteccao_ms": round(statistics.median(atrasos)) if atrasos else None,
+                "partiu": (self.est.get("semente") or {}).get("t"),
                 "retorno": {nome: C.resumo(list(v["subs"].values()))["retorno"]
                             for nome, v in self.est["variantes"].items() if v["subs"]}}

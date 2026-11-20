@@ -9,6 +9,7 @@ O Limitador guarda o que foi gasto no último minuto e espera quando o orçament
 from __future__ import annotations
 
 import math
+import os
 import time
 from collections import deque
 
@@ -50,6 +51,11 @@ class Limitador:
 class Hyperliquid:
     def __init__(self, por_minuto: int = 1000, sessao: requests.Session | None = None, tentativas: int = 5,
                  timeout: float = 30):
+        # Na máquina 24 h vários processos dividem o mesmo IP (o limite da Hyperliquid é por IP): os laboratórios que
+        # rodam lá recebem um teto menor por esta variável, para sobrar orçamento para o copy trading em tempo real.
+        teto = os.environ.get("RADAR_PESO_TETO")
+        if teto and teto.isdigit():
+            por_minuto = min(por_minuto, int(teto))
         self.lim = Limitador(por_minuto)
         self.s = sessao or requests.Session()
         self.tentativas = tentativas

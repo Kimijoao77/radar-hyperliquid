@@ -6,8 +6,8 @@ a máquina está de pé e a que distância ela está da corretora).
 
 Robôs em tempo real (versão 2, 20/11/2026): cada item de ROBOS tem .nome, .passo(agora_ms) (chamado várias vezes por
 segundo: o robô decide quando é hora de agir), .resumo(agora_ms) (o que aparece no sinal de vida) e, se quiser,
-.fechar() (guardar o estado quando o motor é desligado). O primeiro é o copy trading (vivo/copia.py). Tudo em
-simulação, sem chave e sem ordem de verdade.
+.fechar() (guardar o estado quando o motor é desligado). São dois: o copy trading em tempo real (vivo/copia.py) e os
+gêmeos dos outros laboratórios (vivo/gemeos.py, versão 3). Tudo em simulação, sem chave e sem ordem de verdade.
 
     python -m vivo.motor            # roda para sempre
     python -m vivo.motor --uma-vez  # uma batida só (conferência)
@@ -26,7 +26,7 @@ from pathlib import Path
 
 RAIZ = Path(os.environ.get("RADAR_RAIZ", Path(__file__).resolve().parent.parent))
 INFO = "https://api.hyperliquid.xyz/info"
-VERSAO = 2
+VERSAO = 3
 BATIDA_S = 60
 TIQUE_S = 0.25                    # de quanto em quanto tempo os robôs são chamados
 HORA = 3_600_000
@@ -75,8 +75,9 @@ def montar_robos(raiz: Path) -> list:
     pode ficar parado esperando uma resposta."""
     from radar.api import Hyperliquid
     from vivo.copia import CopiaAoVivo
-    api = Hyperliquid(1000, tentativas=1, timeout=5)
-    return [CopiaAoVivo(raiz, api, agora_ms)]
+    from vivo.gemeos import Gemeos
+    api = Hyperliquid(850, tentativas=1, timeout=5)     # o resto do limite (1200 por IP) fica para os laboratórios gêmeos
+    return [CopiaAoVivo(raiz, api, agora_ms), Gemeos(raiz, agora_ms)]
 
 
 def girar(estado: dict, agora: int | None = None) -> None:

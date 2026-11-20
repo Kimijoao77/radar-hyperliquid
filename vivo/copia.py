@@ -24,6 +24,13 @@ Duas medidas que só dá para tirar ao vivo:
 
 Estado em vivo/dados/copia_estado.json; resultado em vivo/gemeo/saida/copia_fiel.json, no mesmo formato do
 saida/copia_fiel.json do laboratório (o Nexus lê os dois com o mesmo código e põe lado a lado).
+
+Medida no mesmo preço (20/11/2026, pedido do João: sem ordem nova, os dois números têm que ser iguais): o laboratório
+avalia as posições abertas no preço da vela de 1 minuto, e a curva do gêmeo, no preço do instante. Para comparar os
+dois sem essa diferença, o gêmeo guarda uma foto das subcontas a cada mudança (o saldo e, por moeda, a quantidade e o
+custo) e, quando o laboratório publica uma rodada nova (o "ate" dela), avalia a foto daquele instante com as velas de
+1 minuto da Hyperliquid, pela mesma conta do laboratório (lab.copia.Precos e patrimonio). Sai em "comparacoes".
+Isto só mede: a cópia em si continua igual (a ordem sai no preço do livro).
 """
 from __future__ import annotations
 
@@ -51,6 +58,9 @@ RECENTE_MS = 3 * 3_600_000    # mesmo instante (o da última rodada do normal), 
 PONTO_ANTIGO_MS = 10 * 60_000  # depois de 3 h fica um ponto a cada 10 minutos
 GRAVAR_MS = 60_000
 HORA = 3_600_000
+FOTOS_MS = 8 * HORA           # fotos das subcontas guardadas (o laboratório publica de hora em hora, com uns minutos de atraso)
+MAX_COMPARACOES = 72
+FOLGA_PARA_VELAS = 120        # só busca uma vela de comparação quando sobra isso do orçamento de consultas
 SEMEAR_POR_VOLTA = 3          # carteiras acertadas por volta na partida (cada uma custa uma consulta de fills)
 JANELA_SEMENTE_MS = 10 * 60_000
 
@@ -165,6 +175,11 @@ class CopiaAoVivo:
         self.est.setdefault("mudancas", [])       # as últimas mudanças de posição vistas
         self.est.setdefault("conferir", [])       # ids de mudanças que ainda falta medir (fills dela)
         self.est.setdefault("seq", 0)
+        self.est.setdefault("fotos", {})         # cópia → [[t, base, capital, {moeda: [quantidade, custo]}]]
+        self.est.setdefault("comparacoes", {})   # "ate" do laboratório → {cópia: retorno no preço da vela}
+        self.arq_normal = self.raiz / "saida" / "copia_fiel.json"
+        self.normal_lido = None
+        self.pendente: dict | None = None        # comparação esperando as velas: {ate, moedas, velas}
         self.no_radar: dict[str, dict] = {}
         self.radar_lido = None                    # (mtime, tamanho) do relatorio.json já lido
         self.proximo = 0
@@ -496,12 +511,95 @@ class CopiaAoVivo:
             self.medir()
         except Exception:  # noqa: BLE001  (medida é extra: nunca derruba a cópia)
             pass
+        try:
+            self.fotografar(self.relogio())
+            self.comparar()
+        except Exception:  # noqa: BLE001  (idem)
+            pass
         fim = self.relogio()
         self.voltas.append((fim, fim - agora))
         self.voltas = [x for x in self.voltas if x[0] > fim - HORA]
         self.falhas = [x for x in self.falhas if x > fim - HORA]
         if fim - self.gravado >= GRAVAR_MS:
             self.gravar(fim)
+
+    # ------------------------------------------------------------ a mesma medida do laboratório
+    def foto(self, v: dict) -> list:
+        """As subcontas de uma cópia resumidas: saldo fixo (o das paradas e o colateral das vivas), capital e, por moeda,
+        a quantidade e o custo somados das vivas. Com o preço p de cada moeda, o patrimônio é base + Σ (q·p − custo)."""
+        base, cap, moedas = 0.0, 0.0, {}
+        for sc in v["subs"].values():
+            cap += sc["capital"]
+            if not sc["vivo"]:
+                base += sc["patrimonio"]
+                continue
+            base += sc["colateral"]
+            for m, (q, a) in sc["pos"].items():
+                x = moedas.setdefault(m, [0.0, 0.0])
+                x[0] += q
+                x[1] += q * a
+        return [round(base, 6), round(cap, 6), {m: [round(q, 10), round(k, 6)] for m, (q, k) in moedas.items()}]
+
+    def fotografar(self, t: int) -> None:
+        """Guarda a foto de cada cópia quando ela muda (ordem, parada, carteira nova)."""
+        for nome, v in self.est["variantes"].items():
+            if not v["subs"]:
+                continue
+            f = self.foto(v)
+            lista = self.est["fotos"].setdefault(nome, [])
+            if not lista or lista[-1][1:] != f:
+                lista.append([t, *f])
+            antigas = [i for i, x in enumerate(lista) if x[0] < t - FOTOS_MS]
+            if len(antigas) > 1:                   # fica a última de antes do corte (ela vale até a próxima)
+                del lista[:antigas[-1]]
+
+    def foto_em(self, nome: str, t: int) -> list | None:
+        """A foto que valia no instante t (a última tirada até ele)."""
+        antes = [x for x in self.est["fotos"].get(nome, []) if x[0] <= t]
+        return antes[-1] if antes else None
+
+    def comparar(self) -> None:
+        """Quando o laboratório publica uma rodada nova, avalia as fotos daquele instante nas velas de 1 minuto (uma
+        moeda por volta, só com folga no orçamento) e guarda o retorno de cada cópia em "comparacoes"."""
+        try:
+            st = self.arq_normal.stat()
+            marca = (st.st_mtime_ns, st.st_size)
+        except FileNotFoundError:
+            return
+        if marca != self.normal_lido:
+            self.normal_lido = marca
+            ate = (_ler(self.arq_normal, {}) or {}).get("ate")
+            if ate and str(ate) not in self.est["comparacoes"] and (self.pendente or {}).get("ate") != ate:
+                fotos = {n: self.foto_em(n, ate) for n in self.est["variantes"]}
+                if all(fotos.values()):             # só se o gêmeo já tinha fotos naquele instante
+                    moedas = sorted({m for f in fotos.values() for m in f[3]})
+                    self.pendente = {"ate": ate, "fotos": fotos, "faltam": moedas, "precos": C.Precos()}
+        p = self.pendente
+        if not p:
+            return
+        if p["faltam"]:
+            lim = getattr(self.api, "lim", None)
+            if lim is not None and lim.usado() > lim.por_minuto - FOLGA_PARA_VELAS:
+                return
+            m = p["faltam"].pop(0)
+            try:                                   # a mesma janela que o laboratório usa para o fim da rodada
+                p["precos"].juntar(m, self.api.velas(m, "1m", p["ate"] - 10 * C.MINUTO, p["ate"]))
+            except Exception:  # noqa: BLE001  (moeda sem vela: fica de fora, como no laboratório)
+                self.falhas.append(self.relogio())
+            if p["faltam"]:
+                return
+        ate, out = p["ate"], {}
+        for nome, (_, base, cap, moedas) in p["fotos"].items():
+            pat = base
+            for m, (q, k) in moedas.items():
+                px = p["precos"].em(m, ate)
+                if px is not None:
+                    pat += q * px - k
+            out[nome] = round(pat / cap - 1, 5) if cap else 0.0
+        self.est["comparacoes"][str(ate)] = out
+        for k in sorted(self.est["comparacoes"], key=int)[:-MAX_COMPARACOES]:
+            del self.est["comparacoes"][k]
+        self.pendente = None
 
     # ------------------------------------------------------------ o que sai
     def montar_saida(self, agora: int) -> dict:
@@ -514,6 +612,7 @@ class CopiaAoVivo:
             "gerado": agora, "gerado_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
             "inicio": self.est.get("inicio", agora), "ate": agora, "versao": VERSAO, "ao_vivo": True,
             "modo": "simulação (sem dinheiro, sem chave)", "taxa": C.TAXA, "semente": self.est.get("semente"),
+            "comparacoes": self.est.get("comparacoes", {}),
             "maquina": {
                 "carteiras_olhadas": len(self.carteiras()), "volta_s": round(self.ciclo_ms / 1000, 1),
                 "volta_demora_ms": round(statistics.median(duracoes)) if duracoes else None,

@@ -20,7 +20,7 @@ class Api:
     """Devolve o que o teste mandar: preços, contas, livros e fills."""
 
     def __init__(self):
-        self.precos, self.contas, self.livros, self.fills = {}, {}, {}, {}
+        self.precos, self.contas, self.livros, self.fills, self.velas_de = {}, {}, {}, {}, {}
         self.fora_do_ar = set()
         self.pedidos = []
         self.lim = Limite()
@@ -43,6 +43,10 @@ class Api:
             return self.livros[moeda]
         p = self.precos[moeda]                      # livro fundo, 1 centésimo de 1 % de cada lado
         return {"levels": [[{"px": str(p * 0.9999), "sz": "1000000"}], [{"px": str(p * 1.0001), "sz": "1000000"}]]}
+
+    def velas(self, moeda, intervalo, inicio, fim):
+        self.pedidos.append(("velas", moeda))
+        return [v for v in self.velas_de.get(moeda, []) if inicio <= v["t"] <= fim]
 
     def fills_desde(self, w, inicio, fim=None, maximo=10000):
         self.pedidos.append(("fills", w))
@@ -348,3 +352,48 @@ def test_curva_um_ponto_por_minuto_nas_ultimas_horas_e_um_a_cada_dez_minutos_ant
     c = V.afinar(velha + nova, agora)
     assert [p[1] for p in c[:4]] == [0, 10, 20, 30] and c[4:] == nova
     assert V.afinar(c, agora) == c
+
+
+def test_sem_ordem_nova_a_comparacao_da_o_mesmo_que_o_laboratorio_no_preco_da_vela(mundo):
+    """O gêmeo fotografa as subcontas; quando o laboratório publica a rodada (ate), ele avalia a foto daquele instante
+    nas velas de 1 minuto, como o laboratório. Com as mesmas posições, dá o mesmo número."""
+    m = mundo
+    m.volta()
+    m.api.contas[W1] = (1_000.0, {"BTC": 10.0, "ETH": -20.0})
+    m.volta(3)
+    sc = m.sub("seletiva")
+    q_btc, a_btc = sc["pos"]["BTC"]
+    q_eth, a_eth = sc["pos"]["ETH"]
+    col = sc["colateral"]
+    m.api.precos.update(BTC=103.0, ETH=9.0)                 # o preço do instante (mid) anda...
+    m.volta(180)
+    ate = (m.t // 60_000) * 60_000 - 60_000                  # ...e o laboratório fecha a rodada um minuto antes
+    m.api.velas_de = {"BTC": [{"t": ate, "T": ate + 60_000, "o": "102", "c": "102.5"}],
+                      "ETH": [{"t": ate, "T": ate + 60_000, "o": "9.5", "c": "9.4"}]}
+    (m.raiz / "saida" / "copia_fiel.json").write_text(json.dumps({"ate": ate}), encoding="utf-8")
+    for _ in range(3):                                       # uma moeda por volta
+        m.volta(3)
+    esperado = (col + q_btc * (102 - a_btc) + q_eth * (9.5 - a_eth)) / 1000 - 1
+    comp = m.robo.est["comparacoes"][str(ate)]
+    assert comp["seletiva"] == pytest.approx(esperado, abs=1e-5)
+    assert comp["seletiva"] != pytest.approx(sc["patrimonio"] / 1000 - 1, abs=1e-4)   # a curva usa o mid: outro número
+    assert [p for p in m.api.pedidos if p[0] == "velas"] == [("velas", "BTC"), ("velas", "ETH")]
+    m.robo.gravar(m.t)
+    s = json.loads((m.raiz / "vivo" / "gemeo" / "saida" / "copia_fiel.json").read_text(encoding="utf-8"))
+    assert s["comparacoes"][str(ate)]["seletiva"] == comp["seletiva"]
+    m.api.pedidos.clear()
+    m.volta(3)
+    assert not [p for p in m.api.pedidos if p[0] == "velas"]  # cada rodada é medida uma vez
+
+
+def test_foto_do_instante_certo_e_sem_foto_antiga_nao_compara(mundo):
+    m = mundo
+    m.volta()
+    t_antes = m.t
+    m.api.contas[W1] = (1_000.0, {"BTC": 10.0})
+    m.volta(3)
+    assert m.robo.foto_em("seletiva", t_antes)[3] == {}      # antes da compra: nada aberto
+    assert m.robo.foto_em("seletiva", m.t)[3]["BTC"][0] > 0
+    (m.raiz / "saida" / "copia_fiel.json").write_text(json.dumps({"ate": t_antes - 3_600_000}), encoding="utf-8")
+    m.volta(3)
+    assert m.robo.pendente is None and m.robo.est["comparacoes"] == {}   # o gêmeo nem existia naquela hora

@@ -107,7 +107,8 @@ def test_rodar_ponta_a_ponta(tmp_path):
     try:
         assert R.main(tmp_path, Api()) == 0
         rel = json.loads((tmp_path / "saida" / "funding.json").read_text())
-        assert rel["versao"] == 3 and rel["anterior"][0]["retorno"] == pytest.approx(-0.00004)
+        assert rel["versao"] == R.VERSAO and rel["anterior"][0]["retorno"] == pytest.approx(-0.00004)
+        assert rel["anterior"][0]["nome"] == R.NOME_DA_VERSAO[2]   # o arquivo velho sem "versao" é o da versão 2
         assert rel["passado"]["posicoes"][0]["moeda"] == "BTC"
         assert rel["passado"]["lucro"] > 0
         assert rel["ranking"][0]["moeda"] == "BTC" and rel["ranking"][0]["ao_ano_7d"] == pytest.approx(0.00003 * ANO_H, rel=1e-3)

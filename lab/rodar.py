@@ -12,11 +12,13 @@ falhas = 0
 # 10/11 (pedido do João: só o que pode bater o ping pong, 45 % ao ano): saíram memecoins (−5 % em 2 dias), funding
 # (a melhor moeda paga ~11 % ao ano), pools estáveis (~5 a 15 % ao ano) e opções (~20 a 30 % ao ano). O código fica.
 # 10/11 (à noite): entrou "listagens" (vender moeda recém-listada na Hyperliquid)
+# 20/11 (pedido do João: "poderia religar ele também"): o funding voltou, recomeçando do zero (versão 4)
 # 18/11: entrou "previsoes" (mercados de previsão do Polymarket, pedido do João: "apostas em geral, as famosas previsões")
 # 11/11: entrou "ideias" (os testes que o Claude cria a partir das ideias dos vídeos; lab/ideias/COMO.md)
 LABS = (("copia", rodar_copia), ("grade", rodar_grade), ("cofres", rodar_cofres), ("apostas", rodar_apostas),
-        ("concentradas", rodar_concentradas), ("listagens", rodar_listagens), ("ideias", rodar_ideias), ("previsoes", rodar_previsoes))
-_DESLIGADOS = (rodar_funding, rodar_pools, rodar_opcoes, rodar_memecoins)
+        ("concentradas", rodar_concentradas), ("listagens", rodar_listagens), ("ideias", rodar_ideias), ("previsoes", rodar_previsoes),
+        ("funding", rodar_funding))
+_DESLIGADOS = (rodar_pools, rodar_opcoes, rodar_memecoins)
 for nome, mod in LABS:
     try:
         mod.main()

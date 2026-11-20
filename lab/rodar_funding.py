@@ -12,7 +12,10 @@ sys.path.insert(0, str(RAIZ))
 
 from lab.funding import COM_SPOT, DIA, HORA, Banco, cfg_de, coletar, ranking, simular, universo  # noqa: E402
 
-VERSAO = 3
+VERSAO = 4                            # 4 (20/11): religado depois de 10 dias parado; o ao vivo recomeça do zero
+# o nome que o resultado de cada versão ganha em "anterior" quando a regra muda
+NOME_DA_VERSAO = {2: "Entrava com 20 % ao ano, ordens a mercado",
+                  3: "Ordem limitada, a partir de 10 % ao ano (09 a 10/11, até ser desligado)"}
 from radar.api import Hyperliquid  # noqa: E402
 
 
@@ -36,12 +39,13 @@ def main(raiz: Path = RAIZ, api=None) -> int:
     if not ult:
         print("funding: sem dados ainda")
         return 0
-    # versão 3: o ao vivo recomeça; o resultado da versão anterior (o último gravado) fica em "anterior"
+    # a cada versão nova o ao vivo recomeça; o resultado da versão anterior (o último gravado) fica em "anterior"
     if est.get("versao") != VERSAO:
         velho = json.loads((raiz / "saida" / "funding.json").read_text(encoding="utf-8")) if (raiz / "saida" / "funding.json").exists() else {}
         av = velho.get("ao_vivo") or {}
         if av.get("capital"):
-            est.setdefault("anterior", []).append({"nome": "Entrava com 20 % ao ano, ordens a mercado", "retorno": round(av["saldo"] / av["capital"] - 1, 5),
+            nome = NOME_DA_VERSAO.get(velho.get("versao") or est.get("versao") or 2, "Versão anterior")
+            est.setdefault("anterior", []).append({"nome": nome, "retorno": round(av["saldo"] / av["capital"] - 1, 5),
                                                    "de": av.get("inicio"), "ate": av.get("fim")})
         est["inicio_ao_vivo"], est["versao"] = ult, VERSAO
     est.setdefault("inicio_ao_vivo", ult)

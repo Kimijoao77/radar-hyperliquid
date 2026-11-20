@@ -46,8 +46,12 @@ def test_resumo_so_olha_a_ultima_hora_e_conta_as_falhas():
 def test_batida_guarda_desde_quando_esta_ligado_e_um_robo_com_erro_nao_derruba(monkeypatch):
     class Bom:
         nome = "bom"
+        passos = 0
 
         def passo(self, agora):
+            self.passos += 1
+
+        def resumo(self, agora):
             return {"ordens": 3}
 
     class Ruim:
@@ -56,13 +60,30 @@ def test_batida_guarda_desde_quando_esta_ligado_e_um_robo_com_erro_nao_derruba(m
         def passo(self, agora):
             raise RuntimeError("quebrou")
 
-    monkeypatch.setattr(M, "ROBOS", [Bom(), Ruim()])
+        def resumo(self, agora):
+            return {"ordens": 0}
+
+    class SemResumo:
+        nome = "mudo"
+
+        def passo(self, agora):
+            pass
+
+        def resumo(self, agora):
+            raise ValueError("sem dados")
+
+    bom = Bom()
+    monkeypatch.setattr(M, "ROBOS", [bom, Ruim(), SemResumo()])
     monkeypatch.setattr(M, "medir_latencia", lambda sessao: 5.0)
     est = {}
+    M.girar(est, 1_000_000)
+    M.girar(est, 1_000_250)
     a = M.batida(None, est, 1_000_000)
     b = M.batida(None, est, 1_060_000)
+    assert bom.passos == 2                                   # o erro do vizinho não parou o robô bom
     assert a["ligado_desde"] == b["ligado_desde"] == 1_000_000 and b["batida"] == 1_060_000
-    assert b["robos"] == [{"nome": "bom", "ordens": 3}, {"nome": "ruim", "erro": "quebrou"}]
+    assert b["robos"] == [{"nome": "bom", "ordens": 3}, {"nome": "ruim", "ordens": 0, "erro": "RuntimeError: quebrou"},
+                          {"nome": "mudo", "erro": "ValueError: sem dados"}]
     assert b["latencia_ms"]["agora"] == 5.0 and len(est["amostras"]) == 2
     assert "simulação" in b["modo"]
 

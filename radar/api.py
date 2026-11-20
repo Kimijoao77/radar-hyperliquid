@@ -48,24 +48,27 @@ class Limitador:
 
 
 class Hyperliquid:
-    def __init__(self, por_minuto: int = 1000, sessao: requests.Session | None = None, tentativas: int = 5):
+    def __init__(self, por_minuto: int = 1000, sessao: requests.Session | None = None, tentativas: int = 5,
+                 timeout: float = 30):
         self.lim = Limitador(por_minuto)
         self.s = sessao or requests.Session()
         self.tentativas = tentativas
+        self.timeout = timeout          # o motor em tempo real usa 1 tentativa e poucos segundos: não pode ficar parado
 
     def _post(self, corpo: dict, peso: int):
         self.lim.gastar(peso)
         espera = 2.0
         for i in range(self.tentativas):
             try:
-                r = self.s.post(INFO, json=corpo, timeout=30)
+                r = self.s.post(INFO, json=corpo, timeout=self.timeout)
             except requests.RequestException:
                 r = None
             if r is not None and r.status_code == 200:
                 return r.json()
             if r is not None and r.status_code not in (429, 500, 502, 503, 504):
                 raise RuntimeError(f"Hyperliquid respondeu {r.status_code}: {r.text[:200]}")
-            time.sleep(espera)
+            if i + 1 < self.tentativas:
+                time.sleep(espera)
             espera = min(espera * 2, 60)
         raise RuntimeError(f"Hyperliquid não respondeu depois de {self.tentativas} tentativas ({corpo.get('type')})")
 
@@ -80,6 +83,14 @@ class Hyperliquid:
     def estado(self, usuario: str) -> dict:
         """Conta perp agora: marginSummary.accountValue, assetPositions (posições abertas)."""
         return self._post({"type": "clearinghouseState", "user": usuario}, 2)
+
+    def mids(self) -> dict:
+        """O preço do meio de todas as moedas agora: {moeda: "preço"}."""
+        return self._post({"type": "allMids"}, 2) or {}
+
+    def livro(self, moeda: str) -> dict:
+        """O livro de ofertas agora: levels = [compras, vendas], cada nível {px, sz, n}, do melhor para o pior."""
+        return self._post({"type": "l2Book", "coin": moeda}, 2) or {}
 
     def portfolio(self, usuario: str):
         """Histórico de saldo e PnL por janela (day, week, month, allTime)."""

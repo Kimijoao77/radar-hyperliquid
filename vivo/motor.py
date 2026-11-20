@@ -1,10 +1,13 @@
 """Motor em tempo real: o processo que fica ligado 24 h na máquina (VPS em Tóquio, perto da Hyperliquid).
 
-Versão 1 (20/11/2026): só o sinal de vida. A cada minuto mede quanto a Hyperliquid demora para responder daqui e
-grava saida/maquina.json; o vivo/atualizar.sh publica esse arquivo no repositório (o Nexus e quem cuida do projeto
-sabem que a máquina está de pé e a que distância ela está da corretora). Os robôs em tempo real (copy, tendência,
-pools concentradas) entram aqui como itens de ROBOS, cada um com um passo(agora_ms); tudo em simulação, sem chave e
-sem ordem de verdade.
+Sinal de vida (versão 1, 20/11/2026): a cada minuto mede quanto a Hyperliquid demora para responder daqui e grava
+saida/maquina.json; o vivo/atualizar.sh publica esse arquivo no repositório (o Nexus e quem cuida do projeto sabem que
+a máquina está de pé e a que distância ela está da corretora).
+
+Robôs em tempo real (versão 2, 20/11/2026): cada item de ROBOS tem .nome, .passo(agora_ms) (chamado várias vezes por
+segundo: o robô decide quando é hora de agir), .resumo(agora_ms) (o que aparece no sinal de vida) e, se quiser,
+.fechar() (guardar o estado quando o motor é desligado). O primeiro é o copy trading (vivo/copia.py). Tudo em
+simulação, sem chave e sem ordem de verdade.
 
     python -m vivo.motor            # roda para sempre
     python -m vivo.motor --uma-vez  # uma batida só (conferência)
@@ -13,6 +16,7 @@ from __future__ import annotations
 
 import json
 import os
+import signal
 import socket
 import statistics
 import sys
@@ -22,11 +26,12 @@ from pathlib import Path
 
 RAIZ = Path(os.environ.get("RADAR_RAIZ", Path(__file__).resolve().parent.parent))
 INFO = "https://api.hyperliquid.xyz/info"
-VERSAO = 1
+VERSAO = 2
 BATIDA_S = 60
+TIQUE_S = 0.25                    # de quanto em quanto tempo os robôs são chamados
 HORA = 3_600_000
 GUARDAR = 24 * 60                 # amostras de latência guardadas (um dia)
-ROBOS: list = []                  # os robôs em tempo real; cada um tem .nome e .passo(agora_ms) -> dict (resumo)
+ROBOS: list = []                  # os robôs em tempo real (ver o texto do começo)
 
 
 def agora_ms() -> int:
@@ -65,8 +70,29 @@ def gravar(caminho: Path, obj) -> None:
     tmp.replace(caminho)
 
 
+def montar_robos(raiz: Path) -> list:
+    """Os robôs desta máquina. Consultas com uma tentativa só e poucos segundos de espera: quem opera ao vivo não
+    pode ficar parado esperando uma resposta."""
+    from radar.api import Hyperliquid
+    from vivo.copia import CopiaAoVivo
+    api = Hyperliquid(1000, tentativas=1, timeout=5)
+    return [CopiaAoVivo(raiz, api, agora_ms)]
+
+
+def girar(estado: dict, agora: int | None = None) -> None:
+    """Chama o passo de cada robô. Um robô com erro não derruba os outros nem o sinal de vida: o erro fica anotado."""
+    agora = agora or agora_ms()
+    erros = estado.setdefault("erros", {})
+    for r in ROBOS:
+        try:
+            r.passo(agora)
+            erros.pop(r.nome, None)
+        except Exception as e:  # noqa: BLE001
+            erros[getattr(r, "nome", "?")] = f"{type(e).__name__}: {e}"[:200]
+
+
 def batida(sessao, estado: dict, agora: int | None = None) -> dict:
-    """Uma volta do motor: mede a latência, roda os robôs e devolve o que vai em saida/maquina.json."""
+    """A volta de um minuto: mede a latência e devolve o que vai em saida/maquina.json (com o resumo dos robôs)."""
     agora = agora or agora_ms()
     estado.setdefault("ligado_desde", agora)
     amostras = estado.setdefault("amostras", [])
@@ -74,10 +100,14 @@ def batida(sessao, estado: dict, agora: int | None = None) -> dict:
     del amostras[:-GUARDAR]
     robos = []
     for r in ROBOS:
+        nome = getattr(r, "nome", "?")
         try:
-            robos.append({"nome": r.nome, **(r.passo(agora) or {})})
-        except Exception as e:  # noqa: BLE001  (um robô com erro não derruba os outros nem o sinal de vida)
-            robos.append({"nome": getattr(r, "nome", "?"), "erro": str(e)[:200]})
+            item = {"nome": nome, **(r.resumo(agora) or {})}
+        except Exception as e:  # noqa: BLE001
+            item = {"nome": nome, "erro": f"{type(e).__name__}: {e}"[:200]}
+        if estado.get("erros", {}).get(nome):
+            item["erro"] = estado["erros"][nome]
+        robos.append(item)
     return {"versao": VERSAO, "maquina": socket.gethostname(), "modo": "simulação (sem dinheiro, sem chave)",
             "ligado_desde": estado["ligado_desde"], "batida": agora,
             "batida_txt": datetime.fromtimestamp(agora / 1000, timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
@@ -89,16 +119,32 @@ def main(argv: list[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     sessao, estado = requests.Session(), {}
     saida = RAIZ / "saida" / "maquina.json"
-    while True:
-        inicio = time.monotonic()
-        try:
-            gravar(saida, batida(sessao, estado))
-        except Exception as e:  # noqa: BLE001
-            print(f"batida falhou: {e}", flush=True)
-        if "--uma-vez" in argv:
-            print(saida.read_text(encoding="utf-8") if saida.exists() else "sem saída")
-            return 0
-        time.sleep(max(1.0, BATIDA_S - (time.monotonic() - inicio)))
+    try:
+        ROBOS.extend(montar_robos(RAIZ))
+    except Exception as e:  # noqa: BLE001  (sem robôs, o sinal de vida continua e mostra o erro)
+        estado["erros"] = {"motor": f"robôs não subiram: {type(e).__name__}: {e}"[:200]}
+        print(estado["erros"]["motor"], flush=True)
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))      # o systemd desliga assim: sai pelo finally
+    proxima = 0.0
+    try:
+        while True:
+            girar(estado)
+            if time.monotonic() >= proxima:
+                proxima = time.monotonic() + BATIDA_S
+                try:
+                    gravar(saida, batida(sessao, estado))
+                except Exception as e:  # noqa: BLE001
+                    print(f"batida falhou: {e}", flush=True)
+                if "--uma-vez" in argv:
+                    print(saida.read_text(encoding="utf-8") if saida.exists() else "sem saída")
+                    return 0
+            time.sleep(TIQUE_S)
+    finally:
+        for r in ROBOS:
+            try:
+                getattr(r, "fechar", lambda: None)()
+            except Exception as e:  # noqa: BLE001
+                print(f"{getattr(r, 'nome', '?')}: não guardou o estado: {e}", flush=True)
 
 
 if __name__ == "__main__":

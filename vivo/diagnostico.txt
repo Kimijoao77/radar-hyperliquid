@@ -1,0 +1,27 @@
+gerado: 2026-11-21 13:19 UTC
+ligada há: up 1 minute
+ 13:19:04 up 1 min,  0 user,  load average: 1.36, 0.51, 0.19
+
+               total        used        free      shared  buff/cache   available
+Mem:             955         386          96           1         625         569
+Swap:           2399           0        2399
+
+/dev/vda2        23G  6.0G   16G  28% /
+
+motor: active desde Sat 2026-11-21 13:19:03 UTC
+reinícios do motor: 0
+
+== memória e travamentos (kernel, últimas 24 h) ==
+
+== motor (últimas linhas) ==
+Nov 21 13:18:41 radar systemd[1]: Started radar-vivo.service - Radar: motor em tempo real (simulacao).
+Nov 21 13:19:03 radar systemd[1]: Stopping radar-vivo.service - Radar: motor em tempo real (simulacao)...
+Nov 21 13:19:03 radar systemd[1]: radar-vivo.service: Deactivated successfully.
+Nov 21 13:19:03 radar systemd[1]: Stopped radar-vivo.service - Radar: motor em tempo real (simulacao).
+Nov 21 13:19:03 radar systemd[1]: radar-vivo.service: Consumed 1.062s CPU time, 61.6M memory peak, 0B memory swap peak.
+Nov 21 13:19:03 radar systemd[1]: Started radar-vivo.service - Radar: motor em tempo real (simulacao).
+
+== atualização (últimas linhas) ==
+-- No entries --
+
+== antes de ligar desta vez (fim da vez anterior) ==

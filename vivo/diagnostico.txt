@@ -1,9 +1,9 @@
 gerado: 2026-11-21 13:19 UTC
-ligada há: up 1 minute
- 13:19:04 up 1 min,  0 user,  load average: 1.36, 0.51, 0.19
+ligada há: up 2 minutes
+ 13:19:35 up 2 min,  0 user,  load average: 0.82, 0.46, 0.18
 
                total        used        free      shared  buff/cache   available
-Mem:             955         386          96           1         625         569
+Mem:             955         396          84           1         627         559
 Swap:           2399           0        2399
 
 /dev/vda2        23G  6.0G   16G  28% /
@@ -22,6 +22,8 @@ Nov 21 13:19:03 radar systemd[1]: radar-vivo.service: Consumed 1.062s CPU time, 
 Nov 21 13:19:03 radar systemd[1]: Started radar-vivo.service - Radar: motor em tempo real (simulacao).
 
 == atualização (últimas linhas) ==
--- No entries --
+Nov 21 13:19:35 radar systemd[1]: Starting radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados...
+Nov 21 13:19:35 radar runuser[2192]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:19:35 radar runuser[2192]: pam_unix(runuser:session): session closed for user radar
 
 == antes de ligar desta vez (fim da vez anterior) ==

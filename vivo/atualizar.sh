@@ -55,6 +55,14 @@ diagnostico() {
     journalctl -u radar-vivo.service --since -3h --no-pager -n 25 2>/dev/null
     echo; echo "== atualização (últimas linhas) =="
     journalctl -u radar-atualiza.service --since -3h --no-pager -n 25 2>/dev/null
+    if [ -s /run/radar-envio.log ]; then
+      echo; echo "== último envio ao GitHub que falhou =="
+      tail -n 25 /run/radar-envio.log
+      echo; echo "== git =="
+      $G status -sb 2>&1 | head -15
+      $G log --oneline -5 2>&1
+      $G log --oneline origin/main -3 2>&1
+    fi
     if [ "$(cut -d. -f1 /proc/uptime)" -lt 1800 ]; then
       echo; echo "== antes de ligar desta vez (fim da vez anterior) =="
       journalctl -b -1 --no-pager -n 60 -p warning 2>/dev/null
@@ -88,11 +96,23 @@ fi
 $G checkout -q -- saida/copia_ao_vivo.json 2>/dev/null
 
 antes=$($G rev-parse HEAD)
+enviou=0
 for i in 1 2 3 4; do
-  $G pull -q --rebase --autostash && $G push -q && break
+  if $G pull -q --rebase --autostash > /run/radar-envio.log 2>&1 && $G push -q >> /run/radar-envio.log 2>&1; then enviou=1; break; fi
   sleep $((i * 5))
 done
 depois=$($G rev-parse HEAD)
+if [ "$enviou" = 1 ]; then
+  : > /run/radar-envio.log
+else
+  # não conseguiu publicar na main: manda o diagnóstico num ramo à parte, só com esse arquivo (assim dá para ver o
+  # motivo mesmo se o problema for um commit que o GitHub recusa)
+  diagnostico
+  blob=$($G hash-object -w vivo/diagnostico.txt)
+  arvore=$(printf '100644 blob %s\tdiagnostico.txt\n' "$blob" | $G mktree)
+  c=$($G commit-tree "$arvore" -m "Diagnóstico da máquina: $(date -u +'%Y-%m-%d %H:%M') UTC")
+  $G push -q -f origin "$c:refs/heads/maquina-diagnostico" >> /run/radar-envio.log 2>&1
+fi
 
 if [ "$antes" != "$depois" ]; then
   mudou=$($G diff --name-only "$antes" "$depois" -- vivo lab radar requirements.txt | grep -v '^vivo/dados/' | grep -v '^vivo/gemeo/' | grep -v '^lab/dados/' || true)

@@ -1,9 +1,9 @@
-gerado: 2026-11-21 13:24 UTC
-ligada há: up 7 minutes
- 13:24:57 up 7 min,  0 user,  load average: 0.02, 0.19, 0.14
+gerado: 2026-11-21 13:30 UTC
+ligada há: up 12 minutes
+ 13:30:03 up 12 min,  0 user,  load average: 0.00, 0.06, 0.09
 
                total        used        free      shared  buff/cache   available
-Mem:             955         403         126           1         578         552
+Mem:             955         360         168           1         579         595
 Swap:           2399           0        2399
 
 /dev/vda2        23G  6.0G   16G  28% /
@@ -22,30 +22,30 @@ Nov 21 13:19:03 radar systemd[1]: radar-vivo.service: Consumed 1.062s CPU time, 
 Nov 21 13:19:03 radar systemd[1]: Started radar-vivo.service - Radar: motor em tempo real (simulacao).
 
 == atualização (últimas linhas) ==
-Nov 21 13:19:54 radar runuser[2321]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 21 13:19:54 radar runuser[2321]: pam_unix(runuser:session): session closed for user radar
-Nov 21 13:19:54 radar runuser[2324]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 21 13:19:54 radar runuser[2324]: pam_unix(runuser:session): session closed for user radar
-Nov 21 13:19:54 radar runuser[2327]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 21 13:19:54 radar runuser[2327]: pam_unix(runuser:session): session closed for user radar
-Nov 21 13:19:54 radar runuser[2330]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 21 13:19:54 radar runuser[2330]: pam_unix(runuser:session): session closed for user radar
-Nov 21 13:19:54 radar runuser[2334]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 21 13:19:54 radar runuser[2334]: pam_unix(runuser:session): session closed for user radar
-Nov 21 13:19:54 radar runuser[2338]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 21 13:19:54 radar runuser[2338]: pam_unix(runuser:session): session closed for user radar
-Nov 21 13:19:54 radar runuser[2341]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 21 13:19:54 radar runuser[2341]: pam_unix(runuser:session): session closed for user radar
-Nov 21 13:19:54 radar runuser[2344]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 21 13:19:55 radar runuser[2344]: pam_unix(runuser:session): session closed for user radar
-Nov 21 13:19:55 radar runuser[2360]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 21 13:19:57 radar runuser[2360]: pam_unix(runuser:session): session closed for user radar
-Nov 21 13:19:57 radar runuser[2369]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 21 13:19:57 radar runuser[2369]: pam_unix(runuser:session): session closed for user radar
-Nov 21 13:19:57 radar systemd[1]: radar-atualiza.service: Deactivated successfully.
-Nov 21 13:19:57 radar systemd[1]: Finished radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados.
-Nov 21 13:24:56 radar systemd[1]: Starting radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados...
-Nov 21 13:24:57 radar runuser[2408]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 21 13:24:57 radar runuser[2408]: pam_unix(runuser:session): session closed for user radar
+Nov 21 13:24:57 radar runuser[2437]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:24:57 radar runuser[2437]: pam_unix(runuser:session): session closed for user radar
+Nov 21 13:24:57 radar runuser[2440]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:24:57 radar runuser[2440]: pam_unix(runuser:session): session closed for user radar
+Nov 21 13:24:57 radar runuser[2443]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:24:57 radar runuser[2443]: pam_unix(runuser:session): session closed for user radar
+Nov 21 13:24:57 radar runuser[2446]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:24:57 radar runuser[2446]: pam_unix(runuser:session): session closed for user radar
+Nov 21 13:24:57 radar runuser[2450]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:24:57 radar runuser[2450]: pam_unix(runuser:session): session closed for user radar
+Nov 21 13:24:57 radar runuser[2454]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:24:57 radar runuser[2454]: pam_unix(runuser:session): session closed for user radar
+Nov 21 13:24:57 radar runuser[2457]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:24:57 radar runuser[2457]: pam_unix(runuser:session): session closed for user radar
+Nov 21 13:24:57 radar runuser[2460]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:24:57 radar runuser[2460]: pam_unix(runuser:session): session closed for user radar
+Nov 21 13:24:57 radar runuser[2476]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:24:59 radar runuser[2476]: pam_unix(runuser:session): session closed for user radar
+Nov 21 13:24:59 radar runuser[2485]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:24:59 radar runuser[2485]: pam_unix(runuser:session): session closed for user radar
+Nov 21 13:24:59 radar systemd[1]: radar-atualiza.service: Deactivated successfully.
+Nov 21 13:24:59 radar systemd[1]: Finished radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados.
+Nov 21 13:30:03 radar systemd[1]: Starting radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados...
+Nov 21 13:30:03 radar runuser[2519]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 21 13:30:03 radar runuser[2519]: pam_unix(runuser:session): session closed for user radar
 
 == antes de ligar desta vez (fim da vez anterior) ==

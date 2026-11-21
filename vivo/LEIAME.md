@@ -39,3 +39,19 @@ de corretora nem de carteira, e nenhuma ordem de verdade é enviada.
 - O fluxo "Teste da máquina" instala tudo num Ubuntu limpo do GitHub, igual à VPS.
 
 Este repositório é público: nada secreto pode ser guardado aqui, nunca.
+
+## O que aconteceu em 21/11/2026 e o que mudou
+
+- A máquina ficou ligada e o motor seguiu rodando (processador e rede normais no painel da Vultr), mas o envio para o
+  GitHub parou às 06:46 (BRT), logo antes da rodada que publica o estado dos robôs. Reiniciar pelo painel não resolveu:
+  o defeito ficou gravado no disco. A chave do GitHub não foi apagada nem trocada (registro de segurança da conta).
+- Causa mais provável: um git morto no meio (memória apertada, com gravação em disco dobrada entre 06:35 e 08:25) deixou
+  uma trava (`index.lock`) ou um rebase pela metade. Não deu para confirmar por dentro: o console da Vultr não aceita
+  colar, e a máquina foi reinstalada.
+- O conserto da manhã (limites de tempo, desfazer rebase preso, teto de memória, diagnóstico) estava certo, mas não
+  chegava: a máquina só recebia código pelo git, que era o que estava quebrado.
+- Agora o `atualizar.sh`: (1) se atualiza pelo endereço público do GitHub (raw), sem depender do git; (2) apaga travas
+  velhas do git; (3) com 30 minutos sem publicar e o GitHub aceitando a chave, baixa o repositório de novo e troca a
+  cópia, guardando `.venv`, `vivo/dados`, `vivo/gemeo` e `saida/maquina.json` (a cópia antiga fica em
+  `/opt/radar.anterior`). Testado num ambiente de mentira: normal, trava velha, trava nova, cópia quebrada, pouco tempo
+  de falha e GitHub fora do ar.

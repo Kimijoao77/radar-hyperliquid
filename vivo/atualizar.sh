@@ -9,12 +9,43 @@
 # limite de tempo, a rodada nunca terminava e as seguintes nem começavam. Agora cada comando do git tem 2 minutos, a
 # rodada inteira tem 6, o git se conserta sozinho se ficar no meio de um rebase, o motor tem um teto de memória e, de
 # hora em hora (e logo depois de ligar), vai junto um diagnóstico (vivo/diagnostico.txt) sem nada secreto.
+#
+# 21/11/2026 (depois da reinstalação): o conserto acima ficou pronto às 08:41 e nunca chegou, porque a máquina só recebia
+# código novo pelo git, que era justamente o que estava travado, e reiniciar não resolveu (o travamento ficou gravado no
+# disco). Agora:
+#   - este arquivo se atualiza sozinho pelo endereço público do GitHub (raw), sem depender do git: um conserto futuro
+#     chega em até 5 minutos mesmo com o git quebrado;
+#   - travas velhas do git (index.lock e outras, que sobram quando um git morre no meio) são apagadas;
+#   - se a máquina passar 30 minutos sem conseguir publicar, com o GitHub aceitando a chave, ela baixa o repositório de novo
+#     do zero e troca a cópia quebrada, guardando os dados do robô.
 set -u
-DIR=/opt/radar
-R="runuser -u radar --"
+DIR="${RADAR_DIR:-/opt/radar}"
+REPO="${RADAR_REPO:-Kimijoao77/radar-hyperliquid}"
+ESTADO="${RADAR_ESTADO:-/var/lib/radar}"
+R="${RADAR_R-runuser -u radar --}"
 G="timeout -k 10 120 $R git -C $DIR"
+SC="${RADAR_SYSTEMCTL:-systemctl}"
+mkdir -p "$ESTADO"
+exec 9> "${RADAR_TRAVA:-/run/radar-atualiza.lock}"; flock -n 9 || exit 0     # uma rodada por vez
+
+# 1. este arquivo se atualiza pelo endereço público, antes de qualquer coisa (só troca se o novo for um script válido)
+EU="$DIR/vivo/atualizar.sh"
+if [ -z "${RADAR_JA_ATUALIZOU:-}" ] && [ -z "${RADAR_SEM_RAW:-}" ]; then
+  novo="$ESTADO/atualizar.novo"
+  if timeout 40 curl -fsSL -o "$novo" "https://raw.githubusercontent.com/$REPO/main/vivo/atualizar.sh?t=$(date +%s)" \
+     && [ -s "$novo" ] && head -1 "$novo" | grep -q '^#!/usr/bin/env bash' && bash -n "$novo" && ! cmp -s "$novo" "$EU"; then
+    cat "$novo" > "$EU"                       # mesmo arquivo (mesmo dono e permissões); o git vê como mudança local
+    echo "atualizar.sh novo (pelo endereço público): rodando de novo"
+    exec 9>&-
+    RADAR_JA_ATUALIZOU=1 exec /bin/bash "$EU"
+  fi
+fi
 cd "$DIR" || exit 1
-exec 9> /run/radar-atualiza.lock; flock -n 9 || exit 0     # uma rodada por vez
+
+# 2. travas velhas do git: só quando nenhum git está rodando e a trava tem mais de 10 minutos
+if ! pgrep -x git >/dev/null 2>&1; then
+  find "$DIR/.git" -maxdepth 4 -name '*.lock' -mmin +10 -print -delete 2>/dev/null | sed 's/^/trava velha do git apagada: /'
+fi
 
 # limites do systemd (só escreve e recarrega quando mudam)
 limites() {
@@ -28,9 +59,9 @@ MemoryMax=800M
 MemorySwapMax=600M"
   [ "$(cat /etc/systemd/system/radar-atualiza.service.d/limite.conf 2>/dev/null)" = "$a" ] || { echo "$a" > /etc/systemd/system/radar-atualiza.service.d/limite.conf; mudou=1; }
   [ "$(cat /etc/systemd/system/radar-vivo.service.d/memoria.conf 2>/dev/null)" = "$v" ] || { echo "$v" > /etc/systemd/system/radar-vivo.service.d/memoria.conf; mudou=1; }
-  if [ "$mudou" = 1 ]; then systemctl daemon-reload; systemctl restart radar-vivo.service; fi
+  if [ "$mudou" = 1 ]; then $SC daemon-reload; $SC restart radar-vivo.service; fi
 }
-limites
+[ -z "${RADAR_TESTE:-}" ] && limites
 
 # git preso no meio de um rebase ou com arquivo em conflito: volta para um estado limpo (perde no máximo a última hora
 # do estado dos robôs, que é refeito)
@@ -71,6 +102,32 @@ diagnostico() {
   chown radar: vivo/diagnostico.txt 2>/dev/null
 }
 
+# baixa o repositório de novo do zero e troca a cópia quebrada. Guarda o ambiente Python, os dados do robô e o que o
+# motor publicou; a cópia antiga fica em $DIR.anterior até a próxima troca (para olhar o que deu errado).
+reclonar() {
+  local url novo="$DIR.novo"
+  url=$(git -C "$DIR" config --get remote.origin.url 2>/dev/null) || return 1
+  [ -n "$url" ] || return 1
+  rm -rf "$novo"
+  echo "cópia do repositório quebrada há mais de 30 min: baixando de novo"
+  timeout -k 10 600 git clone -q "$url" "$novo" || { rm -rf "$novo"; echo "não consegui baixar de novo"; return 1; }
+  $SC stop radar-vivo.service 2>/dev/null
+  for p in .venv vivo/dados vivo/gemeo saida/maquina.json vivo/diagnostico.txt; do
+    if [ -e "$DIR/$p" ]; then rm -rf "${novo:?}/$p"; mkdir -p "$(dirname "$novo/$p")"; cp -a "$DIR/$p" "$novo/$p"; fi
+  done
+  git -C "$novo" config user.name "radar-maquina"
+  git -C "$novo" config user.email "radar-maquina@users.noreply.github.com"
+  git -C "$novo" config pull.rebase true
+  [ -n "${RADAR_TESTE:-}" ] || chown -R radar:radar "$novo"
+  chmod 600 "$novo/.git/config"
+  rm -rf "$DIR.anterior"
+  mv "$DIR" "$DIR.anterior" && mv "$novo" "$DIR"
+  cd "$DIR" || return 1
+  $SC start radar-vivo.service 2>/dev/null
+  echo "cópia nova no lugar; a antiga ficou em $DIR.anterior"
+  return 0
+}
+
 min=$((10#$(date +%M)))
 if [ "${PUBLICAR:-0}" = "1" ] || [ "$min" -lt 5 ] || [ "$(cut -d. -f1 /proc/uptime)" -lt 900 ]; then
   diagnostico
@@ -104,7 +161,19 @@ done
 depois=$($G rev-parse HEAD)
 if [ "$enviou" = 1 ]; then
   : > /run/radar-envio.log
+  date +%s > "$ESTADO/ultimo-envio-ok"
 else
+  # 30 minutos sem publicar, com o GitHub respondendo: a cópia do repositório está quebrada. Baixa de novo e troca.
+  ok=$(cat "$ESTADO/ultimo-envio-ok" 2>/dev/null || echo 0)
+  [ "$ok" = 0 ] && { date +%s > "$ESTADO/ultimo-envio-ok"; ok=$(date +%s); }      # primeira vez: começa a contar agora
+  # só refaz se o GitHub responde e aceita a chave (git ls-remote): aí o defeito é na cópia local, não na rede nem na chave
+  if [ $(( $(date +%s) - ok )) -gt 1800 ] \
+     && timeout -k 5 60 git ls-remote -q "$(git -C "$DIR" config --get remote.origin.url 2>/dev/null)" HEAD >/dev/null 2>&1; then
+    if reclonar; then
+      date +%s > "$ESTADO/ultimo-envio-ok"
+      exit 0                                  # a próxima rodada (em 5 min) já publica com a cópia nova
+    fi
+  fi
   # não conseguiu publicar na main: manda o diagnóstico num ramo à parte, só com esse arquivo (assim dá para ver o
   # motivo mesmo se o problema for um commit que o GitHub recusa)
   diagnostico
@@ -118,7 +187,7 @@ if [ "$antes" != "$depois" ]; then
   mudou=$($G diff --name-only "$antes" "$depois" -- vivo lab radar requirements.txt | grep -v '^vivo/dados/' | grep -v '^vivo/gemeo/' | grep -v '^lab/dados/' || true)
   if [ -n "$mudou" ]; then
     echo "$mudou" | grep -q '^requirements.txt$' && $R "$DIR/.venv/bin/pip" install -q -r "$DIR/requirements.txt"
-    systemctl restart radar-vivo.service
+    $SC restart radar-vivo.service
     echo "código novo: motor reiniciado"
   fi
 fi

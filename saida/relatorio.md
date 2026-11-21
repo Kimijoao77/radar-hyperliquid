@@ -1,10 +1,10 @@
-# Radar Hyperliquid — 2026-11-21 08:58 UTC
+# Radar Hyperliquid — 2026-11-21 09:58 UTC
 
 No radar: 17 carteiras promissoras (31 descartadas, 157 recusadas na triagem).
 
-- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 8379 operações, resultado US$ 24,491, acerto 82 %, q = 0.0005. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 8385 operações, resultado US$ 24,597, acerto 82 %, q = 0.0005. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0xccf595171e2e56655fb4d386b7424da16be69d42`  — 761 operações, resultado US$ 31,525, acerto 97 %, q = 0.0005. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0x0526345bf8e09eb32256008c2844c8949ee3bb9a`  — 3177 operações, resultado US$ 16,953, acerto 83 %, q = 0.0005. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x0526345bf8e09eb32256008c2844c8949ee3bb9a`  — 3178 operações, resultado US$ 16,983, acerto 83 %, q = 0.0005. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0xf24504bb689f1461fbfd89712eb4872130ed4e47`  — 436 operações, resultado US$ 93,929, acerto 53 %, q = 0.0005. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412`  — 147 operações, resultado US$ 143,749, acerto 84 %, q = 0.0005. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0x4276dcb71aa01041cecdac9eca20d621825927f1`  — 357 operações, resultado US$ 21,296, acerto 56 %, q = 0.0005. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar

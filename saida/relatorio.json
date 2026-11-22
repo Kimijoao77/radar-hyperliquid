@@ -55,7 +55,7 @@
      "exposicao_max": 0.0,
      "exposicao_mediana": 0.0,
      "exposicao_p90": 0.0,
-     "fotos": 506,
+     "fotos": 507,
      "posicionado": 0.018
     },
     "conta_ref": 18497.92,
@@ -926,11 +926,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 3,
-     "configurada_mediana": 3,
+     "configurada_mediana": 3.0,
      "exposicao_max": 4.85,
      "exposicao_mediana": 3.0,
      "exposicao_p90": 3.2,
-     "fotos": 506,
+     "fotos": 507,
      "posicionado": 1.0
     },
     "conta_ref": 49419.14,
@@ -1744,7 +1744,7 @@
      "t1": 1795328939038
     }
    ],
-   "saldo": 2566.82,
+   "saldo": 2583.92,
    "situacao": "observando"
   },
   {
@@ -1801,7 +1801,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 506,
+     "fotos": 507,
      "posicionado": 0.0
     },
     "conta_ref": 41195.4,
@@ -2695,11 +2695,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 10,
-     "configurada_mediana": 5.0,
+     "configurada_mediana": 5,
      "exposicao_max": 8.57,
      "exposicao_mediana": 4.79,
      "exposicao_p90": 6.62,
-     "fotos": 510,
+     "fotos": 511,
      "posicionado": 1.0
     },
     "conta_ref": 87257.75,
@@ -3482,7 +3482,7 @@
      "t1": 1795139664073
     }
    ],
-   "saldo": 44370.66,
+   "saldo": 45426.37,
    "situacao": "observando"
   },
   {
@@ -3567,11 +3567,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 25,
-     "configurada_mediana": 25.0,
+     "configurada_mediana": 25,
      "exposicao_max": 37.83,
-     "exposicao_mediana": 15.75,
+     "exposicao_mediana": 15.71,
      "exposicao_p90": 23.4,
-     "fotos": 354,
+     "fotos": 355,
      "posicionado": 0.993
     },
     "conta_ref": 40461.58,
@@ -3931,7 +3931,7 @@
    "dias_faltam": 47.2,
    "dias_observada": 12.8,
    "estilo": {
-    "alavancagem_mediana": 15.75,
+    "alavancagem_mediana": 15.71,
     "dias_semana": [
      10,
      21,
@@ -4327,7 +4327,7 @@
      "t1": 1795324710840
     }
    ],
-   "saldo": 34384.27,
+   "saldo": 33092.76,
    "situacao": "observando"
   },
   {
@@ -4448,7 +4448,7 @@
      "exposicao_max": 9.33,
      "exposicao_mediana": 4.89,
      "exposicao_p90": 7.52,
-     "fotos": 508,
+     "fotos": 509,
      "posicionado": 0.174
     },
     "conta_ref": 32172.4,
@@ -5300,8 +5300,8 @@
      "exposicao_max": 15.02,
      "exposicao_mediana": 9.93,
      "exposicao_p90": 10.89,
-     "fotos": 506,
-     "posicionado": 0.951
+     "fotos": 507,
+     "posicionado": 0.949
     },
     "conta_ref": 10598.8,
     "dia0": "2026-08-19",
@@ -6186,12 +6186,12 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 5,
-     "configurada_mediana": 3.0,
+     "configurada_mediana": 3,
      "exposicao_max": 2.93,
      "exposicao_mediana": 2.42,
      "exposicao_p90": 2.71,
-     "fotos": 165,
-     "posicionado": 0.7
+     "fotos": 166,
+     "posicionado": 0.702
     },
     "conta_ref": 339346.32,
     "dia0": "2026-10-01",
@@ -6933,7 +6933,7 @@
      "t1": 1795102660337
     }
    ],
-   "saldo": 122771.48,
+   "saldo": 124430.45,
    "situacao": "observando"
   },
   {
@@ -7018,11 +7018,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 40,
-     "configurada_mediana": 40,
+     "configurada_mediana": 40.0,
      "exposicao_max": 39.36,
      "exposicao_mediana": 10.47,
      "exposicao_p90": 16.97,
-     "fotos": 354,
+     "fotos": 355,
      "posicionado": 1.0
     },
     "conta_ref": 26700.32,
@@ -7800,7 +7800,7 @@
      "t1": 1795251151472
     }
    ],
-   "saldo": 15013.92,
+   "saldo": 14299.92,
    "situacao": "observando"
   },
   {
@@ -7840,7 +7840,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 510,
+     "fotos": 511,
      "posicionado": null
     },
     "conta_ref": 57964.76,
@@ -8703,7 +8703,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 509,
+     "fotos": 510,
      "posicionado": null
     },
     "conta_ref": 216909.98,
@@ -9654,7 +9654,7 @@
      "exposicao_max": 8.8,
      "exposicao_mediana": 4.99,
      "exposicao_p90": 7.25,
-     "fotos": 165,
+     "fotos": 166,
      "posicionado": 1.0
     },
     "conta_ref": 646590.13,
@@ -10585,12 +10585,12 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 25,
-     "configurada_mediana": 10.0,
+     "configurada_mediana": 10,
      "exposicao_max": 12.45,
-     "exposicao_mediana": 7.07,
+     "exposicao_mediana": 7.11,
      "exposicao_p90": 9.98,
-     "fotos": 509,
-     "posicionado": 0.52
+     "fotos": 510,
+     "posicionado": 0.522
     },
     "conta_ref": 566588.08,
     "dia0": "2026-08-13",
@@ -11003,7 +11003,7 @@
    "dias_faltam": 40.5,
    "dias_observada": 19.5,
    "estilo": {
-    "alavancagem_mediana": 7.07,
+    "alavancagem_mediana": 7.11,
     "dias_semana": [
      7,
      11,
@@ -11413,7 +11413,7 @@
      "t1": 1794690993572
     }
    ],
-   "saldo": 12372.12,
+   "saldo": 12850.75,
    "situacao": "observando"
   },
   {
@@ -11498,11 +11498,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 20,
-     "configurada_mediana": 10,
+     "configurada_mediana": 10.0,
      "exposicao_max": 10.51,
-     "exposicao_mediana": 9.99,
+     "exposicao_mediana": 9.98,
      "exposicao_p90": 10.23,
-     "fotos": 354,
+     "fotos": 355,
      "posicionado": 1.0
     },
     "conta_ref": 84687.3,
@@ -11847,7 +11847,7 @@
    "dias_faltam": 47.2,
    "dias_observada": 12.8,
    "estilo": {
-    "alavancagem_mediana": 9.99,
+    "alavancagem_mediana": 9.98,
     "dias_semana": [
      0,
      14,
@@ -12254,7 +12254,7 @@
      "t1": 1795206849228
     }
    ],
-   "saldo": 12262.22,
+   "saldo": 12723.28,
    "situacao": "observando"
   },
   {
@@ -12359,7 +12359,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 165,
+     "fotos": 166,
      "posicionado": null
     },
     "conta_ref": 101188.94,
@@ -13210,11 +13210,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 20,
-     "configurada_mediana": 20.0,
+     "configurada_mediana": 20,
      "exposicao_max": 15.93,
      "exposicao_mediana": 9.93,
      "exposicao_p90": 12.62,
-     "fotos": 354,
+     "fotos": 355,
      "posicionado": 1.0
     },
     "conta_ref": 70337.69,
@@ -14037,7 +14037,7 @@
      "t1": 1794770370527
     }
    ],
-   "saldo": 0.7,
+   "saldo": 0.65,
    "situacao": "observando"
   },
   {
@@ -14126,7 +14126,7 @@
      "exposicao_max": 40.99,
      "exposicao_mediana": 14.58,
      "exposicao_p90": 19.98,
-     "fotos": 165,
+     "fotos": 166,
      "posicionado": 0.993
     },
     "conta_ref": 193537.92,
@@ -17856,7 +17856,7 @@
      1.0,
      0.000621,
      0.001655,
-     7.07
+     7.11
     ],
     "0x3cc561c1276cccf56d74cc6d65c516ef88a998d2": [
      0.0,
@@ -17920,7 +17920,7 @@
      0.981,
      0.001202,
      0.0027,
-     9.99
+     9.98
     ],
     "0xa4db748d91c6618c77a6f4598bf6b849d5b95f49": [
      0.0,
@@ -17936,7 +17936,7 @@
      0.922,
      0.036155,
      0.065502,
-     15.75
+     15.71
     ],
     "0xccf595171e2e56655fb4d386b7424da16be69d42": [
      0.001011,
@@ -18002,7 +18002,7 @@
      1.0,
      0.000621,
      0.001655,
-     7.07
+     7.11
     ],
     "0x3cc561c1276cccf56d74cc6d65c516ef88a998d2": [
      0.0,
@@ -18058,7 +18058,7 @@
      0.981,
      0.001202,
      0.0027,
-     9.99
+     9.98
     ],
     "0xa4db748d91c6618c77a6f4598bf6b849d5b95f49": [
      0.0,
@@ -18074,7 +18074,7 @@
      0.922,
      0.036155,
      0.065502,
-     15.75
+     15.71
     ],
     "0xccf595171e2e56655fb4d386b7424da16be69d42": [
      0.000858,
@@ -18132,8 +18132,8 @@
  ],
  "descartadas": 31,
  "fila": 0,
- "gerado": 1795339007434,
- "gerado_txt": "2026-11-22 09:16 UTC",
+ "gerado": 1795339216227,
+ "gerado_txt": "2026-11-22 09:20 UTC",
  "nomes": {
   "habilidade": "Habilidade provável",
   "observando": "Em observação",
@@ -18160,12 +18160,12 @@
  },
  "ultima_coleta": {
   "carteiras": 17,
-  "em": 1795339001719,
+  "em": 1795339210075,
   "erros": 0,
   "fila": 0,
-  "fills_novos": 11,
+  "fills_novos": 0,
   "minutos": 0.1,
-  "peso_gasto": 377
+  "peso_gasto": 374
  },
  "ultimo_filtro": {
   "cortes": {

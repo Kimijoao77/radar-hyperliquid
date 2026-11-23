@@ -1,15 +1,15 @@
-# Radar Hyperliquid — 2026-11-23 18:49 UTC
+# Radar Hyperliquid — 2026-11-23 19:49 UTC
 
 No radar: 22 carteiras promissoras (31 descartadas, 212 recusadas na triagem).
 
-- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 8756 operações, resultado US$ 25,559, acerto 81 %, q = 0.0009. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0xccf595171e2e56655fb4d386b7424da16be69d42`  — 786 operações, resultado US$ 32,799, acerto 97 %, q = 0.0009. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0x0526345bf8e09eb32256008c2844c8949ee3bb9a`  — 3233 operações, resultado US$ 17,923, acerto 82 %, q = 0.0009. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0xf24504bb689f1461fbfd89712eb4872130ed4e47`  — 436 operações, resultado US$ 93,929, acerto 53 %, q = 0.0009. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0x4276dcb71aa01041cecdac9eca20d621825927f1`  — 367 operações, resultado US$ 21,630, acerto 56 %, q = 0.0018. lucro consistente (q = 0,002) e continuou ganhando depois que entrou no radar
-- **Habilidade provável** `0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412`  — 159 operações, resultado US$ 93,156, acerto 82 %, q = 0.0033. lucro consistente (q = 0,003) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x3e7c16408c6691e0218167cee78bec7ebad03909`  — 8759 operações, resultado US$ 25,567, acerto 81 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0xccf595171e2e56655fb4d386b7424da16be69d42`  — 790 operações, resultado US$ 32,940, acerto 97 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x0526345bf8e09eb32256008c2844c8949ee3bb9a`  — 3233 operações, resultado US$ 17,923, acerto 82 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0xf24504bb689f1461fbfd89712eb4872130ed4e47`  — 436 operações, resultado US$ 93,929, acerto 53 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0x4276dcb71aa01041cecdac9eca20d621825927f1`  — 368 operações, resultado US$ 21,633, acerto 56 %, q = 0.0007. lucro consistente (q = menos de 0,001) e continuou ganhando depois que entrou no radar
+- **Habilidade provável** `0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412`  — 160 operações, resultado US$ 94,036, acerto 82 %, q = 0.0033. lucro consistente (q = 0,003) e continuou ganhando depois que entrou no radar
 - **Habilidade provável** `0xfcacebb9332e531c86db39659366c349794cbabb`  — 156 operações, resultado US$ 20,389, acerto 67 %, q = 0.0178. lucro consistente (q = 0,018) e continuou ganhando depois que entrou no radar
-- **Promissora** `0x84b2b687df7c99702e887849f8d99bfb0fed12f2`  — 52 operações, resultado US$ 322,668, acerto 94 %, q = 0.0009. números fortes (q = menos de 0,001), falta confirmar no período acompanhado (5/20 operações)
+- **Promissora** `0x84b2b687df7c99702e887849f8d99bfb0fed12f2`  — 52 operações, resultado US$ 322,668, acerto 94 %, q = 0.0007. números fortes (q = menos de 0,001), falta confirmar no período acompanhado (5/20 operações)
 - **Promissora** `0x7f62c09129d1cfaf76980f17d97509f94dbc6924`  — 86 operações, resultado US$ 106,914, acerto 59 %, q = 0.0169. números fortes (q = 0,017), falta confirmar no período acompanhado (18/20 operações)
 - **Promissora** `0x3cc561c1276cccf56d74cc6d65c516ef88a998d2`  — 73 operações, resultado US$ 176,421, acerto 75 %, q = 0.0022. números fortes (q = 0,002), falta confirmar no período acompanhado (11/20 operações)
 - **Promissora** `0x9378b60ccc9855be6a9e7151391610596ed93183`  — 56 operações, resultado US$ 65,425, acerto 59 %, q = 0.0333. números fortes (q = 0,033), falta confirmar no período acompanhado (13/20 operações)

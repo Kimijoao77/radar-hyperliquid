@@ -1,9 +1,9 @@
-gerado: 2026-11-24 04:04 UTC
-ligada há: up 2 days, 14 hours, 47 minutes
- 04:04:43 up 2 days, 14:47,  0 user,  load average: 0.08, 0.04, 0.00
+gerado: 2026-11-24 05:00 UTC
+ligada há: up 2 days, 15 hours, 42 minutes
+ 05:00:05 up 2 days, 15:42,  0 user,  load average: 0.06, 0.03, 0.00
 
                total        used        free      shared  buff/cache   available
-Mem:             955         397         157           0         560         557
+Mem:             955         381         177           0         557         574
 Swap:           2399           1        2398
 
 /dev/vda2        23G  6.4G   16G  30% /
@@ -17,28 +17,28 @@ reinícios do motor: 0
 -- No entries --
 
 == atualização (últimas linhas) ==
-Nov 24 03:54:42 radar runuser[91046]: pam_unix(runuser:session): session closed for user radar
-Nov 24 03:54:42 radar runuser[91063]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 24 03:54:43 radar runuser[91063]: pam_unix(runuser:session): session closed for user radar
-Nov 24 03:54:43 radar runuser[91069]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 24 03:54:43 radar runuser[91069]: pam_unix(runuser:session): session closed for user radar
-Nov 24 03:54:43 radar systemd[1]: radar-atualiza.service: Deactivated successfully.
-Nov 24 03:54:43 radar systemd[1]: Finished radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados.
-Nov 24 03:59:42 radar systemd[1]: Starting radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados...
-Nov 24 03:59:42 radar runuser[91199]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 24 03:59:42 radar runuser[91199]: pam_unix(runuser:session): session closed for user radar
-Nov 24 03:59:42 radar runuser[91205]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 24 03:59:42 radar runuser[91205]: pam_unix(runuser:session): session closed for user radar
-Nov 24 03:59:42 radar runuser[91208]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 24 03:59:42 radar runuser[91208]: pam_unix(runuser:session): session closed for user radar
-Nov 24 03:59:42 radar runuser[91211]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 24 03:59:42 radar runuser[91211]: pam_unix(runuser:session): session closed for user radar
-Nov 24 03:59:42 radar runuser[91228]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 24 03:59:43 radar runuser[91228]: pam_unix(runuser:session): session closed for user radar
-Nov 24 03:59:43 radar runuser[91234]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 24 03:59:43 radar runuser[91234]: pam_unix(runuser:session): session closed for user radar
-Nov 24 03:59:43 radar systemd[1]: radar-atualiza.service: Deactivated successfully.
-Nov 24 03:59:43 radar systemd[1]: Finished radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados.
-Nov 24 04:04:42 radar systemd[1]: Starting radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados...
-Nov 24 04:04:43 radar runuser[91365]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
-Nov 24 04:04:43 radar runuser[91365]: pam_unix(runuser:session): session closed for user radar
+Nov 24 04:50:04 radar runuser[93025]: pam_unix(runuser:session): session closed for user radar
+Nov 24 04:50:04 radar runuser[93042]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 24 04:50:05 radar runuser[93042]: pam_unix(runuser:session): session closed for user radar
+Nov 24 04:50:05 radar runuser[93048]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 24 04:50:05 radar runuser[93048]: pam_unix(runuser:session): session closed for user radar
+Nov 24 04:50:05 radar systemd[1]: radar-atualiza.service: Deactivated successfully.
+Nov 24 04:50:05 radar systemd[1]: Finished radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados.
+Nov 24 04:55:03 radar systemd[1]: Starting radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados...
+Nov 24 04:55:03 radar runuser[93173]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 24 04:55:03 radar runuser[93173]: pam_unix(runuser:session): session closed for user radar
+Nov 24 04:55:03 radar runuser[93179]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 24 04:55:03 radar runuser[93179]: pam_unix(runuser:session): session closed for user radar
+Nov 24 04:55:03 radar runuser[93182]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 24 04:55:03 radar runuser[93182]: pam_unix(runuser:session): session closed for user radar
+Nov 24 04:55:03 radar runuser[93185]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 24 04:55:04 radar runuser[93185]: pam_unix(runuser:session): session closed for user radar
+Nov 24 04:55:04 radar runuser[93202]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 24 04:55:04 radar runuser[93202]: pam_unix(runuser:session): session closed for user radar
+Nov 24 04:55:04 radar runuser[93208]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 24 04:55:04 radar runuser[93208]: pam_unix(runuser:session): session closed for user radar
+Nov 24 04:55:04 radar systemd[1]: radar-atualiza.service: Deactivated successfully.
+Nov 24 04:55:04 radar systemd[1]: Finished radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados.
+Nov 24 05:00:04 radar systemd[1]: Starting radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados...
+Nov 24 05:00:05 radar runuser[93335]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 24 05:00:05 radar runuser[93335]: pam_unix(runuser:session): session closed for user radar

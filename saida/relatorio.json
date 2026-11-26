@@ -22,16 +22,16 @@
     {
      "duracao_min": 0.0,
      "entrada": 2.8867,
-     "fills": 1,
+     "fills": 2,
      "lado": "long",
      "liquidada": false,
      "moeda": "@496",
      "nocional": 2193.31,
      "ordens_entrada": 1,
      "parcial": false,
-     "resultado": -0.27,
-     "retorno": -0.00012,
-     "saida": 0.0,
+     "resultado": 135.34,
+     "retorno": 0.06171,
+     "saida": 3.0674,
      "t0": 1795630714613,
      "t1": null
     }
@@ -71,7 +71,7 @@
      "exposicao_max": 0.02,
      "exposicao_mediana": 0.0,
      "exposicao_p90": 0.0,
-     "fotos": 616,
+     "fotos": 617,
      "posicionado": 0.016
     },
     "conta_ref": 18497.92,
@@ -538,7 +538,7 @@
    "nota": 69.16,
    "operador": {
     "nota": 100,
-    "ordens": 23243,
+    "ordens": 23244,
     "ordens_por_dia": 611.4,
     "rotulo": "Robô provável",
     "sinais": [
@@ -950,7 +950,7 @@
      "exposicao_max": 4.85,
      "exposicao_mediana": 3.0,
      "exposicao_p90": 3.18,
-     "fotos": 616,
+     "fotos": 617,
      "posicionado": 1.0
     },
     "conta_ref": 49419.14,
@@ -1768,7 +1768,7 @@
      "t1": 1795679174205
     }
    ],
-   "saldo": 5256.76,
+   "saldo": 5229.56,
    "situacao": "observando"
   },
   {
@@ -1825,7 +1825,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 616,
+     "fotos": 617,
      "posicionado": 0.0
     },
     "conta_ref": 41195.4,
@@ -2723,11 +2723,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 10,
-     "configurada_mediana": 5.0,
+     "configurada_mediana": 5,
      "exposicao_max": 8.57,
-     "exposicao_mediana": 4.91,
+     "exposicao_mediana": 4.92,
      "exposicao_p90": 6.44,
-     "fotos": 620,
+     "fotos": 621,
      "posicionado": 1.0
     },
     "conta_ref": 87257.75,
@@ -3105,7 +3105,7 @@
    "dias_faltam": 36.6,
    "dias_observada": 23.4,
    "estilo": {
-    "alavancagem_mediana": 4.91,
+    "alavancagem_mediana": 4.92,
     "dias_semana": [
      64,
      74,
@@ -3514,7 +3514,7 @@
      "t1": 1795531700460
     }
    ],
-   "saldo": 39620.23,
+   "saldo": 39761.49,
    "situacao": "observando"
   },
   {
@@ -3599,11 +3599,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 25,
-     "configurada_mediana": 25,
+     "configurada_mediana": 25.0,
      "exposicao_max": 37.83,
-     "exposicao_mediana": 14.49,
+     "exposicao_mediana": 14.44,
      "exposicao_p90": 23.26,
-     "fotos": 464,
+     "fotos": 465,
      "posicionado": 0.988
     },
     "conta_ref": 40461.58,
@@ -3967,7 +3967,7 @@
    "dias_faltam": 43.3,
    "dias_observada": 16.7,
    "estilo": {
-    "alavancagem_mediana": 14.49,
+    "alavancagem_mediana": 14.44,
     "dias_semana": [
      16,
      26,
@@ -4363,7 +4363,7 @@
      "t1": 1795673411638
     }
    ],
-   "saldo": 39102.02,
+   "saldo": 38800.74,
    "situacao": "observando"
   },
   {
@@ -4436,7 +4436,7 @@
      "exposicao_max": 9.33,
      "exposicao_mediana": 2.9,
      "exposicao_p90": 6.66,
-     "fotos": 618,
+     "fotos": 619,
      "posicionado": 0.202
     },
     "conta_ref": 32172.4,
@@ -5325,7 +5325,7 @@
      "exposicao_max": 39.36,
      "exposicao_mediana": 10.52,
      "exposicao_p90": 16.19,
-     "fotos": 464,
+     "fotos": 465,
      "posicionado": 1.0
     },
     "conta_ref": 26700.32,
@@ -6160,11 +6160,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 10,
-     "configurada_mediana": 10,
+     "configurada_mediana": 10.0,
      "exposicao_max": 15.02,
      "exposicao_mediana": 9.94,
      "exposicao_p90": 10.76,
-     "fotos": 616,
+     "fotos": 617,
      "posicionado": 0.944
     },
     "conta_ref": 10598.8,
@@ -6985,7 +6985,7 @@
      "t1": 1795363130940
     }
    ],
-   "saldo": 2379.69,
+   "saldo": 2377.8,
    "situacao": "observando"
   },
   {
@@ -7054,12 +7054,12 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 5,
-     "configurada_mediana": 3,
+     "configurada_mediana": 3.0,
      "exposicao_max": 2.99,
      "exposicao_mediana": 2.31,
      "exposicao_p90": 2.64,
-     "fotos": 275,
-     "posicionado": 0.808
+     "fotos": 276,
+     "posicionado": 0.809
     },
     "conta_ref": 339346.32,
     "dia0": "2026-10-01",
@@ -7813,7 +7813,7 @@
      "t1": 1795647668153
     }
    ],
-   "saldo": 119651.53,
+   "saldo": 119451.73,
    "situacao": "observando"
   },
   {
@@ -7870,7 +7870,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 620,
+     "fotos": 621,
      "posicionado": null
     },
     "conta_ref": 57964.76,
@@ -8799,10 +8799,10 @@
      "configurada_max": 25,
      "configurada_mediana": 10,
      "exposicao_max": 13.79,
-     "exposicao_mediana": 7.26,
+     "exposicao_mediana": 7.27,
      "exposicao_p90": 10.84,
-     "fotos": 619,
-     "posicionado": 0.622
+     "fotos": 620,
+     "posicionado": 0.623
     },
     "conta_ref": 566588.08,
     "dia0": "2026-08-13",
@@ -9219,7 +9219,7 @@
    "dias_faltam": 36.6,
    "dias_observada": 23.4,
    "estilo": {
-    "alavancagem_mediana": 7.26,
+    "alavancagem_mediana": 7.27,
     "dias_semana": [
      8,
      13,
@@ -9629,7 +9629,7 @@
      "t1": 1795598912878
     }
    ],
-   "saldo": 39184.26,
+   "saldo": 39612.01,
    "situacao": "observando"
   },
   {
@@ -9750,7 +9750,7 @@
      "exposicao_max": 11.84,
      "exposicao_mediana": 7.01,
      "exposicao_p90": 7.78,
-     "fotos": 79,
+     "fotos": 80,
      "posicionado": 1.0
     },
     "conta_ref": 596162.69,
@@ -10561,7 +10561,7 @@
      "t1": 1795646112301
     }
    ],
-   "saldo": 37517.37,
+   "saldo": 37411.17,
    "situacao": "observando"
   },
   {
@@ -10646,12 +10646,12 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 14,
-     "configurada_mediana": 9,
+     "configurada_mediana": 9.0,
      "exposicao_max": 13.28,
-     "exposicao_mediana": 9.5,
+     "exposicao_mediana": 9.51,
      "exposicao_p90": 11.27,
-     "fotos": 79,
-     "posicionado": 0.885
+     "fotos": 80,
+     "posicionado": 0.886
     },
     "conta_ref": 19106.98,
     "dia0": "2026-09-11",
@@ -11039,7 +11039,7 @@
    "dias_faltam": 57.2,
    "dias_observada": 2.8,
    "estilo": {
-    "alavancagem_mediana": 9.5,
+    "alavancagem_mediana": 9.51,
     "dias_semana": [
      10,
      5,
@@ -11434,7 +11434,7 @@
      "t1": 1795627644574
     }
    ],
-   "saldo": 19007.2,
+   "saldo": 19160.26,
    "situacao": "observando"
   },
   {
@@ -11487,14 +11487,14 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 7,
-     "configurada_mediana": 4,
+     "configurada_mediana": 4.0,
      "exposicao_max": 2.13,
      "exposicao_mediana": 1.74,
      "exposicao_p90": 1.84,
-     "fotos": 79,
+     "fotos": 80,
      "posicionado": 1.0
     },
-    "conta_ref": 122826.58,
+    "conta_ref": 122815.85,
     "dia0": "2026-09-19",
     "giro_dia": 76884.72,
     "n": 46,
@@ -12205,7 +12205,7 @@
      "t1": 1794417819928
     }
    ],
-   "saldo": 122302.57,
+   "saldo": 122137.86,
    "situacao": "observando"
   },
   {
@@ -12310,7 +12310,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 275,
+     "fotos": 276,
      "posicionado": null
     },
     "conta_ref": 101188.94,
@@ -13177,11 +13177,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 20,
-     "configurada_mediana": 20.0,
+     "configurada_mediana": 20,
      "exposicao_max": 20.95,
-     "exposicao_mediana": 9.88,
+     "exposicao_mediana": 9.89,
      "exposicao_p90": 12.29,
-     "fotos": 464,
+     "fotos": 465,
      "posicionado": 1.0
     },
     "conta_ref": 70337.69,
@@ -13598,7 +13598,7 @@
    "dias_faltam": 43.3,
    "dias_observada": 16.7,
    "estilo": {
-    "alavancagem_mediana": 9.88,
+    "alavancagem_mediana": 9.89,
     "dias_semana": [
      9,
      16,
@@ -14008,7 +14008,7 @@
      "t1": 1794770370527
     }
    ],
-   "saldo": 6423.7,
+   "saldo": 6370.23,
    "situacao": "observando"
   },
   {
@@ -14081,7 +14081,7 @@
      "exposicao_max": 40.99,
      "exposicao_mediana": 14.58,
      "exposicao_p90": 19.98,
-     "fotos": 275,
+     "fotos": 276,
      "posicionado": 0.993
     },
     "conta_ref": 193537.92,
@@ -14928,11 +14928,11 @@
    "copia": {
     "alavancagem": {
      "configurada_max": 40,
-     "configurada_mediana": 10,
+     "configurada_mediana": 10.0,
      "exposicao_max": 9.33,
-     "exposicao_mediana": 7.24,
+     "exposicao_mediana": 7.18,
      "exposicao_p90": 8.55,
-     "fotos": 79,
+     "fotos": 80,
      "posicionado": 1.0
     },
     "conta_ref": 6285745.9,
@@ -15337,7 +15337,7 @@
    "dias_faltam": 57.2,
    "dias_observada": 2.8,
    "estilo": {
-    "alavancagem_mediana": 7.24,
+    "alavancagem_mediana": 7.18,
     "dias_semana": [
      10,
      3,
@@ -15747,7 +15747,7 @@
      "t1": 1795655012350
     }
    ],
-   "saldo": 557331.41,
+   "saldo": 554511.41,
    "situacao": "observando"
   },
   {
@@ -15820,7 +15820,7 @@
      "exposicao_max": null,
      "exposicao_mediana": null,
      "exposicao_p90": null,
-     "fotos": 619,
+     "fotos": 620,
      "posicionado": null
     },
     "conta_ref": 216909.98,
@@ -20342,7 +20342,7 @@
      1.0,
      0.000566,
      0.001511,
-     7.26
+     7.27
     ],
     "0x3cc561c1276cccf56d74cc6d65c516ef88a998d2": [
      0.12355,
@@ -20382,7 +20382,7 @@
      1.0,
      8e-05,
      0.000166,
-     7.24
+     7.18
     ],
     "0x7f62c09129d1cfaf76980f17d97509f94dbc6924": [
      0.265556,
@@ -20406,7 +20406,7 @@
      1.0,
      0.001993,
      0.005158,
-     9.5
+     9.51
     ],
     "0x9a4071c079f245a0df983fe66d213db828c57097": [
      0.0,
@@ -20430,7 +20430,7 @@
      0.976,
      0.001486,
      0.002588,
-     9.88
+     9.89
     ],
     "0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412": [
      -0.021835,
@@ -20438,7 +20438,7 @@
      0.902,
      0.038035,
      0.068857,
-     14.49
+     14.44
     ],
     "0xccf595171e2e56655fb4d386b7424da16be69d42": [
      0.014575,
@@ -20470,7 +20470,7 @@
      1.0,
      0.001782,
      0.003835,
-     4.91
+     4.92
     ],
     "0xf93d2fb3354b5091e7cd042e3686e287153b73d6": [
      0.0,
@@ -20512,7 +20512,7 @@
      1.0,
      0.000566,
      0.001511,
-     7.26
+     7.27
     ],
     "0x3cc561c1276cccf56d74cc6d65c516ef88a998d2": [
      0.0,
@@ -20544,7 +20544,7 @@
      1.0,
      8e-05,
      0.000166,
-     7.24
+     7.18
     ],
     "0x7f62c09129d1cfaf76980f17d97509f94dbc6924": [
      -0.074677,
@@ -20568,7 +20568,7 @@
      1.0,
      0.001993,
      0.005158,
-     9.5
+     9.51
     ],
     "0x9a4071c079f245a0df983fe66d213db828c57097": [
      0.0,
@@ -20592,7 +20592,7 @@
      0.976,
      0.001486,
      0.002588,
-     9.88
+     9.89
     ],
     "0xc5329be87ddadb4e5c8ef0bf01e9f1d43e041412": [
      0.100885,
@@ -20600,7 +20600,7 @@
      0.902,
      0.038035,
      0.068857,
-     14.49
+     14.44
     ],
     "0xccf595171e2e56655fb4d386b7424da16be69d42": [
      0.002747,
@@ -20624,7 +20624,7 @@
      1.0,
      0.001782,
      0.003835,
-     4.91
+     4.92
     ],
     "0xf93d2fb3354b5091e7cd042e3686e287153b73d6": [
      0.0,
@@ -20658,8 +20658,8 @@
  ],
  "descartadas": 34,
  "fila": 0,
- "gerado": 1795682607170,
- "gerado_txt": "2026-11-26 08:43 UTC",
+ "gerado": 1795682760099,
+ "gerado_txt": "2026-11-26 08:46 UTC",
  "nomes": {
   "habilidade": "Habilidade provável",
   "observando": "Em observação",
@@ -20686,12 +20686,12 @@
  },
  "ultima_coleta": {
   "carteiras": 19,
-  "em": 1795682600403,
+  "em": 1795682755326,
   "erros": 0,
   "fila": 0,
-  "fills_novos": 26,
+  "fills_novos": 1,
   "minutos": 0.1,
-  "peso_gasto": 422
+  "peso_gasto": 419
  },
  "ultimo_filtro": {
   "cortes": {

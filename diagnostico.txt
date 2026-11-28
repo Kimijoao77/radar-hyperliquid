@@ -1,0 +1,78 @@
+gerado: 2026-11-28 13:57 UTC
+ligada há: up 1 week, 39 minutes
+ 13:57:15 up 7 days, 39 min,  0 user,  load average: 0.08, 0.04, 0.00
+
+               total        used        free      shared  buff/cache   available
+Mem:             955         349         209           0         565         606
+Swap:           2399          21        2378
+
+/dev/vda2        23G  6.9G   15G  32% /
+
+motor: active desde Fri 2026-11-27 06:40:32 UTC
+reinícios do motor: 0
+
+== memória e travamentos (kernel, últimas 24 h) ==
+
+== motor (últimas linhas) ==
+-- No entries --
+
+== atualização (últimas linhas) ==
+Nov 28 13:52:12 radar runuser[335128]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 28 13:52:12 radar runuser[335128]: pam_unix(runuser:session): session closed for user radar
+Nov 28 13:52:12 radar runuser[335131]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 28 13:52:14 radar runuser[335131]: pam_unix(runuser:session): session closed for user radar
+Nov 28 13:52:14 radar systemd[1]: radar-atualiza.service: Deactivated successfully.
+Nov 28 13:52:14 radar systemd[1]: Finished radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados.
+Nov 28 13:56:23 radar systemd[1]: Starting radar-atualiza.service - Radar: baixa o codigo novo e publica os resultados...
+Nov 28 13:56:24 radar runuser[335296]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 28 13:56:24 radar runuser[335296]: pam_unix(runuser:session): session closed for user radar
+Nov 28 13:56:24 radar runuser[335300]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 28 13:56:24 radar runuser[335300]: pam_unix(runuser:session): session closed for user radar
+Nov 28 13:56:24 radar runuser[335306]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 28 13:56:24 radar runuser[335306]: pam_unix(runuser:session): session closed for user radar
+Nov 28 13:56:24 radar runuser[335309]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 28 13:56:24 radar runuser[335309]: pam_unix(runuser:session): session closed for user radar
+Nov 28 13:56:24 radar runuser[335312]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 28 13:56:24 radar runuser[335312]: pam_unix(runuser:session): session closed for user radar
+Nov 28 13:56:29 radar runuser[335328]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 28 13:56:30 radar runuser[335328]: pam_unix(runuser:session): session closed for user radar
+Nov 28 13:56:40 radar runuser[335344]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 28 13:56:40 radar runuser[335344]: pam_unix(runuser:session): session closed for user radar
+Nov 28 13:56:55 radar runuser[335360]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 28 13:56:55 radar runuser[335360]: pam_unix(runuser:session): session closed for user radar
+Nov 28 13:57:15 radar runuser[335380]: pam_unix(runuser:session): session opened for user radar(uid=999) by (uid=0)
+Nov 28 13:57:15 radar runuser[335380]: pam_unix(runuser:session): session closed for user radar
+
+== último envio ao GitHub que falhou ==
+fatal: It seems that there is already a rebase-merge directory, and
+I wonder if you are in the middle of another rebase.  If that is the
+case, please try
+	git rebase (--continue | --abort | --skip)
+If that is not the case, please
+	rm -fr ".git/rebase-merge"
+and run me again.  I am stopping in case you still have something
+valuable there.
+
+
+== git ==
+## main...origin/main [ahead 360, behind 110]
+ M saida/maquina.json
+ M vivo/dados/copia_estado.json
+ M vivo/dados/medidas.json
+ M vivo/diagnostico.txt
+ M vivo/gemeo/gemeos.json
+ M vivo/gemeo/lab/dados/cofres_estado.json
+ M vivo/gemeo/lab/dados/concentradas_estado.json
+ M vivo/gemeo/lab/dados/grade_funding.json
+ M vivo/gemeo/lab/dados/listagens_estado.json
+ M vivo/gemeo/lab/dados/previsoes_estado.json
+ M vivo/gemeo/saida/concentradas.json
+ M vivo/gemeo/saida/copia_fiel.json
+7fa589e5 Máquina: 2026-11-28 13:46 UTC
+959cbc46 Máquina: 2026-11-28 13:31 UTC
+963cc48f Máquina: 2026-11-28 13:16 UTC
+44fba369 Máquina: 2026-11-28 13:01 UTC
+659facb0 Máquina: 2026-11-28 12:45 UTC
+4f425464 Robôs: 2026-11-28 13:35 UTC
+348f6578 Robôs: 2026-11-28 12:34 UTC
+67588f79 Robôs: 2026-11-28 11:31 UTC
